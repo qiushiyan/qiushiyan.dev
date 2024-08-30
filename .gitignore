@@ -38,3 +38,4 @@ next-env.d.ts
 /.quarto/
 /.luarc.json
 .env
+.velite
