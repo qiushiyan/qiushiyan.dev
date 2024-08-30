@@ -1,0 +1,21 @@
+## Dataset `r i`
+
+Dataset `r i` has `r nrow(data)` rows.
+
+### Summary
+
+
+```{r}
+#| echo: false
+summary(data)
+```
+
+### Plot
+
+```{r}
+#| echo: false
+#| fig-align: center
+plot(data)
+```
+
+

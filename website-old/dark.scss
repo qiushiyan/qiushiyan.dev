@@ -1,0 +1,52 @@
+/*-- scss:defaults --*/
+
+// Base document colors
+$body-bg: #18181b;
+$body-color: #FEFCE8;
+$link-color: #fde68a;
+$white: #fff;
+$light: #525252;
+$code-color: #fde68a;
+$code-bg: #fff;
+
+// Navigation element colors
+$footer-bg: #0f182b;
+$navbar-bg: rgba($body-bg, 0.8);
+
+// Code blocks
+$code-block-bg-alpha: -0.8;
+
+// Bootstrap popovers
+$popover-bg: #242424;
+
+// Bootstrap inputs
+$input-bg: #242424;
+
+#quarto-header {
+  padding: 0.25rem 0;
+  z-index: 400;
+  nav {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    .navbar {
+      display: flex;
+      justify-content: center;
+    }
+    a {
+      color: $white;
+    }
+    .navbar-brand {
+      font-size: 1.5em;
+    }
+  }
+}
+
+.cell-output code {
+  color: $white !important;
+}
+
+
+strong {
+  color: $link-color;
+}

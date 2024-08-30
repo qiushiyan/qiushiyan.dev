@@ -1,0 +1,118 @@
+@view-transition {
+    navigation: auto;
+}
+
+#quarto-document-content h1.title {
+    view-transition-name: post-title;
+}
+
+.navbar-container.container-fluid {
+    width: 100%;
+    padding: 0.5rem 0;
+    max-width: 80rem;
+    display: flex;
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
+}
+
+#navbarCollapse {
+    max-width: 38rem;
+}
+
+.blog-description {
+    font-size: 1.1rem;
+}
+
+.gradient-text {
+    --tw-gradient-to: #ec4899;
+    --tw-gradient-from: #3b82f6;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* increase main content width */
+.page-layout-article {
+    grid-template-columns:
+        [screen-start] 1.5em [screen-start-inset] 2fr [page-start] minmax(25px,
+            50px) [page-start-inset] minmax(50px, 150px) [body-start-outset] minmax(25px,
+            50px) [body-start] 1.5em [body-content-start] minmax(500px, calc(1000px - 3em)) [body-content-end] 1.5em [body-end] minmax(25px, 50px) [body-end-outset] minmax(20px, 50px) [page-end-inset] minmax(25px, 50px) [page-end] 2fr [screen-end-inset] 1.5em [screen-end] !important;
+}
+
+/* for pages with margin column */
+body.floating.slimcontent .page-columns {
+    grid-template-columns:
+        [screen-start] 1.5em [screen-start-inset] 2fr [page-start] minmax(25px,
+            50px) [page-start-inset] minmax(25px, 100px) [body-start-outset] minmax(25px,
+            50px) [body-start] 1.5em [body-content-start] minmax(500px, calc(1000px - 3em)) [body-content-end] 0.5em [body-end] minmax(25px, 50px) [body-end-outset] minmax(20px, 50px) [page-end-inset] minmax(25px, 150px) [page-end] 2fr [screen-end-inset] 1.5em [screen-end] !important;
+}
+
+/* about page icons */
+#about-me .cell-output-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 45px;
+    overflow: hidden;
+}
+
+#about-me .cell-output-display a {
+    margin-right: 10px;
+}
+
+#about-me .cell-output-display i {
+    font-style: normal;
+}
+
+#about-me .cell-output-display i.bi {
+    margin-right: 0.15em;
+}
+
+#about-me .about-link {
+    font-size: 0.8em;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    color: #4e5862;
+    text-decoration: none;
+    border: solid 1px;
+}
+
+#about-me h2 {
+    border: none;
+}
+
+#title-block-header {
+    color: white
+}
+
+.sourceCode {
+    background: inherit !important;
+}
+
+pre {
+    color: white;
+}
+
+a>code,
+p>code,
+h1>code,
+h2>code,
+h3>code,
+h4>code,
+h5>code,
+h6>code {
+    font-weight: 600;
+    background-color: inherit !important;
+}
+
+
+@media (min-width: 992px) {
+    #about-me .cell-output-display {
+        flex-direction: row;
+        column-gap: 0.8em;
+        row-gap: 15px;
+        flex-wrap: wrap;
+    }
+}

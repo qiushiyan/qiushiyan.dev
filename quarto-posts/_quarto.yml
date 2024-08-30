@@ -1,0 +1,14 @@
+project:
+  output-dir: ../content/posts
+execute:
+  freeze: auto
+knitr:
+  opts_chunk:
+    comment: "#>"
+    collapse: true
+
+
+format:
+  gfm:
+    number-sections: true
+    variant: +yaml_metadata_block

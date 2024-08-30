@@ -1,0 +1,75 @@
+---
+title: Reactive Patterns in Python with RxPY
+date: '2022-02-20'
+categories: Python
+description: |
+    Working with data streams in Python with the RxPY library
+jupyter: python3.10
+image: https://avatars.githubusercontent.com/u/6407041?s=200&v=4
+draft: true
+---
+
+## Essential Reactive Concepts
+
+> An **Observable** is the core type in ReactiveX. It serially pushes items, known as emissions, through a series of **operators** until it finally arrives at an **Observer**, where they are consumed.
+
+```{python}
+import reactivex as rx
+import reactivex.operators as op
+import re
+from reactivex import from_iterable
+```
+
+## Reading files
+
+
+### Building a word counter
+
+```{python}
+def words_from_line(line: str):
+    return from_iterable(re.split(r'\W+', line))
+
+def word_counter(filename: str, stop_words: [str] = None):
+    if stop_words is None:
+        stop_words = ["the", "of", "and", "to", "is", "that", "it", "as", "a", "are", "s", "in", "for" "was"]
+
+    f = open(filename)
+    result = []
+
+    subscription = from_iterable(f) \
+        .pipe(
+            op.filter(lambda line: line != ''),
+            op.flat_map(words_from_line),
+            op.filter(lambda word: word != "" and word.lower() not in stop_words),
+            op.group_by(lambda word: word.lower()),
+            op.flat_map(lambda group: group.pipe(
+                op.count(),
+                op.map(lambda ct: (group.key, ct))
+            )),
+        ) \
+        .subscribe(
+            on_next = lambda x: result.append(x),
+            on_completed = lambda: f.close()
+        )
+    result.sort(key=lambda x: x[1], reverse=True)
+    return result
+
+top_words = word_counter("news.txt")
+top_words[:10]
+```
+
+
+## Data Fetching
+
+
+## Integrating with Other Straming APIs
+
+```{python}
+import time
+
+started_at = time.time() # Time in seconds
+end_at = started_at + 5 # last 5 seconds
+ob = rx.interval(1)
+sub = ob.pipe(op.take_while(lambda _: time.time() < end_at))
+sub.subscribe(lambda i: print(i))
+```

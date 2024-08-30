@@ -1,0 +1,10 @@
+freeze: true
+toc: true
+toc-title: "Table of contents"
+toc-location: left
+license: "CC BY"
+author:
+  - name: Qiushi Yan
+    url: https://qiushiyan.dev
+# title-block-banner: "#EDF3F9"
+# title-block-banner-color: body

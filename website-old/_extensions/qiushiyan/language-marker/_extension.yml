@@ -1,0 +1,6 @@
+title: Language Marker
+author: Qiushi Yan
+version: 0.1.0
+contributes:
+  filters:
+    - language-marker.lua

@@ -1,0 +1,562 @@
+---
+title: A Taste of dplyr 1.0.0
+date: '2020-06-02'
+description:
+    A quick summary of some exciting features coming in dplyr 1.0, e.g. `across()`, row-wise operations and context-dependent expressions
+---
+
+This post uses the penguins dataset [@10.1371/journal.pone.0090081] for most demonstration purposes, modified by [Allison Horst](https://github.com/allisonhorst/penguins) (as an alternative to `iris`).
+
+```{r, echo = FALSE}
+ggplot2::theme_set(ggplot2::theme_classic())
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+packageVersion("dplyr")
+```
+
+
+
+
+```{r}
+penguins <- palmerpenguins::penguins
+penguins
+```
+
+
+```{r}
+penguins %>%
+  ggplot(aes(bill_length_mm, bill_depth_mm, color = species, shape = species)) +
+  geom_point()
+```
+
+## Working within columns
+
+The new `across()` function supersedes functionalities of `_at`, `_if`, `_all` variants. The first argument, `.cols`, selects the columns you want to operate on. It uses tidy selection (like `select()`) so you can pick variables by position, name, and type. The second argument, `.fns`, is a function or list of functions to apply to each column. This can also be a purrr style formula
+
+```{r}
+penguins_grouped <- penguins %>% group_by(species)
+
+penguins_grouped %>%
+  summarize(across(starts_with("bill"), mean, na.rm = TRUE),
+    n = n()
+  )
+```
+
+
+For conditional selection (previous `_if` variants), predicate function should be wrapped in `where`.
+
+```{r}
+# double all numeric columns
+penguins %>%
+  mutate(across(where(is.numeric), ~ .x * 2))
+
+# count unique values of all character columns
+penguins %>%
+  summarize(across(where(is.character), ~ length(unique(.x))))
+```
+
+
+Apply multiple functions using list and use the `.names` argument to control column names.
+```{r}
+penguins_grouped %>%
+  summarize(across(matches("mm"),
+    list(
+      min = ~ min(.x, na.rm = TRUE),
+      max = ~ max(.x, na.rm = TRUE)
+    ),
+    .names = "{fn}_{col}"
+  ))
+```
+
+
+
+
+
+## Working within rows
+
+
+Row-wise operations require a special type of grouping where each group consists of a single row. You create this with `rowwise()`.
+
+```{r}
+df <- tibble(
+  student_id = 1:4,
+  test1 = 10:13,
+  test2 = 20:23,
+  test3 = 30:33,
+  test4 = 40:43
+)
+df %>% rowwise()
+```
+
+`rowwise` doesn’t need any additional arguments unless you have variables that identify the rows,  like `student_id`  here. This can be helpful when you want to keep a row identifier.
+
+Like `group_by`, `rowwise` doesn’t really do anything itself; it just changes how the other verbs work.
+
+```{r}
+df %>% mutate(avg = mean(c(test1, test2, test3, test4)))
+
+df %>%
+  rowwise() %>%
+  mutate(avg = mean(c(test1, test2, test3, test4)))
+```
+
+In its essence, `rowwise` vectorize / parallelize a function to acheive rowwisee computation. And in this case, the `mean()` function is vectorized. If there are alternative ways of computing row-wise summaries that take advantage of built-in vectorisation then we do not need `rowwise` at all.
+
+```{r}
+df %>% mutate(s = test1 + test2 + test3)
+
+df %>%
+  rowwise() %>%
+  mutate(s = test1 + test2 + test3)
+```
+
+Another family of summary functions have “parallel” extensions where you can provide multiple variables in the arguments:
+
+
+
+```{r}
+df %>%
+  mutate(
+    min = pmin(test1, test2, test3, test4),
+    max = pmax(test1, test2, test3, test4),
+    string = paste(test1, test2, test3, test4, sep = "-")
+  )
+```
+Where these functions exist, they’ll usually be faster than `rowwise`. The advantage of `rowwise` is that it works with any function, not just those that are already vectorised.
+
+However, an advantage of `rowwise` even there is other ways is that it’s paired with `c_across()`, which works like `c()` but uses the same tidyselect syntax as `across()`. That makes it easy to operate on multiple variables:
+
+```{r}
+df %>%
+  rowwise() %>%
+  mutate(
+    min = min(c_across(starts_with("test"))),
+    max = max(c_across(starts_with("test")))
+  )
+```
+
+Plus, a rowwise df will naturally contain exactly the same rows after `summarize()`, the same as `mutate`
+
+```{r}
+df %>%
+  rowwise() %>%
+  summarize(across(starts_with("test"), ~.x, .names = "{col}_same"))
+```
+
+
+
+### List-columns
+
+Because lists can contain anything, you can use list-columns to keep related objects together, regardless of what type of thing they are. List-columns give you a convenient storage mechanism and `rowwise` gives you a convenient computation mechanism.
+
+```{r}
+df <- tibble(
+  x = list(1, 2:3, 4:6),
+  y = list(TRUE, 1, "a"),
+  z = list(sum, mean, sd)
+)
+df
+```
+
+```{r}
+df %>%
+  rowwise() %>%
+  summarize(
+    x_length = length(x),
+    y_type = typeof(y),
+    z_call = z(1:5)
+  )
+```
+
+
+### Simulaiton
+
+The basic idea of using `rowwise` to perform simulation is to store all your simulation paramters in a data frame, similar to `purrr::pmap`.
+
+```{r}
+df <- tribble(
+  ~id, ~n, ~min, ~max,
+  1, 3, 0, 1,
+  2, 2, 10, 100,
+  3, 2, 100, 1000,
+)
+```
+
+Then you can either generate a list-column containing the simulated values with `mutate`:
+
+```{r}
+df %>%
+  rowwise() %>%
+  mutate(sim = list(runif(n, min, max)))
+```
+Or taking advantage of `summarize`'s new features to return multiple rows per group
+
+```{r}
+df %>%
+  rowwise(everything()) %>%
+  summarize(sim = runif(n, min, max))
+```
+
+The previous approach
+
+```{r}
+df %>%
+  mutate(sim = purrr::pmap(., ~ runif(..2, ..3, ..4)))
+```
+
+
+
+## Group-wise models
+
+The new `nest_by()` function works similarly to `group_nest()`
+
+```{r}
+by_species <- penguins %>% nest_by(species)
+by_species
+```
+Now we can use `mutate` to fit a model to each data frame:
+
+```{r}
+by_species <- by_species %>%
+  rowwise(species) %>%
+  mutate(model = list(lm(bill_length_mm ~ bill_depth_mm, data = data)))
+
+by_species
+```
+And then extract model summaries or coefficients with `summarize()` and `broom` functions (note that `by_species` is still a rowwise data frame):
+
+```{r}
+by_species %>%
+  summarize(broom::glance(model))
+
+by_species %>%
+  summarize(broom::tidy(model))
+```
+
+An alternative approach
+
+```{r}
+penguins %>%
+  group_by(species) %>%
+  group_modify(~ broom::tidy(lm(bill_length_mm ~ bill_depth_mm, data = .x)))
+```
+
+
+
+## New `summarize` features
+
+### Multiple rows and columns
+
+Two big changes make `summarize()` much more flexible. A single summary expression can now return:
+
+- A vector of any length, creating multiple rows. (so we can use summary that returns multiple values without `list`)
+
+- A data frame, creating multiple columns.
+
+
+
+
+
+```{r}
+penguins_grouped %>%
+  summarize(
+    bill_length_dist = quantile(bill_length_mm,
+      c(0.25, 0.5, 0.75),
+      na.rm = TRUE
+    ),
+    q = c(0.25, 0.5, 0.75)
+  )
+```
+
+
+Or return multiple columns from a single summary expression:
+
+```{r}
+penguins_grouped %>%
+  summarize(tibble(
+    min = min(bill_depth_mm, na.rm = TRUE),
+    max = max(bill_depth_mm, na.rm = TRUE)
+  ))
+```
+
+
+At the first glance this may seem not so different with supplying multiple name-value pairs. But this can be useful inside functions. For example, in the previous `quantile` code it would be nice to be able to reduce the duplication so that we don’t have to type the quantile values twice. We can now write a simple function because summary expressions can now be data frames or tibbles:
+
+```{r}
+quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
+  tibble(x = quantile(x, q, na.rm = na.rm), q = q)
+}
+
+penguins_grouped %>%
+  summarize(quibble(bill_depth_mm))
+```
+
+When combining glue syntax and tidy evaluation, it is easy to dynamically name the column names.
+
+```{r}
+quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
+  tibble(
+    "{{ x }}_quantile" := quantile(x, q, na.rm = na.rm),
+    "{{ x }}_q" := q
+  )
+}
+
+penguins_grouped %>%
+  summarize(quibble(flipper_length_mm))
+```
+
+As an aside, if we name the tibble expression in `summarize()` that part will be packed in the result, which can be solved by `tidyr::unpack`. That’s because when we leave the name off, the data frame result is automatically unpacked.
+
+```{r}
+penguins_grouped %>%
+  summarize(df = quibble(flipper_length_mm))
+```
+
+
+
+### non-summary context
+
+In combination with rowwise operations,  `summarize()` is now sufficiently powerful to replace many workflows that previously required a `map()` function.
+
+For example, to read all the all the .csv files in the current directory, you could write:
+
+```r
+tibble(path = dir(pattern = "\\.csv$")) %>%
+  rowwise(path) %>%
+  summarize(read_csv(path))
+```
+
+
+## Move columns around within data frames
+
+New verb `relocate` is provided to change column positions with the same syntax as `select`. The default behavior is to move selected columns to the left-hand side
+
+```{r}
+penguins %>% relocate(island)
+
+penguins %>% relocate(starts_with("bill"))
+
+penguins %>% relocate(sex, body_mass_g, .after = species)
+```
+
+
+Similarly, `mutate` gains new arguments `.after` and `.before` to control where new columns should appear.
+
+```{r}
+penguins %>%
+  mutate(mass_double = body_mass_g * 2, .before = 1)
+```
+
+## Row mutation
+
+dplyr has a new experimental family of row mutation functions inspired by SQL’s `UPDATE`, `INSERT`, `UPSERT`, and `DELETE`. Like the join functions, they all work with a pair of data frames:
+
+
+- `rows_update(x, y)` updates existing rows in x with values in y.
+
+- `rows_patch(x, y)` works like rows_update() but only changes `NA` values.
+
+- `rows_insert(x, y)` adds new rows to x from y.
+
+- `rows_upsert(x, y)` updates existing rows in x and adds new rows from y.
+
+- `rows_delete(x, y)` deletes rows in x that match rows in y.
+
+
+The `rows_` functions match x and y using **keys**.  All of them check that the keys of x and y are valid (i.e. unique) before doing anything.
+
+```{r}
+df <- tibble(a = 1:3, b = letters[c(1:2, NA)], c = 0.5 + 0:2)
+df
+```
+
+We can use `rows_insert()` to add new rows:
+
+```{r}
+new <- tibble(a = c(4, 5), b = c("d", "e"), c = c(3.5, 4.5))
+
+rows_insert(df, new)
+```
+Note that `rows_insert()` will fail if we attempt to insert a row that already exists:
+
+```{r, error = TRUE}
+df %>% rows_insert(tibble(a = 3, b = "c"))
+
+df %>% rows_insert(tibble(a = 3, b = "c"), by = c("a", "b"))
+```
+
+If you want to update existing values, use `rows_update()`. It will throw an error if one of the rows to update does not exist:
+
+```{r, error = TRUE}
+df %>% rows_update(tibble(a = 3, b = "c"))
+
+df %>% rows_update(tibble(a = 4, b = "d"))
+```
+`rows_patch()` is a variant of `rows_update()` that will only update values in x that are `NA`.
+
+```{r}
+df %>% rows_patch(tibble(a = 1:3, b = "patch"))
+```
+
+`row_upsert` update a df or insert new rows.
+
+```{r}
+df %>%
+  rows_upsert(tibble(a = 3, b = "c")) %>% # update
+  rows_upsert(tibble(a = 4, b = "d")) # insert
+```
+
+
+
+## Context dependent expressions
+
+`n()` is a special function in dplyr which return the number of observations in the current group. Now the new version comes with more such special functions, aka context dependent expressions. These functions return information about the "current" group or "current" variable, so only work inside specific contexts like `summarize()` and `mutate()`. Specifically, a family of `cur_` functions are added:
+
+- `cur_data()` gives the current data for the current group (exclusing grouping variables, `cur_data_all` in developmental version returns grouping variables as well)
+
+- `cur_group()` gives the group keys, a tibble with one row and one column for each grouping variable.
+
+- `cur_group_id()` gives a unique numeric identifier for the current group
+
+- `cur_column()` gives the **name** of the current column (in `across()` only).
+
+
+
+```{r}
+df <- tibble(
+  g = sample(rep(letters[1:3], 1:3)),
+  x = runif(6),
+  y = runif(6)
+)
+gf <- df %>% group_by(g)
+
+gf %>% summarize(row = cur_group_rows())
+gf %>% summarize(data = list(cur_group()))
+gf %>% summarize(data = list(cur_data()))
+# has nothing to do with groups
+gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
+```
+
+
+
+
+
+## Superseded functions
+
+`top_n()`, `sample_n()`, and `sample_frac()` have been superseded in favor of a new family of slice helpers: `slice_min()`, `slice_max()`, `slice_head()`, `slice_tail()`, `slice_random()`.
+
+
+```{r}
+# select penguins per group on body mass
+penguins_grouped %>%
+  slice_max(body_mass_g, n = 1)
+
+penguins_grouped %>%
+  slice_min(body_mass_g, n = 1)
+```
+
+```{r}
+# random sampling
+penguins %>%
+  slice_sample(n = 10)
+
+penguins %>%
+  slice_sample(prop = 0.1)
+```
+
+`summarize()` gains new argument `.groups` to control grouping structure of theh result.
+
+
+- `.groups = "drop_last"` drops the last grouping level (i.e. the default behaviour).
+
+- `.groups = "drop"` drops all grouping levels and returns a tibble.
+
+- `.groups = "keep"` preserves the grouping of the input.
+
+- `.groups = "rowwise"` turns each row into its own group.
+
+
+## Other changes
+
+The new `rename_with()` makes it easier to rename variables programmatically:
+
+
+```{r}
+penguins %>%
+  rename_with(stringr::str_to_upper)
+```
+You can optionally choose which columns to apply the transformation to with the second argument:
+
+```{r}
+penguins %>%
+  rename_with(stringr::str_to_upper, starts_with("bill"))
+```
+
+`mutate()` gains argument `.keep` that allows you to control which columns are retained in the output:
+
+```{r}
+penguins %>% mutate(
+  double_mass = body_mass_g * 2,
+  island_lower = stringr::str_to_lower(island),
+  .keep = "used"
+)
+
+penguins %>% mutate(double_mass = body_mass_g * 2, .keep = "none")
+```
+
+
+
+
+## Use cases
+
+This in-progress section documents tasks that would otherwise been impossible or laborious with previous version of dplyr.
+
+### Replace missing values in many columns
+
+Since `tidyr::replace_na` does not support tidy select syntax, replacing NA values in multiple columns could be a drudgery. Now this is made easy with `coalesce` and `across`
+
+```{r}
+penguins %>% summarize(across(starts_with("bill"), ~ sum(is.na(.x))))
+
+penguins %>%
+  mutate(across(starts_with("bill"), ~ coalesce(.x, 0))) %>%
+  summarize(across(starts_with("bill"), ~ sum(is.na(.x))))
+```
+
+### Rolling regression
+
+`cur_data()` is particularly useful for rolling regression, in conjunction with the [slider](https://davisvaughan.github.io/slider/) package.
+
+```{r}
+library(slider)
+library(lubridate)
+# historical stock prices from 2014-2018 for Google, Amazon, Facebook and Apple
+stock <- tsibbledata::gafa_stock %>% select(Symbol, Date, Close, Volume)
+stock
+```
+
+```{r}
+# Arrange and group by `Symbol` (i.e. Google)
+stock <- stock %>%
+  arrange(Symbol, Date) %>%
+  group_by(Symbol)
+
+linear_model <- function(df) {
+  lm(Close ~ Volume, data = df)
+}
+
+# 10 day rolling regression per group
+stock %>%
+  mutate(model = slide_index(
+    cur_data(),
+    Date,
+    linear_model,
+    .before = days(9),
+    .complete = TRUE
+  ))
+```

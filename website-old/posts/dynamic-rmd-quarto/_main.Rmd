@@ -1,0 +1,43 @@
+---
+title: "Dynamic contents in R Markdown and Quarto with `knit_child()`"
+toc: true
+---
+
+Generate random dataset
+
+```{r}
+#| echo: false
+random_data <- function(n) {
+  data.frame(
+    x = rnorm(n),
+    y = rnorm(n)
+  )
+}
+```
+
+```{r}
+all_data <- purrr::map(1:5, ~ random_data(round(runif(1, 10, 100))))
+```
+
+```{r}
+render_child <- function(data, i) {
+  res = knitr::knit_child(
+   text = xfun::read_utf8("_template.Rmd"),
+   envir = rlang::env(data = data, i = i),
+   quiet = TRUE
+  )
+  cat(res, sep = '\n')
+  cat("\n")
+}
+```
+
+Here is a list of reports
+
+```{r}
+#| results: "asis"
+#| echo: false
+purrr::iwalk(all_data, render_child)
+```
+
+
+

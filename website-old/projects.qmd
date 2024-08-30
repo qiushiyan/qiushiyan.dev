@@ -1,0 +1,57 @@
+---
+about:
+  template: solana
+---
+
+## Software projects
+
+- [agua](https://agua.tidymodels.org): An R package that provides H2O integration to the tidymodels framework. Users can fit, optimize and evaluate models using the friendly tidymodels syntax as well as taking advantages of H2O's computing infrastructure. This package is my 2022 summer internship project at RStudio (now Posit).
+
+- [overwatcher](https://overwatcher-stat.herokuapp.com/docs): A REST API for player and match statistics in the Overwatch League (yes it's not a dead game). The application is built with FastAPI.
+
+- [xkcd](https://qiushiyan.github.io/xkcd/): An R package to create interactive xkcd-styled charts in R. The package itself is nothing to brag about but I have done some experiments in it with building htmlwidgets with TypeScript and esbuild.
+
+## Analytical projects
+
+- [nyclodging](https://github.com/qiushiyan/nyclodging) : A shiny app to explore Airbnb rentals in NYC. Includes various EDA of spatial data and a prediction model for listing prices given housing descriptions as user input. The application is built with the golem framework.
+
+- [Titanic Survival](/titanic-survival.pdf): A rather pedantic analysis of the Titanic incident. Ok it's boring but it uses a more complete and updated version of the Titanic dataset (not the kaggle one) provided by the [Encyclopedia Titanica](https://www.encyclopedia-titanica.org/), including redundancy analysis, multiple imputation, logistic regression, bootstrap validation and interpretability analysis.
+
+## Miscellaneous
+
+In addition to data stuff I like to dabble in many other technologies to keep myself motivated to learn something new. Thee following listings are typically proof of concepts and are not intended for wider usage at this point.
+
+- frontend development
+
+  - [JavaScript notebook](https://github.com/qiushiyan/js-notebook): an interactive notebook for JavaScript and TypeScript, available via npx with `npx javascript-notebook serve`. The application is built with React, Redux Toolkit, TypeScript and esbuild.
+
+  - [data science shelf](dsbook-list.web.app/): a vue + firebase application for sharing good readings in data science.
+
+- game development
+
+  - [real2d](https://github.com/qiushiyan/real2d): a really simple 2D ECS game engine written in C++ and Lua.
+
+- others
+
+  - [clipstash](https://github.com/qiushiyan/clipstash): A web app and cli written in Rust to take notes and copy to clipboard
+
+  - [vstodo](https://github.com/qiushiyan/vstodo): A vscode extension to manage todo lists in the editor.
+
+  - [servy](https://github.com/qiushiyan/servy): A simple HTTP server written with Elixir OTP
+
+
+<!-- ## Currently working on
+
+I am trying to implement a recommendation system in Python from scratch. Components to be considered:
+
+- a data cleaning and feature engineering pipeline with kedro and pyspark
+
+- recall services: A FastAPI service, may need to implement item2vec
+
+- rank services: Another FastAPI service
+
+- recommendation services: Another FastAPI service
+
+- message services: may use kafka and cassandra to collect behavior data
+
+- frontend: Svelte and TypeScript -->

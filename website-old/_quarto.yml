@@ -1,0 +1,51 @@
+project:
+  type: website
+  preview:
+    port: 4200
+  resources:
+    - resume.pdf
+    - resume-sde.pdf
+    - titanic-survival.pdf
+    - aws-cert-developer.pdf
+    - custom.js
+
+website:
+  title: "Qiushi Yan"
+  site-url: https://qiushiyan.dev
+  google-analytics: G-34541V6NLD
+  open-graph:
+    site-name: qiushiyan.dev
+  comments:
+    utterances:
+      repo: qiushiyan/qiushiyan.dev
+  navbar:
+    right:
+      - text: "Posts"
+        href: posts.qmd
+      - text: "Projects"
+        href: https://projects.qiushiyan.dev
+      - text: "About"
+        href: about.qmd
+      - icon: github
+        href: https://github.com/qiushiyan
+format:
+  html:
+    theme: [ember.scss, dark.scss]
+    css: styles.css
+    citation-location: margin
+    reference-location: margin
+    highlight-style: github
+    code-overflow: wrap
+    fig-width: 8
+    fig-height: 6
+    code-link: true
+
+comments:
+  giscus:
+    repo: qiushiyan/qiushiyan.dev
+
+knitr:
+  opts_chunk:
+    comment: "#>"
+    message: false
+    warning: false

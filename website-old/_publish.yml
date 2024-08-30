@@ -1,0 +1,4 @@
+- source: project
+  netlify:
+    - id: a22bf66f-4c36-4f47-8d4d-68a9b113de7d
+      url: 'https://www.qiushiyan.dev'
