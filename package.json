@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "pnpm dlx @cloudflare/next-on-pages",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
