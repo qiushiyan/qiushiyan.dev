@@ -1,11 +1,12 @@
 import Comments from "@/components/comments";
 import { MarkdownSharedComponents } from "@/components/markdown-shared-components";
-import { ProseWrapper } from "@/components/prose-wrapper";
+import { ArticleProse } from "@/components/prose-wrapper";
 import { Separator } from "@/components/ui/separator";
 import { cn, postViewTransitionName } from "@/lib/utils";
 
 import "./page.scss";
 
+import { PostDescription } from "@/components/post/post-description";
 import { Badge } from "@/components/ui/badge";
 import { routes } from "@/lib/navigation";
 import { Post, posts } from "#content";
@@ -26,9 +27,10 @@ export default async function PostPage({
 
   return (
     <main>
-      <ProseWrapper>
+      <ArticleProse>
         <article className="post">
           <PostBanner post={post} />
+
           <Separator className="full-width" />
           {htmr(post.content, {
             // @ts-ignore
@@ -36,7 +38,7 @@ export default async function PostPage({
           })}
           <Comments />
         </article>
-      </ProseWrapper>
+      </ArticleProse>
     </main>
   );
 }
@@ -55,7 +57,7 @@ const PostBanner = ({ post }: { post: Post }) => {
         </h1>
         {post.draft && <Badge>Draft</Badge>}
       </div>
-      <div className="mb-4 flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-1">
           <time dateTime={post.date} className="font-semibold">
             Published on {new Date(post.date).toLocaleDateString()}
@@ -75,6 +77,10 @@ const PostBanner = ({ post }: { post: Post }) => {
           <p>{post.metadata.readingTime} min read</p>
         </div>
       </div>
+      <PostDescription
+        className="mb-4 text-sm text-muted-foreground lg:text-base"
+        description={post.description}
+      />
 
       <div className="flex items-center gap-4">
         <Link href={routes.home()}>Home</Link>

@@ -13,13 +13,12 @@ export const PostLink = ({ title, slug }: { title: string; slug: string }) => {
   return (
     <button
       role="link"
-      className={"hover:underline"}
       onClick={() => startTransition(() => router.push(routes.post({ slug })))}
       disabled={pending}
       data-pending={pending ? "" : undefined}
     >
       <h2
-        className="text-pretty text-2xl font-bold text-foreground transition-colors duration-150 hover:text-primary/80"
+        className="link text-pretty text-2xl font-bold !text-foreground"
         style={{
           viewTransitionName: postViewTransitionName(slug),
         }}

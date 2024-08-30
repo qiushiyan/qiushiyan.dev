@@ -22,6 +22,9 @@ const config = {
                 margin: "0px",
               },
             },
+            a: {
+              color: "hsl(var(--primary))",
+            },
           },
         },
       },

@@ -11,9 +11,9 @@ export default function Comments() {
     <Giscus
       id="comments"
       repo="qiushiyan/qiushiyan.dev"
-      repoId="MDEwOlJlcG9zaXRvcnkyMjMxNzYwNDg="
+      repoId="R_kgDOMqSWvg"
       category="General"
-      categoryId="MDE4OkRpc2N1c3Npb25DYXRlZ29yeTMyMDM5MDI3"
+      categoryId="DIC_kwDOMqSWvs4CiDwZ"
       mapping={"og:title"}
       term="Welcome to @giscus/react component!"
       reactionsEnabled="1"

@@ -4,6 +4,7 @@ import { z } from "zod";
 export const { routes, useSafeParams, useSafeSearchParams } =
   createNavigationConfig((defineRoute) => ({
     home: defineRoute("/"),
+    about: defineRoute("/about"),
     projects: defineRoute("/projects"),
     project: defineRoute("/projects/[slug]", {
       params: z.object({

@@ -62,7 +62,29 @@ export const rehypeCode = () => {
         if (lang && code) {
           const inlineCodeNode = {
             type: "element",
-            tagName: "i-inline-code",
+            tagName: "code-inline",
+            properties: {
+              value: code,
+              lang,
+            },
+          };
+          parent.children.splice(index, 1, inlineCodeNode);
+        }
+      }
+    });
+  };
+};
+
+export const rehypeCodeInline = () => {
+  return (tree: Root) => {
+    visit(tree, "element", (node, index, parent) => {
+      if (node.tagName === "em") {
+        const lang = node.children[0].value;
+        const code = node.children[1]?.children[0].value;
+        if (lang && code) {
+          const inlineCodeNode = {
+            type: "element",
+            tagName: "code-inline",
             properties: {
               value: code,
               lang,
@@ -121,7 +143,7 @@ const transformCode = (node: Text, lang: string) => {
 
   const codeNode = {
     type: "element",
-    tagName: "i-code",
+    tagName: "code-block",
     properties: {
       value: code,
       lang,

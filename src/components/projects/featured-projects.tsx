@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import { getProject, getProjects } from "@/actions/projects";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,19 +14,19 @@ const featured = [
   {
     name: "tidymodels/agua",
     href: "https://tidymodels.github.io/agua/",
-    icons: [<SiR className="size-4" />],
+    icons: [<SiR className="size-4" key="r" />],
   },
   {
     name: "qiushiyan/qlang",
     href: "/projects/qlang",
-    icons: [<SiGo className="size-6" />],
+    icons: [<SiGo className="size-6" key="go" />],
   },
   {
     name: "qiushiyan/js-notebook",
     href: "https://jbook.qiushiyan.dev",
     icons: [
-      <SiReact className="size-4" />,
-      <SiTypescript className="size-4" />,
+      <SiReact className="size-4" key="react" />,
+      <SiTypescript className="size-4" key="typescript" />,
     ],
   },
   {
@@ -37,12 +36,15 @@ const featured = [
   {
     name: "tridata-dev/tridata-web",
     icons: [
-      <SiReact className="size-4" />,
-      <SiTypescript className="size-4" />,
+      <SiReact className="size-4" key="react" />,
+      <SiTypescript className="size-4" key="typescript" />,
     ],
   },
 
-  { name: "qiushiyan/go-degit", icons: [<SiGo className="size-6" />] },
+  {
+    name: "qiushiyan/go-degit",
+    icons: [<SiGo className="size-6" key="go-degit" />],
+  },
 ];
 
 export const FeaturedProjects = async () => {
@@ -56,7 +58,7 @@ export const FeaturedProjects = async () => {
   );
 
   return (
-    <div className="w-full px-4">
+    <div className="w-full px-8">
       <ScrollArea className="w-full">
         <FeaturedProjectsClient repos={repos} />
         <ScrollBar orientation="horizontal" />

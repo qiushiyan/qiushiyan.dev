@@ -1,5 +1,6 @@
 project:
   output-dir: ../content/posts
+allowEmptyValues: true
 execute:
   freeze: auto
 knitr:

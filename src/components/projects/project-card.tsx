@@ -20,7 +20,7 @@ interface ProjectCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const ProjectCard = ({ data, className, ...rest }: ProjectCardProps) => {
   return (
-    <Link href={data.href}>
+    <Link href={data.href} className="!text-foreground hover:!no-underline">
       <div
         className={cn(
           "flex w-80 flex-col justify-between gap-2 rounded-md border-2 p-4 transition-all duration-300 ease-out hover:shadow-lg",

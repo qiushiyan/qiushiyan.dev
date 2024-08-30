@@ -8,7 +8,7 @@ import { BlogLink } from "./codehike/link";
 export const MarkdownSharedComponents = {
   "my-callout": Callout,
   img: Image,
-  "i-code": ({
+  "code-block": ({
     value,
     lang,
     filename,
@@ -22,7 +22,7 @@ export const MarkdownSharedComponents = {
     return <CodeBlock value={value} lang={lang} meta={{ filename, caption }} />;
   },
   a: BlogLink,
-  "i-inline-code": ({ value, lang }: { value: string; lang: string }) => (
+  "code-inline": ({ value, lang }: { value: string; lang: string }) => (
     <InlineCode codeblock={{ value, lang, meta: "" }} />
   ),
   "language-switcher": LanguageSwitcher,

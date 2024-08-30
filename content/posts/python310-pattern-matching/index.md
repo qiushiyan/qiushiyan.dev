@@ -3,8 +3,9 @@ title: Structural pattern matching in Python 3.10
 slug: python310-pattern-matching
 date: '2022-02-20'
 description: >
-  Pattern matching with `match ... case` is an exciting feature added in Python
-  3.10. This article reviews the syntax and shows some practical examples.
+  The  _py`match case`_  statement for pattern matching is an exciting new
+  feature added in Python 3.10. This article reviews the syntax and shows some
+  practical examples.
 ---
 
 

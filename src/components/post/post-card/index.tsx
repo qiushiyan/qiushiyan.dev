@@ -1,9 +1,11 @@
+import { BasicProse } from "@/components/prose-wrapper";
 import { routes } from "@/lib/navigation";
 import { Post } from "#content";
 import { ArrowRightIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 
 import { Badge } from "../../ui/badge";
+import { PostDescription } from "../post-description";
 import { PostLink } from "./post-link";
 
 export const PostCard = ({ post }: { post: Post }) => {
@@ -16,9 +18,10 @@ export const PostCard = ({ post }: { post: Post }) => {
       <time dateTime={post.date} className="text-sm text-muted-foreground">
         {new Date(post.date).toLocaleDateString()}
       </time>
-      <p className="line-clamp-3 text-pretty text-foreground">
-        {post.description}
-      </p>
+      <PostDescription
+        className="line-clamp-3 text-pretty text-foreground"
+        description={post.description}
+      />
       <footer className="flex justify-start">
         <Link
           href={routes.post({ slug: post.slug })}

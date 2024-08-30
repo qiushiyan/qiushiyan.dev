@@ -3,7 +3,7 @@ title: Generating dynamic contents in R Markdown and Quarto
 slug: dynamic-rmd-quarto
 date: '2023-01-22'
 description: |
-    Automate report generation in Quarto with Knitr
+    Automate report generation in Quarto with parameterized documents.
 ---
 
 

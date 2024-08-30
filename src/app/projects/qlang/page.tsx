@@ -1,5 +1,5 @@
 import { tokenTransitions } from "@/components/codehike/token-transitions";
-import { ProseWrapper } from "@/components/prose-wrapper";
+import { ArticleProse } from "@/components/prose-wrapper";
 import { Block, CodeBlock, parseRoot } from "codehike/blocks";
 import { highlight, Pre, RawCode } from "codehike/code";
 import { z } from "zod";
@@ -21,7 +21,7 @@ const Schema = Block.extend({
 export default function Page() {
   const { intro, steps } = parseRoot(Content, Schema);
   return (
-    <ProseWrapper>
+    <ArticleProse>
       <article className="project">
         <div className="mb-8 flex flex-col items-center justify-center">
           <h1 className="text-balance text-4xl font-extrabold tracking-wide">
@@ -61,7 +61,7 @@ export default function Page() {
           </div>
         </SelectionProvider>
       </article>
-    </ProseWrapper>
+    </ArticleProse>
   );
 }
 
