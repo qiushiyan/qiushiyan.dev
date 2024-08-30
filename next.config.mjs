@@ -1,5 +1,10 @@
+import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev";
 import createMDX from "@next/mdx";
 import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
+
+if (process.env.NODE_ENV === "development") {
+  await setupDevPlatform();
+}
 
 const isDev = process.argv.indexOf("dev") !== -1;
 const isBuild = process.argv.indexOf("build") !== -1;
