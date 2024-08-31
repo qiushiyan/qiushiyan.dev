@@ -36,7 +36,7 @@ export const collapse: AnnotationHandler = {
 
 const icon = (
   <ChevronDownIcon
-    className="mb-0.5 inline-block select-none opacity-30 transition group-hover:!opacity-100 group-data-[state=closed]:-rotate-90 group-data-[state=closed]:opacity-80"
+    className="mb-0.5 inline-block select-none opacity-70 transition group-hover:!opacity-100 group-data-[state=closed]:-rotate-90 group-data-[state=closed]:opacity-80"
     size={15}
   />
 );

@@ -1,5 +1,5 @@
 project:
-  output-dir: ../content/posts
+  output-dir: _output
 execute:
   freeze: auto
 knitr:
@@ -11,4 +11,6 @@ format:
   gfm:
     variant: +yaml_metadata_block
     filters:
-      - my-filter
+      - filters/code.lua
+      - filters/image.lua
+      - filters/headings.lua

@@ -6,17 +6,18 @@ export const SiteHeader = () => {
   return (
     <header className="sticky top-0 z-40 w-full bg-background py-4">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <h2 className="text-2xl font-extrabold tracking-wide">
-          <Link href="/" className="text-foreground">
-            qiushiyan.dev
-          </Link>
-        </h2>
+        <Link
+          href="/"
+          className="font-heading text-2xl font-extrabold tracking-wide text-foreground"
+        >
+          qiushiyan.dev
+        </Link>
 
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Link
             href={"/about"}
             style={{ viewTransitionName: "about" }}
-            className="font-heading text-lg !text-foreground"
+            className="hidden font-heading text-lg !text-foreground"
           >
             About
           </Link>

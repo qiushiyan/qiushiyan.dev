@@ -38,12 +38,18 @@ export const Callout = ({
         className={cn(
           "absolute left-0 top-0 -translate-x-[calc(50%+1.5px)] -translate-y-1/2 transform rounded-full bg-background p-2 leading-[calc(1em+0.725rem)]",
           variant === "info" && "text-primary",
-          variant === "warning" && "text-warning"
+          variant === "warning" && "!text-warning"
         )}
       >
         {icons[variant]}
       </div>
-      <strong className="mb-2 block text-[1.1em] font-bold text-foreground">
+      <strong
+        className={cn(
+          "mb-2 block text-[1.1em] font-bold",
+          variant === "warning" && "!text-warning",
+          variant === "info" && "text-primary"
+        )}
+      >
         {title || titles[variant]}
       </strong>
       {children}

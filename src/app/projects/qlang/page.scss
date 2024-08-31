@@ -6,10 +6,4 @@
   & > * {
     grid-column: 2;
   }
-
-  .wider {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: calc(100% - 32px);
-  }
 }

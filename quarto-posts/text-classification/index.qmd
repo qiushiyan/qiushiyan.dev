@@ -19,7 +19,7 @@ library(gutenbergr)
 ```
 
 
-The cleaned `books` dataset contains linse as individual rows.
+The cleaned `books` dataset contains lines as individual rows.
 
 ```{r}
 mirror_url <- "http://mirrors.xmission.com/gutenberg/"
@@ -197,7 +197,7 @@ initial_fit <- book_wf %>%
 ```
 
 
-`initial_fit` is a simple fitted regression model without any hyper-parameters. By default `glmnet` calls for 100 values of lambda even if I specify $\lambda = 0.05$. So the extracted result aren't that helpful.
+`initial_fit` is a simple fitted regression model without any hyper-parameters. By default `glmnet` calls for 100 values of lambda even if I specify lambda = 0.05. So the extracted result aren't that helpful.
 
 ```{r}
 initial_fit %>%
@@ -275,7 +275,7 @@ top_models <- logistic_results %>%
 top_models
 ```
 
-`select_best()` with return the 9th row with $\lambda \approx 0.000586$ for its highest performance on `roc_auc`. But I'll stick to the parsimonious principle and pick $\lambda \approx 0.00376$ at the cost of a fall in `roc_auc` by 0.005 and in `accuracy` by 0.001.
+`select_best()` with return the 9th row with lambda = 0.000586 for its highest performance on `roc_auc`. But I'll stick to the parsimonious principle and pick $\lambda \approx 0.00376$ at the cost of a fall in `roc_auc` by 0.005 and in `accuracy` by 0.001.
 
 ```{r}
 logistic_results %>%
@@ -325,7 +325,7 @@ To examine the effect of predictors, We again use `fit` and `pull_workflow` to e
 
 ```{r}
 #| fig-height: 8
-#| fig-width: 11
+#| fig-width: 14
 #| out-height: "1000px"
 #| fig-cap: "Variable importance plot for penalized logistic regression"
 

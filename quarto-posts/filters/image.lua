@@ -1,8 +1,3 @@
--- function CodeBlock(el)
---     print(el.attr)
---     return el
--- end
-
 function Image(el)
     local width = el.attr.attributes["width"]
     if width ~= nil then

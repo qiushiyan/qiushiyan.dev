@@ -22,6 +22,8 @@
     --accent-foreground: 229 28% 25%;
     --destructive: 3 100% 50%;
     --destructive-foreground: 3 0% 100%;
+    --warning: 38 95% 64%;
+    --warning-foreground: 38 95% 20%;
     --ring: 229 100% 62%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
@@ -50,7 +52,6 @@
   }
 
   .dark {
-    /* background in black  */
     --background: 253 43% 3%;
     --foreground: 253 31% 98%;
     --muted: 253 7% 13%;
@@ -69,6 +70,8 @@
     --accent-foreground: 253 13% 74%;
     --destructive: 339.2 90.36% 51.18%;
     --destructive-foreground: 0 0% 100%;
+    --warning: 38 90% 50%;
+    --warning-foreground: 38 10% 95%;
     --ring: 253 91% 58%;
     --radius: 0.5rem;
     --chart-1: 220 70% 50%;
@@ -177,20 +180,12 @@
   }
 }
 
-@layer components {
+@layer base {
   .full-width {
-    grid-column: 1 / -1 !important;
+    @apply lg:col-span-full lg:mx-6 lg:justify-self-center !important;
   }
 
   .wider {
-    grid-column: 1 / -1 !important;
-    justify-self: center;
-    margin-right: 6rem;
-    margin-left: 6rem;
-  }
-
-  @media (max-width: 768px) {
-    .wider {
-    }
+    @apply lg:col-span-full lg:mx-12 lg:justify-self-center !important;
   }
 }

@@ -9,7 +9,7 @@ description:
     This article has been updated to keep up with dplyr 1.1.
 </my-callout>
 
-This post uses the penguins dataset [@10.1371/journal.pone.0090081] for most demonstration purposes, modified by [Allison Horst](https://github.com/allisonhorst/penguins) (as an alternative to `iris`).
+This post uses the penguins dataset modified by [Allison Horst](https://github.com/allisonhorst/penguins) in all the code examples (as an alternative to `iris`).
 
 ```{r, echo = FALSE}
 ggplot2::theme_set(ggplot2::theme_classic())
@@ -109,7 +109,7 @@ df %>%
   mutate(avg = mean(c(test1, test2, test3, test4)))
 ```
 
-In its essence, `rowwise` vectorize / parallelize a function to acheive rowwisee computation. And in this case, the `mean()` function is vectorized. If there are alternative ways of computing row-wise summaries that take advantage of built-in vectorisation then we do not need `rowwise` at all.
+`rowwise` takes each row, feeds it into a function, and return a tibble with the same number of rows. This essentially parallelize a function over the rows in the dataframe.  In this case, the `mean()` function is vectorized. But, if a function is already vectorized, then `rowwise` is not needed.
 
 ```{r}
 df %>% mutate(s = test1 + test2 + test3)
@@ -121,8 +121,6 @@ df %>%
 
 Another family of summary functions have “parallel” extensions where you can provide multiple variables in the arguments:
 
-
-
 ```{r}
 df %>%
   mutate(
@@ -131,7 +129,8 @@ df %>%
     string = paste(test1, test2, test3, test4, sep = "-")
   )
 ```
-Where these functions exist, they’ll usually be faster than `rowwise`. The advantage of `rowwise` is that it works with any function, not just those that are already vectorised.
+
+Where these functions exist, they’ll usually be faster than `rowwise`. The advantage of `rowwise` is that it works with any function, not just those that are already vectorized.
 
 However, an advantage of `rowwise` even there is other ways is that it’s paired with `c_across()`, which works like `c()` but uses the same tidyselect syntax as `across()`. That makes it easy to operate on multiple variables:
 
@@ -149,7 +148,7 @@ Plus, a rowwise df will naturally contain exactly the same rows after `summarize
 ```{r}
 df %>%
   rowwise() %>%
-  summarize(across(starts_with("test"), ~.x, .names = "{col}_same"))
+  summarize(across(starts_with("test"), ~ .x, .names = "{col}_same"))
 ```
 
 
@@ -178,9 +177,9 @@ df %>%
 ```
 
 
-### Simulaiton
+### Simulation
 
-The basic idea of using `rowwise` to perform simulation is to store all your simulation paramters in a data frame, similar to `purrr::pmap`.
+The basic idea of using `rowwise` to perform simulation is to store all your simulation parameters in a data frame, similar to `purrr::pmap`.
 
 ```{r}
 df <- tribble(
@@ -206,7 +205,20 @@ df %>%
   summarize(sim = runif(n, min, max))
 ```
 
-The previous approach
+<my-callout>
+
+In dplyr 1.1, you should use `reframe()` instead of `summarize()` to return multiple rows.
+
+```r
+df |>
+  rowwise(everything()) |>
+  reframe(sim = runif(n, min, max))
+```
+
+</my-callout>
+
+
+Without `rowwise`, you would need to use `purrr::pmap` to perform the simulation.
 
 ```{r}
 df %>%
@@ -223,6 +235,7 @@ The new `nest_by()` function works similarly to `group_nest()`
 by_species <- penguins %>% nest_by(species)
 by_species
 ```
+
 Now we can use `mutate` to fit a model to each data frame:
 
 ```{r}
@@ -232,6 +245,7 @@ by_species <- by_species %>%
 
 by_species
 ```
+
 And then extract model summaries or coefficients with `summarize()` and `broom` functions (note that `by_species` is still a rowwise data frame):
 
 ```{r}
@@ -254,6 +268,13 @@ penguins %>%
 
 ## New `summarize` features
 
+<my-callout>
+
+Use `reframe()` instead of `summarize()` to return multiple rows starting from dplyr 1.1.
+
+
+</my-callout>
+
 ### Multiple rows and columns
 
 Two big changes make `summarize()` much more flexible. A single summary expression can now return:
@@ -261,9 +282,6 @@ Two big changes make `summarize()` much more flexible. A single summary expressi
 - A vector of any length, creating multiple rows. (so we can use summary that returns multiple values without `list`)
 
 - A data frame, creating multiple columns.
-
-
-
 
 
 ```{r}
@@ -421,7 +439,7 @@ df %>%
 
 `n()` is a special function in dplyr which return the number of observations in the current group. Now the new version comes with more such special functions, aka context dependent expressions. These functions return information about the "current" group or "current" variable, so only work inside specific contexts like `summarize()` and `mutate()`. Specifically, a family of `cur_` functions are added:
 
-- `cur_data()` gives the current data for the current group (exclusing grouping variables, `cur_data_all` in developmental version returns grouping variables as well)
+- `cur_data()` gives the current data for the current group (excluding grouping variables, `cur_data_all` in developmental version returns grouping variables as well)
 
 - `cur_group()` gives the group keys, a tibble with one row and one column for each grouping variable.
 
@@ -429,6 +447,11 @@ df %>%
 
 - `cur_column()` gives the **name** of the current column (in `across()` only).
 
+<my-callout>
+
+`cur_data()` is deprecated in favor of `pick(col1, col2, ...)` in dplyr 1.1.
+
+</my-callout>
 
 
 ```{r}
@@ -439,15 +462,13 @@ df <- tibble(
 )
 gf <- df %>% group_by(g)
 
-gf %>% summarize(row = cur_group_rows())
-gf %>% summarize(data = list(cur_group()))
-gf %>% summarize(data = list(cur_data()))
-# has nothing to do with groups
+gf %>% reframe(row = cur_group_rows())
+gf %>% reframe(data = list(cur_group()))
+gf %>% reframe(data = list(pick(everything())))
+
+# cur_column() is not related to groups
 gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
 ```
-
-
-
 
 
 ## Superseded functions
@@ -489,11 +510,11 @@ penguins %>%
 
 The new `rename_with()` makes it easier to rename variables programmatically:
 
-
 ```{r}
 penguins %>%
   rename_with(stringr::str_to_upper)
 ```
+
 You can optionally choose which columns to apply the transformation to with the second argument:
 
 ```{r}
@@ -514,9 +535,7 @@ penguins %>% mutate(double_mass = body_mass_g * 2, .keep = "none")
 ```
 
 
-
-
-## Use cases
+## Recipes
 
 This in-progress section documents tasks that would otherwise been impossible or laborious with previous version of dplyr.
 
@@ -534,7 +553,7 @@ penguins %>%
 
 ### Rolling regression
 
-`cur_data()` is particularly useful for rolling regression, in conjunction with the [slider](https://davisvaughan.github.io/slider/) package.
+We can easily perform rolling computation with the `slider` package and `pick()`.
 
 ```{r}
 library(slider)
@@ -557,7 +576,7 @@ linear_model <- function(df) {
 # 10 day rolling regression per group
 stock %>%
   mutate(model = slide_index(
-    cur_data(),
+    pick(Close, Volume),
     Date,
     linear_model,
     .before = days(9),
