@@ -1,5 +1,5 @@
 import Slugger from "github-slugger";
-import { Element, Nodes, Root, Text } from "hast";
+import { Element, Nodes } from "hast";
 import { toString } from "hast-util-to-string";
 
 interface ExtractedHeading {

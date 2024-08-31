@@ -55,7 +55,6 @@ const posts = defineCollection({
       }),
     })
     .transform((data, { meta }) => {
-      console.log(getHeadingsFromHast(meta.hast));
       return {
         ...data,
         slug: data.slug || slug(data.title),
