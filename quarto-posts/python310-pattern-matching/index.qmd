@@ -9,8 +9,8 @@ description: |
 ```{r}
 #| include: false
 knitr::opts_chunk$set(
-    collapse = TRUE,
-    comment = "#>"
+  collapse = TRUE,
+  comment = "#>"
 )
 ```
 
@@ -103,10 +103,11 @@ We only want to get the fields `mission_name`, `rocket_name` and `details`. Note
 
 ```{python}
 #| collapse: false
-#| output-lang: json
+#| class-output: json
+#| comment: ""
 import requests
 import json
-from pprint import pp
+import pprint
 res = requests.get("https://api.spacexdata.com/v3/launches?limit=3")
 data = res.json()
 out = []
@@ -115,7 +116,7 @@ for launch in data:
         case {"mission_name": mname, "rocket": {"rocket_name": rname}, "details": details}:
             out.append({"mission_name": mname, "rocket_name": rname, "details": details})
 
-pp(out)
+print(json.dumps(out, indent = 2))
 ```
 
 Here, not only are we matching top level key `mission_name` and `details`, we also use a nested pattern to extract rocket name.

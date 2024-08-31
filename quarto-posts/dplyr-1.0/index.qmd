@@ -5,6 +5,10 @@ description:
     A quick summary of some exciting features coming in dplyr 1.0, e.g. `across()`, row-wise operations and context-dependent expressions
 ---
 
+<my-callout>
+    This article has been updated to keep up with dplyr 1.1.
+</my-callout>
+
 This post uses the penguins dataset [@10.1371/journal.pone.0090081] for most demonstration purposes, modified by [Allison Horst](https://github.com/allisonhorst/penguins) (as an alternative to `iris`).
 
 ```{r, echo = FALSE}
@@ -42,7 +46,7 @@ The new `across()` function supersedes functionalities of `_at`, `_if`, `_all` v
 penguins_grouped <- penguins %>% group_by(species)
 
 penguins_grouped %>%
-  summarize(across(starts_with("bill"), mean, na.rm = TRUE),
+  summarize(across(starts_with("bill"), ~ mean(.x, na.rm = TRUE)),
     n = n()
   )
 ```

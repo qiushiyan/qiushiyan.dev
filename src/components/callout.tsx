@@ -3,20 +3,18 @@ import { CircleAlertIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
 
 interface CalloutProps extends React.ComponentProps<"div"> {
   title?: string;
-  variant?: "info" | "warning" | "danger";
+  variant?: "info" | "warning";
   children: React.ReactNode;
 }
 
 const icons = {
-  info: <InfoIcon className="text-info size-8" />,
-  warning: <CircleAlertIcon className="text-warning size-8" />,
-  danger: <TriangleAlertIcon className="size-8 text-destructive" />,
+  info: <InfoIcon className="size-8" />,
+  warning: <CircleAlertIcon className="size-8" />,
 };
 
 const titles = {
   info: "Note",
   warning: "Warning",
-  danger: "Caution",
 };
 
 export const Callout = ({
@@ -29,20 +27,23 @@ export const Callout = ({
   return (
     <div
       className={cn(
-        "duration-350 relative my-4 rounded-md border-2 p-6 leading-relaxed transition-colors",
-        {
-          "border-l-info": variant === "info",
-          "border-l-warning": variant === "warning",
-          "border-l-destructive": variant === "danger",
-        },
+        "duration-350 relative my-4 rounded-md border p-6 leading-relaxed transition-colors",
+        variant === "info" && "border-primary",
+        variant === "warning" && "border-warning",
         className
       )}
       {...props}
     >
-      <div className="absolute left-0 top-0 -translate-x-[calc(50%+1.5px)] -translate-y-1/2 transform rounded-full bg-background p-2 leading-[calc(1em+0.725rem)]">
+      <div
+        className={cn(
+          "absolute left-0 top-0 -translate-x-[calc(50%+1.5px)] -translate-y-1/2 transform rounded-full bg-background p-2 leading-[calc(1em+0.725rem)]",
+          variant === "info" && "text-primary",
+          variant === "warning" && "text-warning"
+        )}
+      >
         {icons[variant]}
       </div>
-      <strong className="mb-2 block text-[1.1em] font-bold">
+      <strong className="mb-2 block text-[1.1em] font-bold text-foreground">
         {title || titles[variant]}
       </strong>
       {children}

@@ -2,16 +2,16 @@ import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev";
 import createMDX from "@next/mdx";
 import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
 
-if (process.env.NODE_ENV === "development") {
-  await setupDevPlatform();
-}
-
 const isDev = process.argv.indexOf("dev") !== -1;
 const isBuild = process.argv.indexOf("build") !== -1;
 if (!process.env.VELITE_STARTED && (isDev || isBuild)) {
   process.env.VELITE_STARTED = "1";
   const { build } = await import("velite");
   await build({ watch: isDev, clean: !isDev });
+}
+
+if (process.env.NODE_ENV === "development") {
+  await setupDevPlatform();
 }
 
 const chConfig = {

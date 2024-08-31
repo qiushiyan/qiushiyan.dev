@@ -7,6 +7,9 @@ description: >-
 ---
 
 
+<my-callout> This article has been updated to reflect the changes in
+dplyr 1.1.0. </my-callout>
+
 This post uses the penguins dataset \[@10.1371/journal.pone.0090081\]
 for most demonstration purposes, modified by [Allison
 Horst](https://github.com/allisonhorst/penguins) (as an alternative to
@@ -72,21 +75,9 @@ also be a purrr style formula
 penguins_grouped <- penguins %>% group_by(species)
 
 penguins_grouped %>%
-  summarize(across(starts_with("bill"), mean, na.rm = TRUE),
+  summarize(across(starts_with("bill"), ~ mean(.x, na.rm = TRUE)),
     n = n()
   )
-#> Warning: There was 1 warning in `summarize()`.
-#> ℹ In argument: `across(starts_with("bill"), mean, na.rm = TRUE)`.
-#> ℹ In group 1: `species = Adelie`.
-#> Caused by warning:
-#> ! The `...` argument of `across()` is deprecated as of dplyr 1.1.0.
-#> Supply arguments directly to `.fns` through an anonymous function instead.
-#> 
-#>   # Previously
-#>   across(a:b, mean, na.rm = TRUE)
-#> 
-#>   # Now
-#>   across(a:b, \(x) mean(x, na.rm = TRUE))
 #> # A tibble: 3 × 4
 #>   species   bill_length_mm bill_depth_mm     n
 #>   <fct>              <dbl>         <dbl> <int>
@@ -376,13 +367,13 @@ df %>%
 #> # Groups:   id, n, min, max [3]
 #>      id     n   min   max     sim
 #>   <dbl> <dbl> <dbl> <dbl>   <dbl>
-#> 1     1     3     0     1   0.702
-#> 2     1     3     0     1   0.801
-#> 3     1     3     0     1   0.457
-#> 4     2     2    10   100  44.7  
-#> 5     2     2    10   100  18.3  
-#> 6     3     2   100  1000 930.   
-#> 7     3     2   100  1000 723.
+#> 1     1     3     0     1   0.676
+#> 2     1     3     0     1   0.302
+#> 3     1     3     0     1   0.656
+#> 4     2     2    10   100  24.0  
+#> 5     2     2    10   100  47.4  
+#> 6     3     2   100  1000 942.   
+#> 7     3     2   100  1000 953.
 ```
 
 The previous approach
@@ -909,12 +900,12 @@ gf %>% summarize(row = cur_group_rows())
 #> # Groups:   g [3]
 #>   g       row
 #>   <chr> <int>
-#> 1 a         2
-#> 2 b         1
-#> 3 b         3
-#> 4 c         4
-#> 5 c         5
-#> 6 c         6
+#> 1 a         4
+#> 2 b         3
+#> 3 b         6
+#> 4 c         1
+#> 5 c         2
+#> 6 c         5
 gf %>% summarize(data = list(cur_group()))
 #> # A tibble: 3 × 2
 #>   g     data            
@@ -941,12 +932,12 @@ gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
 #> # Groups:   g [3]
 #>   g     x      y     
 #>   <chr> <chr>  <chr> 
-#> 1 b     x 0.2  y 0.75
-#> 2 a     x 0.74 y 0.63
-#> 3 b     x 0.21 y 0.12
-#> 4 c     x 0.62 y 0.12
-#> 5 c     x 0.39 y 0.63
-#> 6 c     x 0.79 y 0.85
+#> 1 c     x 0.74 y 0.61
+#> 2 c     x 0.92 y 0.46
+#> 3 b     x 0.46 y 0.18
+#> 4 a     x 0.23 y 0.8 
+#> 5 c     x 0.93 y 0.81
+#> 6 b     x 0.53 y 0.65
 ```
 
 ## Superseded functions
@@ -986,35 +977,35 @@ penguins_grouped %>%
 penguins %>%
   slice_sample(n = 10)
 #> # A tibble: 10 × 8
-#>    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-#>    <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
-#>  1 Adelie  Biscoe              41            20                 203        4725
-#>  2 Adelie  Torgersen           39.6          17.2               196        3550
-#>  3 Adelie  Torgersen           34.6          21.1               198        4400
-#>  4 Gentoo  Biscoe              43.2          14.5               208        4450
-#>  5 Adelie  Biscoe              38.2          18.1               185        3950
-#>  6 Gentoo  Biscoe              44            13.6               208        4350
-#>  7 Gentoo  Biscoe              43.3          14                 208        4575
-#>  8 Adelie  Dream               36            18.5               186        3100
-#>  9 Gentoo  Biscoe              53.4          15.8               219        5500
-#> 10 Adelie  Torgersen           34.6          17.2               189        3200
+#>    species   island   bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+#>    <fct>     <fct>             <dbl>         <dbl>             <int>       <int>
+#>  1 Adelie    Torgers…           35.9          16.6               190        3050
+#>  2 Gentoo    Biscoe             48.4          14.4               203        4625
+#>  3 Chinstrap Dream              51.9          19.5               206        3950
+#>  4 Chinstrap Dream              50.7          19.7               203        4050
+#>  5 Chinstrap Dream              46.6          17.8               193        3800
+#>  6 Adelie    Dream              40.8          18.9               208        4300
+#>  7 Gentoo    Biscoe             51.5          16.3               230        5500
+#>  8 Gentoo    Biscoe             50.8          17.3               228        5600
+#>  9 Adelie    Biscoe             41.6          18                 192        3950
+#> 10 Adelie    Dream              40.3          18.5               196        4350
 #> # ℹ 2 more variables: sex <fct>, year <int>
 
 penguins %>%
   slice_sample(prop = 0.1)
 #> # A tibble: 34 × 8
-#>    species   island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-#>    <fct>     <fct>           <dbl>         <dbl>             <int>       <int>
-#>  1 Adelie    Biscoe           35.7          16.9               185        3150
-#>  2 Gentoo    Biscoe           45.2          13.8               215        4750
-#>  3 Gentoo    Biscoe           46.1          13.2               211        4500
-#>  4 Adelie    Dream            40.6          17.2               187        3475
-#>  5 Gentoo    Biscoe           45.2          16.4               223        5950
-#>  6 Gentoo    Biscoe           45.5          15                 220        5000
-#>  7 Gentoo    Biscoe           46.8          16.1               215        5500
-#>  8 Chinstrap Dream            45.7          17                 195        3650
-#>  9 Gentoo    Biscoe           45            15.4               220        5050
-#> 10 Chinstrap Dream            52            18.1               201        4050
+#>    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+#>    <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
+#>  1 Adelie  Dream               37.3          16.8               192        3000
+#>  2 Adelie  Dream               40.9          18.9               184        3900
+#>  3 Gentoo  Biscoe              46.7          15.3               219        5200
+#>  4 Gentoo  Biscoe              48.4          14.4               203        4625
+#>  5 Gentoo  Biscoe              46.2          14.4               214        4650
+#>  6 Gentoo  Biscoe              50.8          17.3               228        5600
+#>  7 Gentoo  Biscoe              50.5          15.9               222        5550
+#>  8 Adelie  Dream               39.5          17.8               188        3300
+#>  9 Adelie  Torgersen           39.3          20.6               190        3650
+#> 10 Gentoo  Biscoe              52.2          17.1               228        5400
 #> # ℹ 24 more rows
 #> # ℹ 2 more variables: sex <fct>, year <int>
 ```

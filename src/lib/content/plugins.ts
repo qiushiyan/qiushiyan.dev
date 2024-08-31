@@ -1,12 +1,12 @@
 // @ts-nocheck
-import { Element, Root, Text } from "hast";
+import { Element, Root } from "hast";
 import { h } from "hastscript";
 import { Root as MdastRoot } from "mdast";
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-import { visit } from "unist-util-visit";
+import { SKIP, visit } from "unist-util-visit";
 
 export const rehypeCode = () => {
   return (tree: Root) => {
@@ -140,11 +140,11 @@ const transformCode = (node: Text, lang: string) => {
     );
   }
   const code = codeLines.join("\n");
-
   const codeNode = {
     type: "element",
     tagName: "code-block",
     properties: {
+      id: meta?.ref,
       value: code,
       lang,
       filename: meta?.filename,
@@ -160,6 +160,20 @@ const transformCode = (node: Text, lang: string) => {
   };
 
   return codeNode;
+};
+
+export const rehypeUnwrapImages = () => {
+  return (tree: Root) => {
+    visit(tree, "element", (node, index, parent) => {
+      if (node.tagName === "p" && typeof index === "number" && parent) {
+        const child = node.children[0];
+        if (child.type === "element" && child.tagName === "img") {
+          parent.children.splice(index, 1, child);
+          return [SKIP, index];
+        }
+      }
+    });
+  };
 };
 
 export const remarkUseDirective = () => {

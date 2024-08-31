@@ -121,7 +121,7 @@ We only want to get the fields `mission_name`, `rocket_name` and
 ``` python
 import requests
 import json
-from pprint import pp
+import pprint
 res = requests.get("https://api.spacexdata.com/v3/launches?limit=3")
 data = res.json()
 out = []
@@ -130,21 +130,28 @@ for launch in data:
         case {"mission_name": mname, "rocket": {"rocket_name": rname}, "details": details}:
             out.append({"mission_name": mname, "rocket_name": rname, "details": details})
 
-pp(out)
+print(json.dumps(out, indent = 2))
 ```
 
-    #> [{'mission_name': 'FalconSat',
-    #>   'rocket_name': 'Falcon 1',
-    #>   'details': 'Engine failure at 33 seconds and loss of vehicle'},
-    #>  {'mission_name': 'DemoSat',
-    #>   'rocket_name': 'Falcon 1',
-    #>   'details': 'Successful first stage burn and transition to second stage, '
-    #>              'maximum altitude 289 km, Premature engine shutdown at T+7 min 30 '
-    #>              's, Failed to reach orbit, Failed to recover first stage'},
-    #>  {'mission_name': 'Trailblazer',
-    #>   'rocket_name': 'Falcon 1',
-    #>   'details': 'Residual stage 1 thrust led to collision between stage 1 and '
-    #>              'stage 2'}]
+``` json
+[
+  {
+    "mission_name": "FalconSat",
+    "rocket_name": "Falcon 1",
+    "details": "Engine failure at 33 seconds and loss of vehicle"
+  },
+  {
+    "mission_name": "DemoSat",
+    "rocket_name": "Falcon 1",
+    "details": "Successful first stage burn and transition to second stage, maximum altitude 289 km, Premature engine shutdown at T+7 min 30 s, Failed to reach orbit, Failed to recover first stage"
+  },
+  {
+    "mission_name": "Trailblazer",
+    "rocket_name": "Falcon 1",
+    "details": "Residual stage 1 thrust led to collision between stage 1 and stage 2"
+  }
+]
+```
 
 Here, not only are we matching top level key `mission_name` and
 `details`, we also use a nested pattern to extract rocket name.

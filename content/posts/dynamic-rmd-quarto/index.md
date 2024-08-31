@@ -67,10 +67,10 @@ frame.
 ```{r}
 # chunk option output = 'asis'
 res <- knitr::knit_child(text = c(
-    '```{r}',
-    'summary(data)',
-    '```'
-  ), envir = rlang::env(data = iris), quiet = TRUE)
+    "```{r}",
+    "summary(data)",
+    "```"
+), envir = rlang::env(data = iris), quiet = TRUE)
 cat(res, sep = "\n")
 ```
 ````
@@ -104,75 +104,79 @@ The example main and template documents are shown below:
 
 <div class="two-column wider">
 
-<div class="div">
+<div class="col-span-1">
 
 In `main.Rmd`
 
-    ---
-    title: "Dynamic contents in R Markdown and Quarto with `knit_child()`"
-    toc: true
-    ---
+```` markdown
+---
+title: "Dynamic contents in R Markdown and Quarto with `knit_child()`"
+toc: true
+---
 
-    Generate random dataset
+Generate random dataset
 
-    ```{r}
-    #| echo: false
-    random_data <- function(n) {
-      data.frame(
-        x = rnorm(n),
-        y = rnorm(n)
-      )
-    }
-    ```
+```{r}
+#| echo: false
+random_data <- function(n) {
+  data.frame(
+    x = rnorm(n),
+    y = rnorm(n)
+  )
+}
+```
 
-    ```{r}
-    all_data <- purrr::map(1:5, ~ random_data(round(runif(1, 10, 100))))
-    ```
+```{r}
+all_data <- purrr::map(1:5, ~ random_data(round(runif(1, 10, 100))))
+```
 
-    ```{r}
-    render_child <- function(data, i) {
-      res = knitr::knit_child(
-       text = xfun::read_utf8("_template.Rmd"),
-       envir = rlang::env(data = data, i = i),
-       quiet = TRUE
-      )
-      cat(res, sep = '\n')
-      cat("\n")
-    }
-    ```
+```{r}
+render_child <- function(data, i) {
+  res <- knitr::knit_child(
+    text = xfun::read_utf8("_template.Rmd"),
+    envir = rlang::env(data = data, i = i),
+    quiet = TRUE
+  )
+  cat(res, sep = "\n")
+  cat("\n")
+}
+```
 
-    Here is a list of reports
+Here is a list of reports
 
-    ```{r}
-    #| results: "asis"
-    #| echo: false
-    purrr::iwalk(all_data, render_child)
-    ```
+```{r}
+#| results: "asis"
+#| echo: false
+purrr::iwalk(all_data, render_child)
+```
+````
 
 </div>
 
-<div class="div">
+<div class="col-span-1">
 
 In `_template.Rmd`
 
-    ## Dataset `r i`
+```` markdown
+## Dataset `r i`
 
-    Dataset `r i` has `r nrow(data)` rows.
+Dataset `r i` has `r nrow(data)` rows.
 
-    ### Summary
+### Summary
 
-    ```{r}
-    #| echo: false
-    summary(data)
-    ```
+```{r}
+#| echo: false
+summary(data)
+```
 
-    ### Plot
+### Plot
 
-    ```{r}
-    #| echo: false
-    #| fig-align: center
-    plot(data)
-    ```
+```{r}
+#| echo: false
+#| fig-align: center
+plot(data)
+```
+````
 
 </div>
 
@@ -207,8 +211,8 @@ below:
 
 ``` r
 knitr::knit_expand(
-  text = "The value of `a` is {{a}}",
-  a = 1
+    text = "The value of `a` is {{a}}",
+    a = 1
 )
 #> [1] "The value of `a` is 1"
 ```
@@ -219,8 +223,8 @@ this post. For example
 
 ``` r
 res <- knnitr::knit_expand(
-  file = "template.Rmd"
-  data = iris[1:5, ]
+    file = "template.Rmd",
+    data = iris[1:5, ]
 )
 ```
 

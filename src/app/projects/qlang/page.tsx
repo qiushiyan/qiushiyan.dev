@@ -6,7 +6,6 @@ import { z } from "zod";
 
 import "./page.scss";
 
-import { routes } from "@/lib/navigation";
 import Link from "next/link";
 
 import Content from "./content.md";
@@ -28,7 +27,7 @@ export default function Page() {
             {intro.title}
           </h1>
           <div className="flex items-center gap-6">
-            <Link href={routes.home()}>Home</Link>
+            <Link href={"/"}>Home</Link>
             <JumpDemoButton />
           </div>
         </div>

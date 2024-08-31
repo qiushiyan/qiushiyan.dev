@@ -1,4 +1,3 @@
-import { routes } from "@/lib/navigation";
 import { Link } from "next-view-transitions";
 
 import { ThemeToggle } from "./theme-toggle";
@@ -15,7 +14,7 @@ export const SiteHeader = () => {
 
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Link
-            href={routes.about()}
+            href={"/about"}
             style={{ viewTransitionName: "about" }}
             className="font-heading text-lg !text-foreground"
           >

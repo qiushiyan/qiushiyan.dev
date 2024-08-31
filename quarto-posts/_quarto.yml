@@ -1,6 +1,5 @@
 project:
   output-dir: ../content/posts
-allowEmptyValues: true
 execute:
   freeze: auto
 knitr:
@@ -8,8 +7,8 @@ knitr:
     comment: "#>"
     collapse: true
 
-
 format:
   gfm:
-    number-sections: true
     variant: +yaml_metadata_block
+    filters:
+      - my-filter

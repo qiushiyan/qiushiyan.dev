@@ -2,7 +2,6 @@
 
 import { useTransition } from "react";
 
-import { routes } from "@/lib/navigation";
 import { postViewTransitionName } from "@/lib/utils";
 import { useTransitionRouter } from "next-view-transitions";
 
@@ -13,7 +12,7 @@ export const PostLink = ({ title, slug }: { title: string; slug: string }) => {
   return (
     <button
       role="link"
-      onClick={() => startTransition(() => router.push(routes.post({ slug })))}
+      onClick={() => startTransition(() => router.push(`/posts/${slug}`))}
       disabled={pending}
       data-pending={pending ? "" : undefined}
     >

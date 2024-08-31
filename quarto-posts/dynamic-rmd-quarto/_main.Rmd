@@ -21,12 +21,12 @@ all_data <- purrr::map(1:5, ~ random_data(round(runif(1, 10, 100))))
 
 ```{r}
 render_child <- function(data, i) {
-  res = knitr::knit_child(
-   text = xfun::read_utf8("_template.Rmd"),
-   envir = rlang::env(data = data, i = i),
-   quiet = TRUE
+  res <- knitr::knit_child(
+    text = xfun::read_utf8("_template.Rmd"),
+    envir = rlang::env(data = data, i = i),
+    quiet = TRUE
   )
-  cat(res, sep = '\n')
+  cat(res, sep = "\n")
   cat("\n")
 }
 ```

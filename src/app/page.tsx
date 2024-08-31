@@ -7,7 +7,6 @@ import "./home.scss";
 import { Suspense } from "react";
 
 import { BasicProse } from "@/components/prose-wrapper";
-import { routes } from "@/lib/navigation";
 import { home } from "#content";
 import Link from "next/link";
 
@@ -36,19 +35,13 @@ export default function Home() {
 
       <section>
         <Heading>
-          <Link href={routes.posts()}>Posts</Link>
+          <Link href={"/posts"}>Posts</Link>
         </Heading>
 
         <div className="flex flex-col gap-4">
-          {getPosts()
-            .slice(0, 3)
-            .map((post) => (
-              <PostCard key={post.slug} post={post} />
-            ))}
-        </div>
-
-        <div className="flex justify-end">
-          <Link href={routes.posts()}>See all</Link>
+          {getPosts().map((post) => (
+            <PostCard key={post.slug} post={post} />
+          ))}
         </div>
       </section>
     </main>

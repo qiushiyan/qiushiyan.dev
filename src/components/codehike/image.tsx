@@ -1,8 +1,10 @@
+import { cn } from "@/lib/utils";
 import NextImage from "next/image";
 
 type Props = {
   src: string;
   alt: string;
+  className?: string;
   width?: number;
   height?: number;
 };
@@ -10,21 +12,27 @@ type Props = {
 export const Image = ({
   src,
   alt,
-  width = 600,
-  height = 400,
-  ...rest
+  width = 700,
+  height = 500,
+  className,
 }: Props) => {
   return (
-    <div className="flex items-center justify-center">
-      <figure
-        className="relative"
-        style={{ width: `${width}px`, height: `${height}px` }}
-      >
-        <NextImage src={src} alt={alt} fill className="object-cover" />
-        <figcaption className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-slate-300">
-          {alt}
-        </figcaption>
-      </figure>
-    </div>
+    <figure
+      className={cn(
+        "flex flex-col items-center justify-center gap-4",
+        className
+      )}
+    >
+      <NextImage
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className="object-cover"
+      />
+      <figcaption className="text-sm text-foreground/80 lg:text-base">
+        {alt}
+      </figcaption>
+    </figure>
   );
 };

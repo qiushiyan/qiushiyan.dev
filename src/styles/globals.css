@@ -176,3 +176,21 @@
     animation: none;
   }
 }
+
+@layer components {
+  .full-width {
+    grid-column: 1 / -1 !important;
+  }
+
+  .wider {
+    grid-column: 1 / -1 !important;
+    justify-self: center;
+    margin-right: 6rem;
+    margin-left: 6rem;
+  }
+
+  @media (max-width: 768px) {
+    .wider {
+    }
+  }
+}

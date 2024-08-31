@@ -7,23 +7,43 @@ import { BlogLink } from "./codehike/link";
 
 export const MarkdownSharedComponents = {
   "my-callout": Callout,
-  img: Image,
-  "code-block": ({
-    value,
-    lang,
-    filename,
-    caption,
-  }: {
-    value: string;
-    lang: string;
-    filename?: string;
-    caption?: string;
-  }) => {
+  img: (props: ImageProps) => {
+    return (
+      <Image
+        src={props.src}
+        alt={props.alt}
+        className={props.className}
+        width={props.width}
+        height={props.height}
+      />
+    );
+  },
+  "code-block": ({ value, lang, filename, caption }: CodeBlockProps) => {
     return <CodeBlock value={value} lang={lang} meta={{ filename, caption }} />;
   },
   a: BlogLink,
-  "code-inline": ({ value, lang }: { value: string; lang: string }) => (
+  "code-inline": ({ value, lang }: CodeInlineProps) => (
     <InlineCode codeblock={{ value, lang, meta: "" }} />
   ),
   "language-switcher": LanguageSwitcher,
+};
+
+type ImageProps = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  className: string;
+};
+
+type CodeBlockProps = {
+  value: string;
+  lang: string;
+  filename?: string;
+  caption?: string;
+};
+
+type CodeInlineProps = {
+  value: string;
+  lang: string;
 };

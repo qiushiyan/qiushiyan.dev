@@ -49,15 +49,18 @@ When it comes to inserting subcontents into either `.qmd` or `.Rmd` files, `knit
 
 `knit_child` accepts both an inline string `text` or a file path `file`. Below we use the inline string to generate a summary of the `iris` data frame.
 
+
+
+
 ```{r}
 #| echo: fenced
 #| output: asis
 # chunk option output = 'asis'
 res <- knitr::knit_child(text = c(
-    '```{r}',
-    'summary(data)',
-    '```'
-  ), envir = rlang::env(data = iris), quiet = TRUE)
+    "```{r}",
+    "summary(data)",
+    "```"
+), envir = rlang::env(data = iris), quiet = TRUE)
 cat(res, sep = "\n")
 ```
 
@@ -75,13 +78,14 @@ The example main and template documents are shown below:
 
 :::: {.two-column .wider}
 
-:::div
+::: {.col-span-1}
 
 In `main.Rmd`
 
 ```{r}
+#| collapse: false
 #| comment: ""
-#| ouput: asis
+#| class-output: "markdown"
 #| echo: false
 x <- xfun::read_utf8("_main.Rmd")
 cat(x, sep = "\n")
@@ -89,13 +93,14 @@ cat(x, sep = "\n")
 
 :::
 
-:::div
+::: {.col-span-1}
 
 In `_template.Rmd`
 
 ```{r}
+#| collapse: false
 #| comment: ""
-#| ouput: asis
+#| class-output: "markdown"
 #| echo: false
 x <- xfun::read_utf8("_template.Rmd")
 cat(x, sep = "\n")
@@ -126,8 +131,8 @@ When you run the main document, it will generate a list of random data frames, g
 
 ```{r}
 knitr::knit_expand(
-  text = "The value of `a` is {{a}}",
-  a = 1
+    text = "The value of `a` is {{a}}",
+    a = 1
 )
 ```
 
@@ -136,8 +141,8 @@ Since you can also pass in a `file` argument in `knit_expand`, I was tempted to 
 ```{r}
 #| eval: false
 res <- knnitr::knit_expand(
-  file = "template.Rmd"
-  data = iris[1:5, ]
+    file = "template.Rmd",
+    data = iris[1:5, ]
 )
 ```
 

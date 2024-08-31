@@ -1,3 +1,5 @@
 /.quarto/
 
 /_*.local
+
+/.luarc.json

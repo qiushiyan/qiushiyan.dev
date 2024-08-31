@@ -1,5 +1,4 @@
 import { timestamp } from "@/lib/content/schema";
-import Slugger from "github-slugger";
 import remarkDirective from "remark-directive";
 import remarkUnwrapImages from "remark-unwrap-images";
 import { defineCollection, defineConfig, s } from "velite";
@@ -7,10 +6,18 @@ import { defineCollection, defineConfig, s } from "velite";
 import {
   rehypeCode,
   rehypeCodeInline,
+  rehypeUnwrapImages,
   remarkUseDirective,
 } from "./src/lib/content/plugins";
 
-const slugger = new Slugger();
+const slug = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+};
 
 const home = defineCollection({
   name: "home",
@@ -45,18 +52,17 @@ const posts = defineCollection({
       lastModified: timestamp(),
       draft: s.boolean().optional().default(false),
       content: s.markdown({
-        copyLinkedFiles: true,
         remarkPlugins: [
           remarkDirective,
           remarkUseDirective,
           remarkUnwrapImages,
         ],
-        rehypePlugins: [rehypeCode],
+        rehypePlugins: [rehypeCode, rehypeUnwrapImages],
       }),
     })
     .transform((data) => ({
       ...data,
-      slug: data.slug || slugger.slug(data.title),
+      slug: data.slug || slug(data.title),
     })),
 });
 

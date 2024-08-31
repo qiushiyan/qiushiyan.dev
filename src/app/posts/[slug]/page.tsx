@@ -8,7 +8,6 @@ import "./page.scss";
 
 import { PostDescription } from "@/components/post/post-description";
 import { Badge } from "@/components/ui/badge";
-import { routes } from "@/lib/navigation";
 import { Post, posts } from "#content";
 import htmr from "htmr";
 import { ClockIcon } from "lucide-react";
@@ -58,7 +57,7 @@ const PostBanner = ({ post }: { post: Post }) => {
         {post.draft && <Badge>Draft</Badge>}
       </div>
       <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 border-l-2 pl-2">
           <time dateTime={post.date} className="font-semibold">
             Published on {new Date(post.date).toLocaleDateString()}
           </time>
@@ -78,14 +77,14 @@ const PostBanner = ({ post }: { post: Post }) => {
         </div>
       </div>
       <PostDescription
-        className="mb-4 text-sm text-muted-foreground lg:text-base"
+        className="mb-4 text-sm lg:text-base"
         description={post.description}
       />
 
       <div className="flex items-center gap-4">
-        <Link href={routes.home()}>Home</Link>
+        <Link href={"/"}>Home</Link>
         <span className="text-xl">&gt;</span>
-        <Link href={routes.posts()}>Posts</Link>
+        <Link href={"/posts"}>Posts</Link>
       </div>
     </header>
   );

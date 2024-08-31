@@ -1,5 +1,7 @@
 import { posts } from "#content";
 
+export const runtime = "edge";
+
 export const generateStaticParams = async () => {
   return posts.map((post) => ({ slug: post.slug }));
 };

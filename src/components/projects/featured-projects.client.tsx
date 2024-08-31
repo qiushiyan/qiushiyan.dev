@@ -23,7 +23,7 @@ export const FeaturedProjectsClient = ({ repos }: { repos: Repos }) => {
   };
 
   return (
-    <div className="flex gap-6 pb-8 pt-4">
+    <div className="my-4 flex items-stretch gap-6 pb-8">
       {repos.map((repo, index) => (
         <ProjectCard
           key={repo.name}

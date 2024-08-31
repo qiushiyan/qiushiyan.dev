@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index aa3751021809c614a4db18ba01756dea41d9bf2c..eab05f351835d02adfdc543846b3a6f10de11cb8 100644
+--- a/package.json
++++ b/package.json
+@@ -3,7 +3,7 @@
+   "version": "1.0.2",
+   "description": "Simple and lightweight (< 2kB) HTML to React converter that works in server and browser",
+   "main": "lib/htmr.js",
+-  "browser": "lib/htmr.browser.js",
++  "browser": "lib/htmr.js",
+   "react-native": "lib/htmr.js",
+   "types": "index.d.ts",
+   "files": [

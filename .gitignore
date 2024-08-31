@@ -39,4 +39,8 @@ next-env.d.ts
 /.luarc.json
 .env
 .velite
-_environment.local
+# Ignore everything in quarto-posts except .qmd files
+quarto-posts/**/index_cache/
+quarto-posts/**/index_files/
+
+.wrangler
