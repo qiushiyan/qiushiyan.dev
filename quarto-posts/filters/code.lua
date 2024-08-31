@@ -23,12 +23,12 @@ function CodeBlock(el)
             end
         else
             if in_block then
-                if block_lines >= 10 then
+                if block_lines > 6 then
                     local collapse_line
-                    if block_lines > 20 then
-                        collapse_line = string.format("# !collapse(1:%d) collapsed", block_lines)
+                    if block_lines >= 10 then
+                        collapse_line = string.format("\n# !collapse(1:%d) collapsed\n", block_lines)
                     else
-                        collapse_line = string.format("# !collapse(1:%d)", block_lines)
+                        collapse_line = string.format("\n# !collapse(1:%d)\n", block_lines)
                     end
                     table.insert(new_lines, block_start, collapse_line)
                 end
@@ -41,12 +41,12 @@ function CodeBlock(el)
     end
 
     -- Handle case where block ends at the last line
-    if in_block and block_lines >= 8 then
+    if in_block and block_lines >= 6 then
         local collapse_line
-        if block_lines > 12 then
-            collapse_line = string.format("# !collapse(1:%d) collapsed", block_lines)
+        if block_lines > 10 then
+            collapse_line = string.format("# !collapse(1:%d) collapsed\n", block_lines)
         else
-            collapse_line = string.format("# !collapse(1:%d)", block_lines)
+            collapse_line = string.format("# !collapse(1:%d)\n", block_lines)
         end
         table.insert(new_lines, block_start, collapse_line)
     end

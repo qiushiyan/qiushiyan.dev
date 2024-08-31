@@ -1,57 +1,17 @@
 import { timestamp } from "@/lib/content/schema";
-import { Heading, Node as MdastNode, Root as MdastRoot } from "mdast";
+import { slug } from "github-slugger";
+import rehypeSlug from "rehype-slug";
 import remarkDirective from "remark-directive";
 import remarkUnwrapImages from "remark-unwrap-images";
 import { defineCollection, defineConfig, s } from "velite";
 
+import { getHeadingsFromHast } from "./headings";
 import {
   rehypeCode,
   rehypeCodeInline,
   rehypeUnwrapImages,
   remarkUseDirective,
 } from "./src/lib/content/plugins";
-
-const slug = (title: string) => {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-};
-
-const getHeadings = (tree: MdastRoot) => {
-  const headings: { depth: 2 | 3; title: string; slug: string }[] = [];
-
-  function extractHeadingText(node: Heading): string {
-    return node.children
-      .filter((child) => child.type === "text")
-      .map((child) => (child as { value: string }).value)
-      .join(" ");
-  }
-
-  const visitor = (node: MdastNode) => {
-    if (node.type === "heading") {
-      const heading = node as Heading;
-      if (heading.depth === 2 || heading.depth === 3) {
-        const title = extractHeadingText(heading);
-        headings.push({
-          depth: heading.depth as 2 | 3,
-          title,
-          slug: slug(title),
-        });
-      }
-    }
-
-    if ("children" in node && Array.isArray(node.children)) {
-      node.children.forEach((child) => visitor(child as MdastNode));
-    }
-  };
-
-  visitor(tree);
-
-  return headings;
-};
 
 const home = defineCollection({
   name: "home",
@@ -91,14 +51,15 @@ const posts = defineCollection({
           remarkUseDirective,
           remarkUnwrapImages,
         ],
-        rehypePlugins: [rehypeCode, rehypeUnwrapImages],
+        rehypePlugins: [rehypeSlug, rehypeCode, rehypeUnwrapImages],
       }),
     })
     .transform((data, { meta }) => {
+      console.log(getHeadingsFromHast(meta.hast));
       return {
         ...data,
         slug: data.slug || slug(data.title),
-        headings: meta.mdast ? getHeadings(meta.mdast) : [],
+        headings: meta.hast ? getHeadingsFromHast(meta.hast) : [],
       };
     }),
 });

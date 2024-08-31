@@ -8,6 +8,10 @@
   }
 
   .full-width {
-    grid-column: 1 / -1;
+    @apply lg:col-span-full lg:mx-6;
+  }
+
+  .wider {
+    @apply lg:col-span-full lg:mx-12;
   }
 }

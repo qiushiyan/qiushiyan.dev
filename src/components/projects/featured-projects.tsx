@@ -58,12 +58,10 @@ export const FeaturedProjects = async () => {
   );
 
   return (
-    <div className="w-full px-8">
-      <ScrollArea className="w-full">
-        <FeaturedProjectsClient repos={repos} />
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
-    </div>
+    <ScrollArea className="w-full px-8">
+      <FeaturedProjectsClient repos={repos} />
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };
 

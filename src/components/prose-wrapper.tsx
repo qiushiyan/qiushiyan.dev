@@ -4,7 +4,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
-const basicProseClasses = cn(
+export const basicProseClasses = cn(
   "prose-quoteless prose prose-neutral max-w-none dark:prose-invert prose-a:underline prose-a:underline-offset-4 prose-a:transition-colors prose-a:hover:text-primary/80 prose-code:before:hidden prose-code:after:hidden"
 );
 

@@ -16,6 +16,8 @@ examples (as an alternative to `iris`).
 
 ``` r
 library(dplyr)
+
+# !collapse(1:8)
 #> 
 #> Attaching package: 'dplyr'
 #> The following objects are masked from 'package:stats':
@@ -33,7 +35,8 @@ packageVersion("dplyr")
 ``` r
 penguins <- palmerpenguins::penguins
 penguins
-# !collapse(1:15) collapsed#> # A tibble: 344 × 8
+# !collapse(1:15) collapsed
+#> # A tibble: 344 × 8
 #>    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 #>    <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
 #>  1 Adelie  Torgersen           39.1          18.7               181        3750
@@ -77,6 +80,7 @@ penguins_grouped %>%
   summarize(across(starts_with("bill"), ~ mean(.x, na.rm = TRUE)),
     n = n()
   )
+# !collapse(1:6)
 #> # A tibble: 3 × 4
 #>   species   bill_length_mm bill_depth_mm     n
 #>   <fct>              <dbl>         <dbl> <int>
@@ -92,7 +96,9 @@ should be wrapped in `where`.
 # double all numeric columns
 penguins %>%
   mutate(across(where(is.numeric), ~ .x * 2))
-# !collapse(1:16)#> # A tibble: 344 × 8
+
+# !collapse(1:16) collapsed
+#> # A tibble: 344 × 8
 #>    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 #>    <fct>   <fct>              <dbl>         <dbl>             <dbl>       <dbl>
 #>  1 Adelie  Torgersen           78.2          37.4               362        7500
@@ -126,7 +132,8 @@ penguins_grouped %>%
     ),
     .names = "{fn}_{col}"
   ))
-# !collapse(1:8)#> # A tibble: 3 × 7
+# !collapse(1:8)
+#> # A tibble: 3 × 7
 #>   species   min_bill_length_mm max_bill_length_mm min_bill_depth_mm
 #>   <fct>                  <dbl>              <dbl>             <dbl>
 #> 1 Adelie                  32.1               46                15.5
@@ -150,7 +157,8 @@ df <- tibble(
   test4 = 40:43
 )
 df %>% rowwise()
-# !collapse(1:8)#> # A tibble: 4 × 5
+# !collapse(1:8)
+#> # A tibble: 4 × 5
 #> # Rowwise: 
 #>   student_id test1 test2 test3 test4
 #>        <int> <int> <int> <int> <int>
@@ -169,6 +177,8 @@ changes how the other verbs work.
 
 ``` r
 df %>% mutate(avg = mean(c(test1, test2, test3, test4)))
+
+# !collapse(1:8)
 #> # A tibble: 4 × 6
 #>   student_id test1 test2 test3 test4   avg
 #>        <int> <int> <int> <int> <int> <dbl>
@@ -180,7 +190,8 @@ df %>% mutate(avg = mean(c(test1, test2, test3, test4)))
 df %>%
   rowwise() %>%
   mutate(avg = mean(c(test1, test2, test3, test4)))
-# !collapse(1:8)#> # A tibble: 4 × 6
+# !collapse(1:8)
+#> # A tibble: 4 × 6
 #> # Rowwise: 
 #>   student_id test1 test2 test3 test4   avg
 #>        <int> <int> <int> <int> <int> <dbl>
@@ -198,6 +209,8 @@ not needed.
 
 ``` r
 df %>% mutate(s = test1 + test2 + test3)
+
+# !collapse(1:8)
 #> # A tibble: 4 × 6
 #>   student_id test1 test2 test3 test4     s
 #>        <int> <int> <int> <int> <int> <int>
@@ -209,7 +222,8 @@ df %>% mutate(s = test1 + test2 + test3)
 df %>%
   rowwise() %>%
   mutate(s = test1 + test2 + test3)
-# !collapse(1:8)#> # A tibble: 4 × 6
+# !collapse(1:8)
+#> # A tibble: 4 × 6
 #> # Rowwise: 
 #>   student_id test1 test2 test3 test4     s
 #>        <int> <int> <int> <int> <int> <int>
@@ -229,6 +243,7 @@ df %>%
     max = pmax(test1, test2, test3, test4),
     string = paste(test1, test2, test3, test4, sep = "-")
   )
+# !collapse(1:7)
 #> # A tibble: 4 × 8
 #>   student_id test1 test2 test3 test4   min   max string     
 #>        <int> <int> <int> <int> <int> <int> <int> <chr>      
@@ -254,7 +269,8 @@ df %>%
     min = min(c_across(starts_with("test"))),
     max = max(c_across(starts_with("test")))
   )
-# !collapse(1:8)#> # A tibble: 4 × 7
+# !collapse(1:8)
+#> # A tibble: 4 × 7
 #> # Rowwise: 
 #>   student_id test1 test2 test3 test4   min   max
 #>        <int> <int> <int> <int> <int> <int> <int>
@@ -271,6 +287,7 @@ Plus, a rowwise df will naturally contain exactly the same rows after
 df %>%
   rowwise() %>%
   summarize(across(starts_with("test"), ~ .x, .names = "{col}_same"))
+# !collapse(1:7)
 #> # A tibble: 4 × 4
 #>   test1_same test2_same test3_same test4_same
 #>        <int>      <int>      <int>      <int>
@@ -294,6 +311,7 @@ df <- tibble(
   z = list(sum, mean, sd)
 )
 df
+# !collapse(1:6)
 #> # A tibble: 3 × 3
 #>   x         y         z     
 #>   <list>    <list>    <list>
@@ -310,6 +328,7 @@ df %>%
     y_type = typeof(y),
     z_call = z(1:5)
   )
+# !collapse(1:6)
 #> # A tibble: 3 × 3
 #>   x_length y_type    z_call
 #>      <int> <chr>      <dbl>
@@ -339,6 +358,7 @@ values with `mutate`:
 df %>%
   rowwise() %>%
   mutate(sim = list(runif(n, min, max)))
+# !collapse(1:7)
 #> # A tibble: 3 × 5
 #> # Rowwise: 
 #>      id     n   min   max sim      
@@ -355,7 +375,8 @@ rows per group
 df %>%
   rowwise(everything()) %>%
   summarize(sim = runif(n, min, max))
-# !collapse(1:18) collapsed#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+# !collapse(1:18) collapsed
+#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
 #> dplyr 1.1.0.
 #> ℹ Please use `reframe()` instead.
 #> ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
@@ -394,6 +415,7 @@ simulation.
 ``` r
 df %>%
   mutate(sim = purrr::pmap(., ~ runif(..2, ..3, ..4)))
+# !collapse(1:6)
 #> # A tibble: 3 × 5
 #>      id     n   min   max sim      
 #>   <dbl> <dbl> <dbl> <dbl> <list>   
@@ -409,6 +431,7 @@ The new `nest_by()` function works similarly to `group_nest()`
 ``` r
 by_species <- penguins %>% nest_by(species)
 by_species
+# !collapse(1:7)
 #> # A tibble: 3 × 2
 #> # Rowwise:  species
 #>   species                 data
@@ -426,6 +449,7 @@ by_species <- by_species %>%
   mutate(model = list(lm(bill_length_mm ~ bill_depth_mm, data = data)))
 
 by_species
+# !collapse(1:7)
 #> # A tibble: 3 × 3
 #> # Rowwise:  species
 #>   species                 data model 
@@ -442,7 +466,9 @@ frame):
 ``` r
 by_species %>%
   summarize(broom::glance(model))
-# !collapse(1:11)#> `summarise()` has grouped output by 'species'. You can override using the
+
+# !collapse(1:11) collapsed
+#> `summarise()` has grouped output by 'species'. You can override using the
 #> `.groups` argument.
 #> # A tibble: 3 × 13
 #> # Groups:   species [3]
@@ -455,7 +481,8 @@ by_species %>%
 
 by_species %>%
   summarize(broom::tidy(model))
-# !collapse(1:17) collapsed#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+# !collapse(1:17) collapsed
+#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
 #> dplyr 1.1.0.
 #> ℹ Please use `reframe()` instead.
 #> ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
@@ -480,7 +507,8 @@ An alternative approach
 penguins %>%
   group_by(species) %>%
   group_modify(~ broom::tidy(lm(bill_length_mm ~ bill_depth_mm, data = .x)))
-# !collapse(1:10)#> # A tibble: 6 × 6
+# !collapse(1:10)
+#> # A tibble: 6 × 6
 #> # Groups:   species [3]
 #>   species   term          estimate std.error statistic  p.value
 #>   <fct>     <chr>            <dbl>     <dbl>     <dbl>    <dbl>
@@ -520,7 +548,8 @@ penguins_grouped %>%
     ),
     q = c(0.25, 0.5, 0.75)
   )
-# !collapse(1:20) collapsed#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+# !collapse(1:20) collapsed
+#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
 #> dplyr 1.1.0.
 #> ℹ Please use `reframe()` instead.
 #> ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
@@ -550,6 +579,7 @@ penguins_grouped %>%
     min = min(bill_depth_mm, na.rm = TRUE),
     max = max(bill_depth_mm, na.rm = TRUE)
   ))
+# !collapse(1:6)
 #> # A tibble: 3 × 3
 #>   species     min   max
 #>   <fct>     <dbl> <dbl>
@@ -572,7 +602,8 @@ quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
 
 penguins_grouped %>%
   summarize(quibble(bill_depth_mm))
-# !collapse(1:20) collapsed#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+# !collapse(1:20) collapsed
+#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
 #> dplyr 1.1.0.
 #> ℹ Please use `reframe()` instead.
 #> ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
@@ -607,7 +638,8 @@ quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
 
 penguins_grouped %>%
   summarize(quibble(flipper_length_mm))
-# !collapse(1:20) collapsed#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+# !collapse(1:20) collapsed
+#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
 #> dplyr 1.1.0.
 #> ℹ Please use `reframe()` instead.
 #> ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
@@ -637,7 +669,8 @@ automatically unpacked.
 ``` r
 penguins_grouped %>%
   summarize(df = quibble(flipper_length_mm))
-# !collapse(1:20) collapsed#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+# !collapse(1:20) collapsed
+#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
 #> dplyr 1.1.0.
 #> ℹ Please use `reframe()` instead.
 #> ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
@@ -682,7 +715,9 @@ the left-hand side
 
 ``` r
 penguins %>% relocate(island)
-# !collapse(1:16)#> # A tibble: 344 × 8
+
+# !collapse(1:16) collapsed
+#> # A tibble: 344 × 8
 #>    island    species bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 #>    <fct>     <fct>            <dbl>         <dbl>             <int>       <int>
 #>  1 Torgersen Adelie            39.1          18.7               181        3750
@@ -699,7 +734,9 @@ penguins %>% relocate(island)
 #> # ℹ 2 more variables: sex <fct>, year <int>
 
 penguins %>% relocate(starts_with("bill"))
-# !collapse(1:16)#> # A tibble: 344 × 8
+
+# !collapse(1:16) collapsed
+#> # A tibble: 344 × 8
 #>    bill_length_mm bill_depth_mm species island    flipper_length_mm body_mass_g
 #>             <dbl>         <dbl> <fct>   <fct>                 <int>       <int>
 #>  1           39.1          18.7 Adelie  Torgersen               181        3750
@@ -716,7 +753,8 @@ penguins %>% relocate(starts_with("bill"))
 #> # ℹ 2 more variables: sex <fct>, year <int>
 
 penguins %>% relocate(sex, body_mass_g, .after = species)
-# !collapse(1:15) collapsed#> # A tibble: 344 × 8
+# !collapse(1:15) collapsed
+#> # A tibble: 344 × 8
 #>    species sex    body_mass_g island    bill_length_mm bill_depth_mm
 #>    <fct>   <fct>        <int> <fct>              <dbl>         <dbl>
 #>  1 Adelie  male          3750 Torgersen           39.1          18.7
@@ -739,7 +777,8 @@ control where new columns should appear.
 ``` r
 penguins %>%
   mutate(mass_double = body_mass_g * 2, .before = 1)
-# !collapse(1:15) collapsed#> # A tibble: 344 × 9
+# !collapse(1:15) collapsed
+#> # A tibble: 344 × 9
 #>    mass_double species island    bill_length_mm bill_depth_mm flipper_length_mm
 #>          <dbl> <fct>   <fct>              <dbl>         <dbl>             <int>
 #>  1        7500 Adelie  Torgersen           39.1          18.7               181
@@ -780,6 +819,7 @@ that the keys of x and y are valid (i.e. unique) before doing anything.
 ``` r
 df <- tibble(a = 1:3, b = letters[c(1:2, NA)], c = 0.5 + 0:2)
 df
+# !collapse(1:6)
 #> # A tibble: 3 × 3
 #>       a b         c
 #>   <int> <chr> <dbl>
@@ -794,7 +834,8 @@ We can use `rows_insert()` to add new rows:
 new <- tibble(a = c(4, 5), b = c("d", "e"), c = c(3.5, 4.5))
 
 rows_insert(df, new)
-# !collapse(1:9)#> Matching, by = "a"
+# !collapse(1:9)
+#> Matching, by = "a"
 #> # A tibble: 5 × 3
 #>       a b         c
 #>   <int> <chr> <dbl>
@@ -817,6 +858,7 @@ df %>% rows_insert(tibble(a = 3, b = "c"))
 #> ℹ Use `conflict = "ignore"` if you want to ignore these `y` rows.
 
 df %>% rows_insert(tibble(a = 3, b = "c"), by = c("a", "b"))
+# !collapse(1:7)
 #> # A tibble: 4 × 3
 #>       a b         c
 #>   <int> <chr> <dbl>
@@ -831,6 +873,8 @@ throw an error if one of the rows to update does not exist:
 
 ``` r
 df %>% rows_update(tibble(a = 3, b = "c"))
+
+# !collapse(1:8)
 #> Matching, by = "a"
 #> # A tibble: 3 × 3
 #>       a b         c
@@ -852,6 +896,7 @@ values in x that are `NA`.
 
 ``` r
 df %>% rows_patch(tibble(a = 1:3, b = "patch"))
+# !collapse(1:7)
 #> Matching, by = "a"
 #> # A tibble: 3 × 3
 #>       a b         c
@@ -867,7 +912,8 @@ df %>% rows_patch(tibble(a = 1:3, b = "patch"))
 df %>%
   rows_upsert(tibble(a = 3, b = "c")) %>% # update
   rows_upsert(tibble(a = 4, b = "d")) # insert
-# !collapse(1:9)#> Matching, by = "a"
+# !collapse(1:9)
+#> Matching, by = "a"
 #> Matching, by = "a"
 #> # A tibble: 4 × 3
 #>       a b         c
@@ -916,6 +962,8 @@ df <- tibble(
 gf <- df %>% group_by(g)
 
 gf %>% reframe(row = cur_group_rows())
+
+# !collapse(1:9)
 #> # A tibble: 6 × 2
 #>   g       row
 #>   <chr> <int>
@@ -933,6 +981,8 @@ gf %>% reframe(data = list(cur_group()))
 #> 2 b     <tibble [1 × 1]>
 #> 3 c     <tibble [1 × 1]>
 gf %>% reframe(data = list(pick(everything())))
+
+# !collapse(1:7)
 #> # A tibble: 3 × 2
 #>   g     data            
 #>   <chr> <list>          
@@ -942,7 +992,8 @@ gf %>% reframe(data = list(pick(everything())))
 
 # cur_column() is not related to groups
 gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
-# !collapse(1:10)#> # A tibble: 6 × 3
+# !collapse(1:10)
+#> # A tibble: 6 × 3
 #> # Groups:   g [3]
 #>   g     x      y     
 #>   <chr> <chr>  <chr> 
@@ -964,6 +1015,8 @@ favor of a new family of slice helpers: `slice_min()`, `slice_max()`,
 # select penguins per group on body mass
 penguins_grouped %>%
   slice_max(body_mass_g, n = 1)
+
+# !collapse(1:9)
 #> # A tibble: 3 × 8
 #> # Groups:   species [3]
 #>   species   island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
@@ -975,7 +1028,8 @@ penguins_grouped %>%
 
 penguins_grouped %>%
   slice_min(body_mass_g, n = 1)
-# !collapse(1:9)#> # A tibble: 4 × 8
+# !collapse(1:9)
+#> # A tibble: 4 × 8
 #> # Groups:   species [3]
 #>   species   island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 #>   <fct>     <fct>           <dbl>         <dbl>             <int>       <int>
@@ -990,7 +1044,9 @@ penguins_grouped %>%
 # random sampling
 penguins %>%
   slice_sample(n = 10)
-# !collapse(1:15)#> # A tibble: 10 × 8
+
+# !collapse(1:15) collapsed
+#> # A tibble: 10 × 8
 #>    species   island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 #>    <fct>     <fct>           <dbl>         <dbl>             <int>       <int>
 #>  1 Adelie    Dream            40.6          17.2               187        3475
@@ -1007,7 +1063,8 @@ penguins %>%
 
 penguins %>%
   slice_sample(prop = 0.1)
-# !collapse(1:15) collapsed#> # A tibble: 34 × 8
+# !collapse(1:15) collapsed
+#> # A tibble: 34 × 8
 #>    species   island   bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 #>    <fct>     <fct>             <dbl>         <dbl>             <int>       <int>
 #>  1 Chinstrap Dream              43.2          16.6               187        2900
@@ -1044,7 +1101,8 @@ programmatically:
 ``` r
 penguins %>%
   rename_with(stringr::str_to_upper)
-# !collapse(1:15) collapsed#> # A tibble: 344 × 8
+# !collapse(1:15) collapsed
+#> # A tibble: 344 × 8
 #>    SPECIES ISLAND    BILL_LENGTH_MM BILL_DEPTH_MM FLIPPER_LENGTH_MM BODY_MASS_G
 #>    <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
 #>  1 Adelie  Torgersen           39.1          18.7               181        3750
@@ -1067,7 +1125,8 @@ with the second argument:
 ``` r
 penguins %>%
   rename_with(stringr::str_to_upper, starts_with("bill"))
-# !collapse(1:15) collapsed#> # A tibble: 344 × 8
+# !collapse(1:15) collapsed
+#> # A tibble: 344 × 8
 #>    species island    BILL_LENGTH_MM BILL_DEPTH_MM flipper_length_mm body_mass_g
 #>    <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
 #>  1 Adelie  Torgersen           39.1          18.7               181        3750
@@ -1093,7 +1152,9 @@ penguins %>% mutate(
   island_lower = stringr::str_to_lower(island),
   .keep = "used"
 )
-# !collapse(1:15)#> # A tibble: 344 × 4
+
+# !collapse(1:15) collapsed
+#> # A tibble: 344 × 4
 #>    island    body_mass_g double_mass island_lower
 #>    <fct>           <int>       <dbl> <chr>       
 #>  1 Torgersen        3750        7500 torgersen   
@@ -1109,7 +1170,8 @@ penguins %>% mutate(
 #> # ℹ 334 more rows
 
 penguins %>% mutate(double_mass = body_mass_g * 2, .keep = "none")
-# !collapse(1:14) collapsed#> # A tibble: 344 × 1
+# !collapse(1:14) collapsed
+#> # A tibble: 344 × 1
 #>    double_mass
 #>          <dbl>
 #>  1        7500
@@ -1168,7 +1230,8 @@ library(lubridate)
 # historical stock prices from 2014-2018 for Google, Amazon, Facebook and Apple
 stock <- tsibbledata::gafa_stock %>% select(Symbol, Date, Close, Volume)
 stock
-# !collapse(1:14) collapsed#> # A tibble: 5,032 × 4
+# !collapse(1:14) collapsed
+#> # A tibble: 5,032 × 4
 #>    Symbol Date       Close    Volume
 #>    <chr>  <date>     <dbl>     <dbl>
 #>  1 AAPL   2014-01-02  79.0  58671200
@@ -1203,7 +1266,8 @@ stock %>%
     .before = days(9),
     .complete = TRUE
   ))
-# !collapse(1:15) collapsed#> # A tibble: 5,032 × 5
+# !collapse(1:15) collapsed
+#> # A tibble: 5,032 × 5
 #> # Groups:   Symbol [4]
 #>    Symbol Date       Close    Volume model 
 #>    <chr>  <date>     <dbl>     <dbl> <list>

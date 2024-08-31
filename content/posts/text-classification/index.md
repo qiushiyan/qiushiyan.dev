@@ -17,6 +17,8 @@ line being written by one sister instead of another.
 
 ``` r
 library(dplyr)
+
+# !collapse(1:8)
 #> 
 #> Attaching package: 'dplyr'
 #> The following objects are masked from 'package:stats':
@@ -32,7 +34,7 @@ library(tidytext)
 library(gutenbergr)
 ```
 
-The cleaned `books` dataset contains linse as individual rows.
+The cleaned `books` dataset contains lines as individual rows.
 
 ``` r
 mirror_url <- "http://mirrors.xmission.com/gutenberg/"
@@ -48,7 +50,8 @@ books <- gutenberg_works(author %in% c("Brontë, Emily", "Brontë, Charlotte")) 
         text
     )
 books
-# !collapse(1:14) collapsed#> # A tibble: 59,283 × 4
+# !collapse(1:14) collapsed
+#> # A tibble: 59,283 × 4
 #>    title             author       line_index text               
 #>    <chr>             <fct>             <int> <chr>              
 #>  1 Wuthering Heights Emily Brontë          1 "Wuthering Heights"
@@ -170,7 +173,9 @@ column word count.
 
 ``` r
 library(tidymodels)
-# !collapse(1:15)#> ── Attaching packages ────────────────────────────────────── tidymodels 1.1.0 ──
+
+# !collapse(1:15) collapsed
+#> ── Attaching packages ────────────────────────────────────── tidymodels 1.1.0 ──
 #> ✔ broom        1.0.5     ✔ rsample      1.2.1
 #> ✔ dials        1.2.0     ✔ tibble       3.2.1
 #> ✔ infer        1.0.4     ✔ tune         1.2.1
@@ -184,7 +189,7 @@ library(tidymodels)
 #> ✖ recipes::fixed() masks stringr::fixed()
 #> ✖ dplyr::lag()     masks stats::lag()
 #> ✖ recipes::step()  masks stats::step()
-#> • Dig deeper into tidy modeling with R at https://www.tmwr.org
+#> • Learn how to get started at https://www.tidymodels.org/start/
 set.seed(2020)
 doParallel::registerDoParallel()
 
@@ -198,7 +203,8 @@ model_df <- tidy_books %>%
     select(-title, -text)
 
 model_df
-# !collapse(1:20) collapsed#> # A tibble: 32,029 × 432
+# !collapse(1:20) collapsed
+#> # A tibble: 32,029 × 432
 #>    line_index heights wuthering chapter returned visit heathcliff black  eyes
 #>         <int>   <int>     <int>   <int>    <int> <int>      <int> <int> <int>
 #>  1          1       1         1       0        0     0          0     0     0
@@ -252,14 +258,15 @@ initial_fit <- book_wf %>%
 
 `initial_fit` is a simple fitted regression model without any
 hyper-parameters. By default `glmnet` calls for 100 values of lambda
-even if I specify $\lambda = 0.05$. So the extracted result aren’t that
+even if I specify lambda = 0.05. So the extracted result aren’t that
 helpful.
 
 ``` r
 initial_fit %>%
     extract_fit_parsnip() %>%
     tidy()
-# !collapse(1:20) collapsed#> 
+# !collapse(1:20) collapsed
+#> 
 #> Attaching package: 'Matrix'
 #> The following objects are masked from 'package:tidyr':
 #> 
@@ -290,7 +297,8 @@ initial_predict <- predict(initial_fit, book_test) %>%
     bind_cols(book_test %>% select(author, line_index))
 
 initial_predict
-# !collapse(1:15) collapsed#> # A tibble: 8,008 × 5
+# !collapse(1:15) collapsed
+#> # A tibble: 8,008 × 5
 #>    .pred_class     .pred_Charlotte Bron…¹ `.pred_Emily Brontë` author line_index
 #>    <fct>                            <dbl>                <dbl> <fct>       <int>
 #>  1 Charlotte Bron…                  0.766                0.234 Emily…         11
@@ -383,7 +391,8 @@ top_models <- logistic_results %>%
     filter(mean > 0.9)
 
 top_models
-# !collapse(1:14) collapsed#> # A tibble: 79 × 7
+# !collapse(1:14) collapsed
+#> # A tibble: 79 × 7
 #>     penalty .metric .estimator  mean     n std_err .config               
 #>       <dbl> <chr>   <chr>      <dbl> <int>   <dbl> <chr>                 
 #>  1 0.00756  roc_auc binary     0.916    10 0.00147 Preprocessor1_Model079
@@ -422,6 +431,7 @@ lambda:
 
 ``` r
 book_wf_final %>% extract_spec_parsnip()
+# !collapse(1:7)
 #> Logistic Regression Model Specification (classification)
 #> 
 #> Main Arguments:
@@ -439,6 +449,7 @@ logistic_final <- last_fit(book_wf_final, split = book_split)
 
 logistic_final %>%
     collect_metrics()
+# !collapse(1:6)
 #> # A tibble: 3 × 4
 #>   .metric     .estimator .estimate .config             
 #>   <chr>       <chr>          <dbl> <chr>               

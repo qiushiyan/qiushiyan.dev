@@ -1,19 +1,41 @@
+@tailwind base;
+
+@layer base {
+  .full-width {
+    @apply lg:col-span-full lg:mx-6 !important;
+  }
+
+  .wider {
+    @apply lg:col-span-full lg:mx-12 !important;
+  }
+}
+
 .post {
   display: grid;
   grid-template-columns: 1fr min(70ch, calc(100% - 64px)) 1fr;
   grid-column-gap: 16px;
-  padding: 0 16px;
+  padding: 0 1rem;
 
-  .two-column {
-    @apply grid grid-cols-1 lg:grid-cols-2 lg:gap-8;
+  h1,
+  h2,
+  h3 {
+    scroll-margin-top: calc(var(--nav-height) + 2.5rem);
   }
 
   & > * {
     grid-column: 2;
   }
 
-  .aside {
-    grid-column: 3 / 4;
+  .toc {
+    position: sticky;
+    top: 5rem;
+    grid-column: 1 / span 1;
+    padding: 1rem;
+    max-height: calc(100vh - 5rem);
+  }
+
+  .two-column {
+    @apply grid grid-cols-1 lg:grid-cols-2 lg:gap-8;
   }
 
   // quarto classes

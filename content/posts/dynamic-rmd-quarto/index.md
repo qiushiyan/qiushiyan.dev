@@ -77,6 +77,7 @@ cat(res, sep = "\n")
 
 ``` r
 summary(data)
+# !collapse(1:7)
 #>   Sepal.Length   Sepal.Width    Petal.Length   Petal.Width        Species  
 #>  Min.   :4.30   Min.   :2.00   Min.   :1.00   Min.   :0.1   setosa    :50  
 #>  1st Qu.:5.10   1st Qu.:2.80   1st Qu.:1.60   1st Qu.:0.3   versicolor:50  

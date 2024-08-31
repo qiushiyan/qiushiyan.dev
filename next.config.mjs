@@ -14,6 +14,7 @@ if (process.env.NODE_ENV === "development") {
   await setupDevPlatform();
 }
 
+/** @type {import("codehike/mdx").CodeHikeConfig} */
 const chConfig = {
   components: { code: "Code" },
 };

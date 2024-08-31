@@ -22,8 +22,3 @@ function Header(el)
     end
     return el
 end
-
-function Meta(meta)
-    meta["headings"] = headings
-    return meta
-end

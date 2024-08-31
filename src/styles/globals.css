@@ -31,6 +31,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --nav-height: 4rem;
     --expo-out: linear(
       0 0%,
       0.1684 2.66%,
@@ -95,7 +96,7 @@
   }
 
   .link {
-    @apply text-primary transition-all duration-150 hover:text-primary/80 hover:underline hover:underline-offset-4 !important;
+    @apply text-primary transition-all duration-150 hover:text-primary/80 hover:underline hover:underline-offset-4;
   }
 
   a {
@@ -177,15 +178,5 @@
   .dark::view-transition-old(root),
   .dark::view-transition-new(root) {
     animation: none;
-  }
-}
-
-@layer base {
-  .full-width {
-    @apply lg:col-span-full lg:mx-6 lg:justify-self-center !important;
-  }
-
-  .wider {
-    @apply lg:col-span-full lg:mx-12 lg:justify-self-center !important;
   }
 }

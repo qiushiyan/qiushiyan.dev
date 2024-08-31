@@ -1,5 +1,7 @@
 project:
-  output-dir: _output
+  output-dir: ../content/posts
+  render:
+    - "*.qmd"
 execute:
   freeze: auto
 knitr:

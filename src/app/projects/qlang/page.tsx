@@ -1,15 +1,13 @@
 import { tokenTransitions } from "@/components/codehike/token-transitions";
 import { ArticleProse } from "@/components/prose-wrapper";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Block, CodeBlock, parseRoot } from "codehike/blocks";
 import { highlight, Pre, RawCode } from "codehike/code";
+import Link from "next/link";
 import { z } from "zod";
 
-import "./page.scss";
-
-import Link from "next/link";
-
 import Content from "./content.md";
-import { JumpDemoButton } from "./jump-demo-button";
 import { Selectable, Selection, SelectionProvider } from "./utils";
 
 const Schema = Block.extend({
@@ -28,7 +26,15 @@ export default function Page() {
           </h1>
           <div className="flex items-center gap-6">
             <Link href={"/"}>Home</Link>
-            <JumpDemoButton />
+            <Link
+              href={"#demo"}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "!no-underline"
+              )}
+            >
+              Jump to demo
+            </Link>
           </div>
         </div>
         {intro.children}

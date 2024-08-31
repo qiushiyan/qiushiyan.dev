@@ -14,6 +14,8 @@ import { ClockIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 import { notFound } from "next/navigation";
 
+import { PostToc } from "./toc";
+
 export default async function PostPage({
   params,
 }: {
@@ -29,8 +31,8 @@ export default async function PostPage({
       <ArticleProse>
         <article className="post">
           <PostBanner post={post} />
-
           <Separator className="full-width" />
+          <PostToc headings={post.headings} />
           {htmr(post.content, {
             // @ts-ignore
             transform: MarkdownSharedComponents,
@@ -51,6 +53,7 @@ const PostBanner = ({ post }: { post: Post }) => {
           style={{
             viewTransitionName: postViewTransitionName(post.slug),
           }}
+          id="post-banner"
         >
           {post.title}
         </h1>

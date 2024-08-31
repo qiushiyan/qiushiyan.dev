@@ -48,10 +48,7 @@ export const CodeBlock = async ({ value, lang, meta }: CodeBlockProps) => {
         <Pre
           code={highlighted}
           handlers={CodeHikeHandlers}
-          className={cn(
-            "my-0 whitespace-pre border p-2",
-            hasFilename && "rounded-t-none"
-          )}
+          className={cn("my-0 border p-2", hasFilename && "rounded-t-none")}
         />
       </div>
       {notes.length > 0 && (

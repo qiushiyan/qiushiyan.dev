@@ -27,7 +27,7 @@ export default function Home() {
       </section>
 
       <h2 className="text-2xl font-bold">Personal Projects</h2>
-      <section className="full-width overflow-x-auto">
+      <section className="full-width">
         <Suspense fallback={<FeaturedProjects.Skeleton />}>
           <FeaturedProjects />
         </Suspense>
