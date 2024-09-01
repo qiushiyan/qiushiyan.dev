@@ -3,6 +3,9 @@ title: Text classification with penalized logistic regression
 date: '2020-05-02'
 description: |
     Train a classification model with tidymodels to distinguish Charlotte Brontë from Emily Brontë.
+tags:
+    - R
+    - Machine Learning
 ---
 
 

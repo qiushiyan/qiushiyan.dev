@@ -4,8 +4,31 @@ date: '2020-06-02'
 description: >-
   A quick summary of some exciting features coming in dplyr 1.0, e.g.
   `across()`, row-wise operations and context-dependent expressions
+tags:
+  - R
 ---
 
+
+<!--
+BEGIN_TOC
+- Working within columns|working-within-columns|2
+- Working within rows|working-within-rows|2
+  - List-columns|list-columns|3
+  - Simulation|simulation|3
+- Group-wise models|group-wise-models|2
+- New `summarize` features|new-summarize-features|2
+  - Multiple rows and columns|multiple-rows-and-columns|3
+  - non-summary context|non-summary-context|3
+- Move columns around within data frames|move-columns-around-within-data-frames|2
+- Row mutation|row-mutation|2
+- Context dependent expressions|context-dependent-expressions|2
+- Superseded functions|superseded-functions|2
+- Other changes|other-changes|2
+- Recipes|recipes|2
+  - Replace missing values in many columns|replace-missing-values-in-many-columns|3
+  - Rolling regression|rolling-regression|3
+END_TOC
+-->
 
 <my-callout> This article has been updated to keep up with dplyr 1.1.
 </my-callout>
@@ -16,7 +39,6 @@ examples (as an alternative to `iris`).
 
 ``` r
 library(dplyr)
-
 # !collapse(1:8)
 #> 
 #> Attaching package: 'dplyr'
@@ -64,7 +86,7 @@ penguins %>%
 
 ![](index_files/figure-commonmark/unnamed-chunk-4-1.png)
 
-## Working within columns
+## Working within columns {#working-within-columns}
 
 The new `across()` function supersedes functionalities of `_at`, `_if`,
 `_all` variants. The first argument, `.cols`, selects the columns you
@@ -96,7 +118,6 @@ should be wrapped in `where`.
 # double all numeric columns
 penguins %>%
   mutate(across(where(is.numeric), ~ .x * 2))
-
 # !collapse(1:16) collapsed
 #> # A tibble: 344 × 8
 #>    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
@@ -143,7 +164,7 @@ penguins_grouped %>%
 #> #   max_flipper_length_mm <int>
 ```
 
-## Working within rows
+## Working within rows {#working-within-rows}
 
 Row-wise operations require a special type of grouping where each group
 consists of a single row. You create this with `rowwise()`.
@@ -177,7 +198,6 @@ changes how the other verbs work.
 
 ``` r
 df %>% mutate(avg = mean(c(test1, test2, test3, test4)))
-
 # !collapse(1:8)
 #> # A tibble: 4 × 6
 #>   student_id test1 test2 test3 test4   avg
@@ -209,7 +229,6 @@ not needed.
 
 ``` r
 df %>% mutate(s = test1 + test2 + test3)
-
 # !collapse(1:8)
 #> # A tibble: 4 × 6
 #>   student_id test1 test2 test3 test4     s
@@ -297,7 +316,7 @@ df %>%
 #> 4         13         23         33         43
 ```
 
-### List-columns
+### List-columns {#list-columns}
 
 Because lists can contain anything, you can use list-columns to keep
 related objects together, regardless of what type of thing they are.
@@ -337,7 +356,7 @@ df %>%
 #> 3        3 character   1.58
 ```
 
-### Simulation
+### Simulation {#simulation}
 
 The basic idea of using `rowwise` to perform simulation is to store all
 your simulation parameters in a data frame, similar to `purrr::pmap`.
@@ -387,13 +406,13 @@ df %>%
 #> # Groups:   id, n, min, max [3]
 #>      id     n   min   max     sim
 #>   <dbl> <dbl> <dbl> <dbl>   <dbl>
-#> 1     1     3     0     1   0.920
-#> 2     1     3     0     1   0.382
-#> 3     1     3     0     1   0.637
-#> 4     2     2    10   100  19.5  
-#> 5     2     2    10   100  81.9  
-#> 6     3     2   100  1000 346.   
-#> 7     3     2   100  1000 551.
+#> 1     1     3     0     1   0.630
+#> 2     1     3     0     1   0.987
+#> 3     1     3     0     1   0.189
+#> 4     2     2    10   100  56.4  
+#> 5     2     2    10   100  20.5  
+#> 6     3     2   100  1000 241.   
+#> 7     3     2   100  1000 507.
 ```
 
 <my-callout>
@@ -424,7 +443,7 @@ df %>%
 #> 3     3     2   100  1000 <dbl [2]>
 ```
 
-## Group-wise models
+## Group-wise models {#group-wise-models}
 
 The new `nest_by()` function works similarly to `group_nest()`
 
@@ -466,7 +485,6 @@ frame):
 ``` r
 by_species %>%
   summarize(broom::glance(model))
-
 # !collapse(1:11) collapsed
 #> `summarise()` has grouped output by 'species'. You can override using the
 #> `.groups` argument.
@@ -520,7 +538,7 @@ penguins %>%
 #> 6 Gentoo    bill_depth_mm    2.02      0.219      9.24 1.02e-15
 ```
 
-## New `summarize` features
+## New `summarize` features {#new-summarize-features}
 
 <my-callout>
 
@@ -529,7 +547,7 @@ starting from dplyr 1.1.
 
 </my-callout>
 
-### Multiple rows and columns
+### Multiple rows and columns {#multiple-rows-and-columns}
 
 Two big changes make `summarize()` much more flexible. A single summary
 expression can now return:
@@ -692,7 +710,7 @@ penguins_grouped %>%
 #> 9 Gentoo                              221                 0.75
 ```
 
-### non-summary context
+### non-summary context {#non-summary-context}
 
 In combination with rowwise operations, `summarize()` is now
 sufficiently powerful to replace many workflows that previously required
@@ -707,7 +725,7 @@ tibble(path = dir(pattern = "\\.csv$")) %>%
   summarize(read_csv(path))
 ```
 
-## Move columns around within data frames
+## Move columns around within data frames {#move-columns-around-within-data-frames}
 
 New verb `relocate` is provided to change column positions with the same
 syntax as `select`. The default behavior is to move selected columns to
@@ -715,7 +733,6 @@ the left-hand side
 
 ``` r
 penguins %>% relocate(island)
-
 # !collapse(1:16) collapsed
 #> # A tibble: 344 × 8
 #>    island    species bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
@@ -734,7 +751,6 @@ penguins %>% relocate(island)
 #> # ℹ 2 more variables: sex <fct>, year <int>
 
 penguins %>% relocate(starts_with("bill"))
-
 # !collapse(1:16) collapsed
 #> # A tibble: 344 × 8
 #>    bill_length_mm bill_depth_mm species island    flipper_length_mm body_mass_g
@@ -795,7 +811,7 @@ penguins %>%
 #> # ℹ 3 more variables: body_mass_g <int>, sex <fct>, year <int>
 ```
 
-## Row mutation
+## Row mutation {#row-mutation}
 
 dplyr has a new experimental family of row mutation functions inspired
 by SQL’s `UPDATE`, `INSERT`, `UPSERT`, and `DELETE`. Like the join
@@ -873,7 +889,6 @@ throw an error if one of the rows to update does not exist:
 
 ``` r
 df %>% rows_update(tibble(a = 3, b = "c"))
-
 # !collapse(1:8)
 #> Matching, by = "a"
 #> # A tibble: 3 × 3
@@ -924,7 +939,7 @@ df %>%
 #> 4     4 d      NA
 ```
 
-## Context dependent expressions
+## Context dependent expressions {#context-dependent-expressions}
 
 `n()` is a special function in dplyr which return the number of
 observations in the current group. Now the new version comes with more
@@ -962,17 +977,16 @@ df <- tibble(
 gf <- df %>% group_by(g)
 
 gf %>% reframe(row = cur_group_rows())
-
 # !collapse(1:9)
 #> # A tibble: 6 × 2
 #>   g       row
 #>   <chr> <int>
 #> 1 a         1
-#> 2 b         4
-#> 3 b         6
-#> 4 c         2
-#> 5 c         3
-#> 6 c         5
+#> 2 b         2
+#> 3 b         4
+#> 4 c         3
+#> 5 c         5
+#> 6 c         6
 gf %>% reframe(data = list(cur_group()))
 #> # A tibble: 3 × 2
 #>   g     data            
@@ -981,7 +995,6 @@ gf %>% reframe(data = list(cur_group()))
 #> 2 b     <tibble [1 × 1]>
 #> 3 c     <tibble [1 × 1]>
 gf %>% reframe(data = list(pick(everything())))
-
 # !collapse(1:7)
 #> # A tibble: 3 × 2
 #>   g     data            
@@ -997,15 +1010,15 @@ gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
 #> # Groups:   g [3]
 #>   g     x      y     
 #>   <chr> <chr>  <chr> 
-#> 1 a     x 0.35 y 0.23
-#> 2 c     x 0.15 y 0.75
-#> 3 c     x 0.37 y 0.04
-#> 4 b     x 0.87 y 0.77
-#> 5 c     x 0.56 y 0.71
-#> 6 b     x 0.22 y 0.11
+#> 1 a     x 0.86 y 0.56
+#> 2 b     x 0.31 y 0.53
+#> 3 c     x 0.56 y 0.27
+#> 4 b     x 0.24 y 0.94
+#> 5 c     x 0.84 y 0.6 
+#> 6 c     x 0.78 y 0.98
 ```
 
-## Superseded functions
+## Superseded functions {#superseded-functions}
 
 `top_n()`, `sample_n()`, and `sample_frac()` have been superseded in
 favor of a new family of slice helpers: `slice_min()`, `slice_max()`,
@@ -1015,7 +1028,6 @@ favor of a new family of slice helpers: `slice_min()`, `slice_max()`,
 # select penguins per group on body mass
 penguins_grouped %>%
   slice_max(body_mass_g, n = 1)
-
 # !collapse(1:9)
 #> # A tibble: 3 × 8
 #> # Groups:   species [3]
@@ -1044,39 +1056,38 @@ penguins_grouped %>%
 # random sampling
 penguins %>%
   slice_sample(n = 10)
-
 # !collapse(1:15) collapsed
 #> # A tibble: 10 × 8
-#>    species   island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-#>    <fct>     <fct>           <dbl>         <dbl>             <int>       <int>
-#>  1 Adelie    Dream            40.6          17.2               187        3475
-#>  2 Gentoo    Biscoe           50.5          15.9               225        5400
-#>  3 Gentoo    Biscoe           49.1          15                 228        5500
-#>  4 Gentoo    Biscoe           44.5          14.7               214        4850
-#>  5 Gentoo    Biscoe           45.2          16.4               223        5950
-#>  6 Gentoo    Biscoe           46.3          15.8               215        5050
-#>  7 Gentoo    Biscoe           50.2          14.3               218        5700
-#>  8 Gentoo    Biscoe           45.2          15.8               215        5300
-#>  9 Chinstrap Dream            50            19.5               196        3900
-#> 10 Adelie    Biscoe           45.6          20.3               191        4600
+#>    species   island   bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+#>    <fct>     <fct>             <dbl>         <dbl>             <int>       <int>
+#>  1 Adelie    Dream              44.1          19.7               196        4400
+#>  2 Adelie    Dream              39.6          18.8               190        4600
+#>  3 Adelie    Dream              38.8          20                 190        3950
+#>  4 Adelie    Torgers…           35.9          16.6               190        3050
+#>  5 Chinstrap Dream              45.6          19.4               194        3525
+#>  6 Chinstrap Dream              50.2          18.8               202        3800
+#>  7 Adelie    Dream              38.1          17.6               187        3425
+#>  8 Gentoo    Biscoe             47.5          14                 212        4875
+#>  9 Adelie    Biscoe             38.2          18.1               185        3950
+#> 10 Adelie    Dream              39.5          16.7               178        3250
 #> # ℹ 2 more variables: sex <fct>, year <int>
 
 penguins %>%
   slice_sample(prop = 0.1)
 # !collapse(1:15) collapsed
 #> # A tibble: 34 × 8
-#>    species   island   bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-#>    <fct>     <fct>             <dbl>         <dbl>             <int>       <int>
-#>  1 Chinstrap Dream              43.2          16.6               187        2900
-#>  2 Adelie    Torgers…           41.8          19.4               198        4450
-#>  3 Gentoo    Biscoe             50.7          15                 223        5550
-#>  4 Adelie    Biscoe             38.2          18.1               185        3950
-#>  5 Adelie    Biscoe             38.8          17.2               180        3800
-#>  6 Adelie    Biscoe             39.6          20.7               191        3900
-#>  7 Adelie    Torgers…           38.7          19                 195        3450
-#>  8 Gentoo    Biscoe             49.3          15.7               217        5850
-#>  9 Adelie    Biscoe             38.1          16.5               198        3825
-#> 10 Adelie    Dream              40.8          18.9               208        4300
+#>    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+#>    <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
+#>  1 Gentoo  Biscoe              46.5          13.5               210        4550
+#>  2 Adelie  Torgersen           42            20.2               190        4250
+#>  3 Gentoo  Biscoe              46.2          14.4               214        4650
+#>  4 Gentoo  Biscoe              46.1          13.2               211        4500
+#>  5 Adelie  Torgersen           39.7          18.4               190        3900
+#>  6 Adelie  Biscoe              37.8          18.3               174        3400
+#>  7 Adelie  Dream               39.5          17.8               188        3300
+#>  8 Gentoo  Biscoe              59.6          17                 230        6050
+#>  9 Gentoo  Biscoe              45.5          13.7               214        4650
+#> 10 Adelie  Biscoe              37.6          17                 185        3600
 #> # ℹ 24 more rows
 #> # ℹ 2 more variables: sex <fct>, year <int>
 ```
@@ -1093,7 +1104,7 @@ of theh result.
 
 - `.groups = "rowwise"` turns each row into its own group.
 
-## Other changes
+## Other changes {#other-changes}
 
 The new `rename_with()` makes it easier to rename variables
 programmatically:
@@ -1152,7 +1163,6 @@ penguins %>% mutate(
   island_lower = stringr::str_to_lower(island),
   .keep = "used"
 )
-
 # !collapse(1:15) collapsed
 #> # A tibble: 344 × 4
 #>    island    body_mass_g double_mass island_lower
@@ -1187,12 +1197,12 @@ penguins %>% mutate(double_mass = body_mass_g * 2, .keep = "none")
 #> # ℹ 334 more rows
 ```
 
-## Recipes
+## Recipes {#recipes}
 
 This in-progress section documents tasks that would otherwise been
 impossible or laborious with previous version of dplyr.
 
-### Replace missing values in many columns
+### Replace missing values in many columns {#replace-missing-values-in-many-columns}
 
 Since `tidyr::replace_na` does not support tidy select syntax, replacing
 NA values in multiple columns could be a drudgery. Now this is made easy
@@ -1214,7 +1224,7 @@ penguins %>%
 #> 1              0             0
 ```
 
-### Rolling regression
+### Rolling regression {#rolling-regression}
 
 We can easily perform rolling computation with the `slider` package and
 `pick()`.

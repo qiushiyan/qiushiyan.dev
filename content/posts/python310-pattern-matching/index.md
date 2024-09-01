@@ -6,10 +6,22 @@ description: >
   The  _py`match case`_  statement for pattern matching is an exciting new
   feature added in Python 3.10. This article reviews the syntax and shows some
   practical examples.
+tags:
+  - Python
 ---
 
 
-## Introduction
+<!--
+BEGIN_TOC
+- Introduction|introduction|2
+- Pattern matching as a replacement for switch statements|pattern-matching-as-a-replacement-for-switch-statements|2
+- Match dictionaries and lists|match-dictionaries-and-lists|2
+- Add conditions|add-conditions|2
+- Matching constants|matching-constants|2
+END_TOC
+-->
+
+## Introduction {#introduction}
 
 [Structural Pattern Matching](https://www.python.org/dev/peps/pep-0634/)
 is a new feature introduced in python
@@ -54,7 +66,7 @@ sys.version
 #> '3.10.14 (main, Mar 19 2024, 21:46:16) [Clang 15.0.0 (clang-1500.3.9.4)]'
 ```
 
-## Pattern matching as a replacement for switch statements
+## Pattern matching as a replacement for switch statements {#pattern-matching-as-a-replacement-for-switch-statements}
 
 The most apparent usage of pattern matching is implementing
 `switch ... case` statements in many other programming languages, which
@@ -75,7 +87,7 @@ def move(self, direction):
             self.move_right()
 ```
 
-## Match dictionaries and lists
+## Match dictionaries and lists {#match-dictionaries-and-lists}
 
 The real power of pattern matching resides in destructuring data
 structures like lists and dictionaries.
@@ -208,7 +220,7 @@ match command.split():
         current_room = current_room.neighbor(direction)
 ```
 
-## Add conditions
+## Add conditions {#add-conditions}
 
 Pattern matching allows if conditions the same way as list
 comprehension, we can append an *py`if ... else`* clause like so
@@ -265,7 +277,7 @@ match p:
 In general, any class can be used for validation. This is also called a
 **class pattern**.
 
-## Matching constants
+## Matching constants {#matching-constants}
 
 Care should be taken when matching constants, since it’s common to store
 the constant in an variable and then use it in `case`. The following

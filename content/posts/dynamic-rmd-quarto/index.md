@@ -4,8 +4,18 @@ slug: dynamic-rmd-quarto
 date: '2023-01-22'
 description: |
   Automate report generation in Quarto with parameterized documents.
+tags:
+  - Quarto
 ---
 
+
+<!--
+BEGIN_TOC
+- Using the `knitr` engine|using-the-knitr-engine|2
+- A note on `knitr::knit_expand`|a-note-on-knitrknitexpand|2
+- Without `knitr`|without-knitr|2
+END_TOC
+-->
 
 A common scenario in my day-to-day data analysis is that I have many
 objects that are typically data frames, and for each of them I want to
@@ -43,7 +53,7 @@ change the name one by one. This post introduces a programmatic way of
 automating this task using `knit_child` from the `knitr` rendering
 engine.
 
-## Using the `knitr` engine
+## Using the `knitr` engine {#using-the-knitr-engine}
 
 The `knitr` engine has built-in supports for dyanmic, parameterized
 documents. For R Markdown, you can pass data to the document using the
@@ -202,7 +212,7 @@ style="border: 3px solid #627891; padding: 20px; height: 900px">
 
 </div>
 
-## A note on `knitr::knit_expand`
+## A note on `knitr::knit_expand` {#a-note-on-knitrknitexpand}
 
 [R Markdown
 Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/knit-expand.html)
@@ -260,7 +270,7 @@ c(1, 1, 1, 1, 1)
 
 which is not valid R syntax.
 
-## Without `knitr`
+## Without `knitr` {#without-knitr}
 
 It you are using Quarto with a different engine than `knitr`, I found no
 similar construct as `knitr::knit_child`. Although Quarto offers a

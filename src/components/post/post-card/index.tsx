@@ -1,35 +1,62 @@
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { postViewTransitionName } from "@/lib/utils";
 import { Post } from "#content";
-import { ArrowRightIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 
 import { Badge } from "../../ui/badge";
 import { PostDescription } from "../post-description";
-import { PostLink } from "./post-link";
 
 export const PostCard = ({ post }: { post: Post }) => {
   return (
-    <div className="flex flex-col gap-2 py-4 has-[[data-pending]]:animate-pulse">
-      <header className="flex items-center justify-between">
-        <PostLink title={post.title} slug={post.slug} />
-        {post.draft && <Badge>Draft</Badge>}
-      </header>
+    <Link href={`/posts/${post.slug}`} className="hover:!no-underline">
+      <Card className="flex h-fit flex-col gap-2 overflow-hidden rounded-md shadow-sm transition-all hover:bg-accent hover:text-accent-foreground">
+        <CardHeader className="flex items-center justify-between">
+          <h2
+            className="text-pretty text-xl font-bold"
+            style={{
+              viewTransitionName: postViewTransitionName(post.slug),
+            }}
+          >
+            {post.title}
+          </h2>
+          {post.draft && <Badge>Draft</Badge>}
+        </CardHeader>
 
-      <PostDescription
-        className="line-clamp-3 text-pretty text-foreground"
-        description={post.description}
-      />
-      <footer className="flex items-center justify-between">
-        <Link
-          href={`/posts/${post.slug}`}
-          className="group flex items-center gap-2"
-        >
-          Read more
-          <ArrowRightIcon className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-2" />
-        </Link>
-        <time dateTime={post.date} className="text-sm text-muted-foreground">
-          {new Date(post.date).toLocaleDateString()}
-        </time>
-      </footer>
-    </div>
+        <CardContent>
+          <PostDescription
+            className="line-clamp-3 text-pretty text-sm text-muted-foreground"
+            description={post.description}
+          />
+        </CardContent>
+
+        <CardFooter className="items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="h-4 w-4" />
+            <time
+              dateTime={post.date}
+              className="text-sm text-muted-foreground"
+            >
+              {new Date(post.date).toLocaleDateString()}
+            </time>
+          </div>
+          <div className="flex items-center gap-1">
+            {post.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };

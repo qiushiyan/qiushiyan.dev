@@ -9,3 +9,24 @@ export const getPosts = cache(() => {
     postB.date.localeCompare(postA.date)
   );
 });
+
+export const getPostsByTags = cache((tags: string[]) => {
+  return getPosts().filter((post) =>
+    tags.some((tag) => post.tags.includes(tag))
+  );
+});
+
+export const findPost = (slug: string) => {
+  return posts.find((post) => post.slug === slug);
+};
+
+export const getAllTags = cache(() => {
+  const posts = getPosts();
+  const tags = posts.reduce((acc, post) => {
+    post.tags.forEach((tag) => {
+      acc.add(tag);
+    });
+    return acc;
+  }, new Set<string>());
+  return Array.from(tags);
+});

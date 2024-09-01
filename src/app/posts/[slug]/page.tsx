@@ -8,13 +8,12 @@ import "./page.scss";
 
 import { PostDescription } from "@/components/post/post-description";
 import { Badge } from "@/components/ui/badge";
+import { findPost } from "@/lib/content/posts";
 import { Post, posts } from "#content";
 import htmr from "htmr";
 import { ClockIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 import { notFound } from "next/navigation";
-
-import { PostToc } from "./toc";
 
 export default async function PostPage({
   params,
@@ -27,12 +26,11 @@ export default async function PostPage({
   }
 
   return (
-    <main>
+    <main className="overflow-x-hidden">
       <ArticleProse>
         <article className="post">
           <PostBanner post={post} />
           <Separator className="full-width" />
-          <PostToc headings={post.headings} />
           {htmr(post.content, {
             // @ts-ignore
             transform: MarkdownSharedComponents,
@@ -91,7 +89,4 @@ const PostBanner = ({ post }: { post: Post }) => {
       </div>
     </header>
   );
-};
-const findPost = (slug: string) => {
-  return posts.find((post) => post.slug === slug);
 };

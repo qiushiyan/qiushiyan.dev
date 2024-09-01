@@ -1,78 +1,70 @@
-import Slugger from "github-slugger";
-import { Element, Nodes } from "hast";
-import { toString } from "hast-util-to-string";
+import rehypeRaw from "rehype-raw";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
 
-interface ExtractedHeading {
+const processor = unified().use([
+  remarkParse,
+  remarkRehype,
+  rehypeRaw,
+  rehypeStringify,
+]);
+
+interface TocEntry {
   depth: 2 | 3;
   slug: string;
   html: string;
 }
+export function extractToc(content: Uint8Array): TocEntry[] {
+  const decoder = new TextDecoder();
 
-function getHeadingsFromHast(tree: Nodes): ExtractedHeading[] {
-  const slugger = new Slugger();
-  const headings: ExtractedHeading[] = [];
-
-  function visitor(node: Element) {
+  // Define BEGIN_TOC and END_TOC as Uint8Arrays
+  const beginToc = new Uint8Array([66, 69, 71, 73, 78, 95, 84, 79, 67]); // 'BEGIN_TOC'
+  const endToc = new Uint8Array([69, 78, 68, 95, 84, 79, 67]); // 'END_TOC'
+  let start = -1;
+  let end = -1;
+  // Search for BEGIN_TOC
+  for (let i = 0; i < content.length - beginToc.length; i++) {
     if (
-      node.type === "element" &&
-      (node.tagName === "h2" || node.tagName === "h3")
+      content[i] === beginToc[0] &&
+      content
+        .subarray(i, i + beginToc.length)
+        .every((value, index) => value === beginToc[index])
     ) {
-      const depth = parseInt(node.tagName.charAt(1)) as 2 | 3;
-      const text = toString(node);
-      const slug = slugger.slug(text);
-
-      // Convert the heading element to an HTML string suitable for use inside an <a> tag
-      const html = headingToInnerHtml(node);
-
-      headings.push({ depth, slug, html });
-    }
-
-    if (node.children) {
-      node.children.forEach((child) => {
-        if (child.type === "element") visitor(child);
-      });
+      start = i + beginToc.length;
+      break;
     }
   }
 
-  if (tree.type === "root") {
-    tree.children.forEach((node) => {
-      if (node.type === "element") visitor(node);
-    });
+  if (start === -1) return [];
+
+  // Search for END_TOC
+  for (let i = start; i < content.length - endToc.length; i++) {
+    if (
+      content[i] === endToc[0] &&
+      content
+        .subarray(i, i + endToc.length)
+        .every((value, index) => value === endToc[index])
+    ) {
+      end = i;
+      break;
+    }
   }
 
-  return headings;
-}
+  if (end === -1) return [];
 
-// Helper function to convert a heading element to inner HTML suitable for use inside an <a> tag
-function headingToInnerHtml(node: Element): string {
-  return node.children
-    .map((child) => {
-      if (child.type === "text") {
-        return escapeHtml(child.value);
-      }
-      if (child.type === "element") {
-        // For nested elements, we'll convert them to spans to avoid nesting interactive elements
-        const tag = child.tagName === "a" ? "span" : child.tagName;
-        const attributes = Object.entries(child.properties || {})
-          .filter(([key]) => key !== "href") // Remove href attribute
-          .map(([key, value]) => `${key}="${escapeHtml(String(value))}"`)
-          .join(" ");
-        const innerHtml = headingToInnerHtml(child);
-        return `<${tag}${attributes ? " " + attributes : ""}>${innerHtml}</${tag}>`;
-      }
-      return "";
-    })
-    .join("");
-}
+  // Extract and process TOC content
+  const tocContent = decoder.decode(content.subarray(start, end)).trim();
+  const lines = tocContent.split("\n");
 
-// Helper function to escape HTML special characters
-function escapeHtml(unsafe: string): string {
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return lines.map((line) => {
+    const [, indent, title, slug, depth] =
+      line.match(/^(\s*)- (.+?)\|(.+?)\|(\d+)$/) || [];
+    return {
+      html: processor.processSync(title).value as string,
+      slug,
+      depth: parseInt(depth, 10) as 2 | 3,
+    };
+  });
 }
-
-export { getHeadingsFromHast };

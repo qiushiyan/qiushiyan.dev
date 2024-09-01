@@ -3,6 +3,8 @@ title: A Taste of dplyr 1.0.0
 date: '2020-06-02'
 description:
     A quick summary of some exciting features coming in dplyr 1.0, e.g. `across()`, row-wise operations and context-dependent expressions
+tags:
+    - R
 ---
 
 <my-callout>

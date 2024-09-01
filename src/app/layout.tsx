@@ -11,7 +11,6 @@ import {
 import "@/styles/globals.css";
 
 import { RootProvider } from "@/components/providers/root-provider";
-import { SiteHeader } from "@/components/site-header";
 import { cn } from "@/lib/utils";
 
 const fontSans = FontSans({
@@ -51,10 +50,7 @@ export default function RootLayout({
             fontMono.variable
           )}
         >
-          <RootProvider>
-            <SiteHeader />
-            {children}
-          </RootProvider>
+          <RootProvider>{children}</RootProvider>
         </body>
       </html>
     </ViewTransitions>

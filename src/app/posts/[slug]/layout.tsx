@@ -1,4 +1,12 @@
+import { SiteHeader } from "@/components/site-header";
+import {
+  SIDEBAR_STATE_COOKIE,
+  SidebarLayout,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { posts } from "#content";
+
+import { PostSidebar } from "./post-sidebar";
 
 export const runtime = "edge";
 
@@ -28,6 +36,28 @@ export const generateMetadata = ({ params }: { params: { slug: string } }) => {
   };
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { cookies } = await import("next/headers");
+  return (
+    <>
+      <SidebarLayout
+        defaultOpen={cookies().get("sidebar:state")?.value === "true"}
+        className="flex-col"
+      >
+        <SiteHeader
+          renderRight={() => (
+            <>
+              <SidebarTrigger />
+            </>
+          )}
+        />
+        <PostSidebar />
+        {children}
+      </SidebarLayout>
+    </>
+  );
 }

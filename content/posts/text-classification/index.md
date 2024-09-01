@@ -4,8 +4,21 @@ date: '2020-05-02'
 description: >
   Train a classification model with tidymodels to distinguish Charlotte Brontë
   from Emily Brontë.
+tags:
+  - R
+  - Machine Learning
 ---
 
+
+<!--
+BEGIN_TOC
+- Comparing word frequency|comparing-word-frequency|2
+- Modeling|modeling|2
+  - Data preprocessing|data-preprocessing|3
+  - Train a penalized logistic regression model|train-a-penalized-logistic-regression-model|3
+  - Tuning lambda|tuning-lambda|3
+END_TOC
+-->
 
 This article demonstrates a modeling example using the
 [`tidymodels`](https://www.tidymodels.org/) framework for text
@@ -17,7 +30,6 @@ line being written by one sister instead of another.
 
 ``` r
 library(dplyr)
-
 # !collapse(1:8)
 #> 
 #> Attaching package: 'dplyr'
@@ -97,7 +109,7 @@ tidy_books <- clean_books %>%
 #> Joining with `by = join_by(author)`
 ```
 
-## Comparing word frequency
+## Comparing word frequency {#comparing-word-frequency}
 
 Before building an actual predictive model, let’s do some EDA to see
 different tendency to use a particular word! This will also shed light
@@ -149,9 +161,9 @@ Brontë (upper left corner). Charlotte, on the other hand, has few
 representative words (bottom right corner). We will investigate this
 further in the model.
 
-## Modeling
+## Modeling {#modeling}
 
-### Data preprocessing
+### Data preprocessing {#data-preprocessing}
 
 There are 430 and features (words) and 32029 observations in total.
 Approximately 18% of the response are 1 (Emily Brontë).
@@ -173,7 +185,6 @@ column word count.
 
 ``` r
 library(tidymodels)
-
 # !collapse(1:15) collapsed
 #> ── Attaching packages ────────────────────────────────────── tidymodels 1.1.0 ──
 #> ✔ broom        1.0.5     ✔ rsample      1.2.1
@@ -189,7 +200,7 @@ library(tidymodels)
 #> ✖ recipes::fixed() masks stringr::fixed()
 #> ✖ dplyr::lag()     masks stats::lag()
 #> ✖ recipes::step()  masks stats::step()
-#> • Learn how to get started at https://www.tidymodels.org/start/
+#> • Use tidymodels_prefer() to resolve common conflicts.
 set.seed(2020)
 doParallel::registerDoParallel()
 
@@ -226,7 +237,7 @@ model_df
 #> #   times <int>, guess <int>, wind <int>, house <int>, set <int>, …
 ```
 
-### Train a penalized logistic regression model
+### Train a penalized logistic regression model {#train-a-penalized-logistic-regression-model}
 
 Split the data into training set and testing set.
 
@@ -331,7 +342,7 @@ result since “Charlotte Brontë” accounts for 81% of `author`, making our
 model only slightly better than a classifier that would assign all
 `author` with “Charlotte Brontë” anyway.
 
-### Tuning lambda
+### Tuning lambda {#tuning-lambda}
 
 We can figure out an appropriate penalty using resampling and tune the
 model.

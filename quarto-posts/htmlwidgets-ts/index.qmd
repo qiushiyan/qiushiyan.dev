@@ -3,6 +3,9 @@ title: Developing htmlwidgets in R with TypeScript and esbuild
 date: '2022-01-29'
 description: |
     Frontend tools that add type safety and speed to htmlwidgets development.
+tags:
+    - R
+    - TypeScript
 ---
 
 

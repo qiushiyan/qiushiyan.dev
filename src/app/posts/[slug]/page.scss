@@ -26,14 +26,6 @@
     grid-column: 2;
   }
 
-  .toc {
-    position: sticky;
-    top: 5rem;
-    grid-column: 1 / span 1;
-    padding: 1rem;
-    max-height: calc(100vh - 5rem);
-  }
-
   .two-column {
     @apply grid grid-cols-1 lg:grid-cols-2 lg:gap-8;
   }
@@ -62,7 +54,7 @@
     }
   }
   .column-body-outset {
-    @apply wider w-full !important;
+    @apply wider;
   }
 
   [data-inline-code] {

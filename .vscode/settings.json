@@ -25,5 +25,8 @@
   },
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[lua]": {
+    "editor.defaultFormatter": "sumneko.lua"
   }
 }

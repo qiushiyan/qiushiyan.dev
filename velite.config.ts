@@ -1,11 +1,11 @@
 import { timestamp } from "@/lib/content/schema";
 import { slug } from "github-slugger";
-import rehypeSlug from "rehype-slug";
 import remarkDirective from "remark-directive";
+import remarkHeadingAttrs from "remark-heading-attrs";
 import remarkUnwrapImages from "remark-unwrap-images";
 import { defineCollection, defineConfig, s } from "velite";
 
-import { getHeadingsFromHast } from "./headings";
+import { extractToc } from "./headings";
 import {
   rehypeCode,
   rehypeCodeInline,
@@ -34,11 +34,13 @@ const about = defineCollection({
 const posts = defineCollection({
   name: "Post",
   pattern: "./posts/**/*.md",
+
   schema: s
     .object({
       title: s.string(),
       date: s.isodate(),
       slug: s.string().optional(),
+      tags: s.array(s.string()).optional().default(["other"]),
       description: s.markdown({
         rehypePlugins: [rehypeCodeInline],
       }),
@@ -51,14 +53,14 @@ const posts = defineCollection({
           remarkUseDirective,
           remarkUnwrapImages,
         ],
-        rehypePlugins: [rehypeSlug, rehypeCode, rehypeUnwrapImages],
+        rehypePlugins: [rehypeCode, rehypeUnwrapImages],
       }),
     })
     .transform((data, { meta }) => {
       return {
         ...data,
         slug: data.slug || slug(data.title),
-        headings: meta.hast ? getHeadingsFromHast(meta.hast) : [],
+        headings: extractToc(meta.value as Uint8Array),
       };
     }),
 });
@@ -71,6 +73,6 @@ export default defineConfig({
     about,
   },
   markdown: {
-    remarkPlugins: [],
+    remarkPlugins: [remarkHeadingAttrs],
   },
 });
