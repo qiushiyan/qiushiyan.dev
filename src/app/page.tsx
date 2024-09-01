@@ -10,9 +10,10 @@ import { BasicProse } from "@/components/prose-wrapper";
 import { SiteHeader } from "@/components/site-header";
 import { getAllTags } from "@/lib/content/posts";
 import { home } from "#content";
-import Link from "next/link";
 
 import { FeaturedProjects } from "../components/projects/featured-projects";
+
+export const runtime = "edge";
 
 export default function Home({
   searchParams,
