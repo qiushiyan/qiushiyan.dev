@@ -24,9 +24,9 @@ export const getAllTags = cache(() => {
   const posts = getPosts();
   const tags = posts.reduce((acc, post) => {
     post.tags.forEach((tag) => {
-      acc.add(tag);
+      acc.set(tag, true);
     });
     return acc;
-  }, new Set<string>());
-  return Array.from(tags);
+  }, new Map<string, boolean>());
+  return Array.from(tags.keys());
 });
