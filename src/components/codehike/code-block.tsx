@@ -19,7 +19,7 @@ type CodeBlockProps = {
 export const CodeBlock = async ({ value, lang, meta }: CodeBlockProps) => {
   const highlighted = await highlight(
     { value, lang: lang ?? "", meta: "" },
-    "one-dark-pro"
+    "github-from-css"
   );
   const noteAnnotations = highlighted.annotations.filter(
     ({ name }) => name === "ref"
@@ -48,6 +48,7 @@ export const CodeBlock = async ({ value, lang, meta }: CodeBlockProps) => {
         <Pre
           code={highlighted}
           handlers={CodeHikeHandlers}
+          style={highlighted.style}
           className={cn("my-0 border p-2", hasFilename && "rounded-t-none")}
         />
       </div>

@@ -9,6 +9,7 @@ import {
 } from "next/font/google";
 
 import "@/styles/globals.css";
+import "@/styles/highlight.css";
 
 import { RootProvider } from "@/components/providers/root-provider";
 import { cn } from "@/lib/utils";
