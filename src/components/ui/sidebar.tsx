@@ -120,7 +120,7 @@ const Sidebar = ({ children, className }: React.ComponentProps<"div">) => {
 
 const SidebarInner = ({ children }: { children: React.ReactNode }) => {
   const { onOpenChange } = useSidebar();
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = React.useRef<React.ElementRef<"div">>(null);
 
   useOnClickOutside(ref, () => {
     if (

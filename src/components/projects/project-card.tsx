@@ -46,8 +46,8 @@ export const ProjectCard = ({ data, className, ...rest }: ProjectCardProps) => {
             </p>
           </div>
           <div className="flex gap-2">
-            {data.icons.map((icon) => (
-              <>{icon}</>
+            {data.icons.map((icon, index) => (
+              <span key={index}>{icon}</span>
             ))}
           </div>
         </footer>

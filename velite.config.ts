@@ -1,17 +1,37 @@
 import { timestamp } from "@/lib/content/schema";
+import { routes } from "@/lib/navigation";
 import { slug } from "github-slugger";
+import rehypeRaw from "rehype-raw";
+import rehypeStringify from "rehype-stringify";
 import remarkDirective from "remark-directive";
 import remarkHeadingAttrs from "remark-heading-attrs";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
 import remarkUnwrapImages from "remark-unwrap-images";
+import { unified } from "unified";
 import { defineCollection, defineConfig, s } from "velite";
 
-import { extractToc } from "./headings";
 import {
   rehypeCode,
   rehypeCodeInline,
   rehypeUnwrapImages,
   remarkUseDirective,
 } from "./src/lib/content/plugins";
+
+const htmlProcessor = unified().use([
+  remarkParse,
+  remarkRehype,
+  rehypeRaw,
+  rehypeStringify,
+]);
+
+const descriptionProcessor = unified().use([
+  remarkParse,
+  remarkRehype,
+  rehypeRaw,
+  rehypeCodeInline,
+  rehypeStringify,
+]);
 
 const home = defineCollection({
   name: "home",
@@ -41,12 +61,26 @@ const posts = defineCollection({
       date: s.isodate(),
       slug: s.string().optional(),
       tags: s.array(s.string()).optional().default(["other"]),
-      description: s.markdown({
-        rehypePlugins: [rehypeCodeInline],
-      }),
+      description: s.string(),
       metadata: s.metadata(),
       lastModified: timestamp(),
       draft: s.boolean().optional().default(false),
+      headings: s
+        .array(
+          s.object({
+            title: s.string(),
+            slug: s.string(),
+            depth: s.number(),
+          })
+        )
+        .transform((headings) =>
+          headings.map((heading) => ({
+            html: htmlProcessor.processSync(heading.title).toString(),
+            slug: heading.slug,
+            depth: heading.depth,
+          }))
+        ),
+      raw: s.raw(),
       content: s.markdown({
         remarkPlugins: [
           remarkDirective,
@@ -57,10 +91,14 @@ const posts = defineCollection({
       }),
     })
     .transform((data, { meta }) => {
+      const postSlug = data.slug || slug(data.title);
       return {
         ...data,
-        slug: data.slug || slug(data.title),
-        headings: extractToc(meta.value as Uint8Array),
+        descriptionHtml: descriptionProcessor
+          .processSync(data.description)
+          .toString(),
+        slug: postSlug,
+        href: routes.post(postSlug),
       };
     }),
 });

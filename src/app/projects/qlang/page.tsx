@@ -1,6 +1,7 @@
 import { tokenTransitions } from "@/components/codehike/token-transitions";
 import { ArticleProse } from "@/components/prose-wrapper";
 import { buttonVariants } from "@/components/ui/button";
+import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { Block, CodeBlock, parseRoot } from "codehike/blocks";
 import { highlight, Pre, RawCode } from "codehike/code";
@@ -25,7 +26,7 @@ export default function Page() {
             {intro.title}
           </h1>
           <div className="flex items-center gap-6">
-            <Link href={"/"}>Home</Link>
+            <Link href={routes.home}>Home</Link>
             <Link
               href={"#demo"}
               className={cn(

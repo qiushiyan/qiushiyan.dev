@@ -1,24 +1,28 @@
 ---
 title: Text classification with penalized logistic regression
 date: '2020-05-02'
-description: >
-  Train a classification model with tidymodels to distinguish Charlotte Brontë
-  from Emily Brontë.
+description: "Train a classification model with tidymodels to distinguish Charlotte\
+  \ Bront\xEB from Emily Bront\xEB.\n"
 tags:
-  - R
-  - Machine Learning
+- R
+- Machine Learning
+headings:
+- title: Comparing word frequency
+  slug: comparing-word-frequency
+  depth: 2
+- title: Modeling
+  slug: modeling
+  depth: 2
+- title: Data preprocessing
+  slug: data-preprocessing
+  depth: 3
+- title: Train a penalized logistic regression model
+  slug: train-a-penalized-logistic-regression-model
+  depth: 3
+- title: Tuning lambda
+  slug: tuning-lambda
+  depth: 3
 ---
-
-
-<!--
-BEGIN_TOC
-- Comparing word frequency|comparing-word-frequency|2
-- Modeling|modeling|2
-  - Data preprocessing|data-preprocessing|3
-  - Train a penalized logistic regression model|train-a-penalized-logistic-regression-model|3
-  - Tuning lambda|tuning-lambda|3
-END_TOC
--->
 
 This article demonstrates a modeling example using the
 [`tidymodels`](https://www.tidymodels.org/) framework for text

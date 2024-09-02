@@ -5,17 +5,18 @@ date: '2023-01-22'
 description: |
   Automate report generation in Quarto with parameterized documents.
 tags:
-  - Quarto
+- Quarto
+headings:
+- title: Using the `knitr` engine
+  slug: using-the-knitr-engine
+  depth: 2
+- title: A note on `knitr::knit_expand`
+  slug: a-note-on-knitrknitexpand
+  depth: 2
+- title: Without `knitr`
+  slug: without-knitr
+  depth: 2
 ---
-
-
-<!--
-BEGIN_TOC
-- Using the `knitr` engine|using-the-knitr-engine|2
-- A note on `knitr::knit_expand`|a-note-on-knitrknitexpand|2
-- Without `knitr`|without-knitr|2
-END_TOC
--->
 
 A common scenario in my day-to-day data analysis is that I have many
 objects that are typically data frames, and for each of them I want to

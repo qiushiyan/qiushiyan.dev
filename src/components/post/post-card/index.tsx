@@ -14,7 +14,7 @@ import { PostDescription } from "../post-description";
 
 export const PostCard = ({ post }: { post: Post }) => {
   return (
-    <Link href={`/posts/${post.slug}`} className="hover:!no-underline">
+    <Link href={post.href} className="hover:!no-underline">
       <Card className="flex h-fit flex-col gap-2 overflow-hidden rounded-md shadow-sm transition-all hover:bg-accent hover:text-accent-foreground">
         <CardHeader className="flex items-center justify-between">
           <h2
@@ -31,7 +31,7 @@ export const PostCard = ({ post }: { post: Post }) => {
         <CardContent>
           <PostDescription
             className="line-clamp-3 text-pretty text-sm text-muted-foreground"
-            description={post.description}
+            description={post.descriptionHtml}
           />
         </CardContent>
 

@@ -4,17 +4,16 @@ date: '2022-01-29'
 description: |
   Frontend tools that add type safety and speed to htmlwidgets development.
 tags:
-  - R
-  - TypeScript
+- R
+- TypeScript
+headings:
+- title: The `packer` package
+  slug: the-packer-package
+  depth: 2
+- title: Using TypeScript and esbuild
+  slug: using-typescript-and-esbuild
+  depth: 2
 ---
-
-
-<!--
-BEGIN_TOC
-- The `packer` package|the-packer-package|2
-- Using TypeScript and esbuild|using-typescript-and-esbuild|2
-END_TOC
--->
 
 <my-callout>
 

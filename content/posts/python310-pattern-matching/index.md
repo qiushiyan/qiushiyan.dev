@@ -2,24 +2,27 @@
 title: Structural pattern matching in Python 3.10
 slug: python310-pattern-matching
 date: '2022-02-20'
-description: >
-  The  _py`match case`_  statement for pattern matching is an exciting new
-  feature added in Python 3.10. This article reviews the syntax and shows some
-  practical examples.
+description: |
+  The  _py`match case`_  statement for pattern matching is an exciting new feature added in Python 3.10. This article reviews the syntax and shows some practical examples.
 tags:
-  - Python
+- Python
+headings:
+- title: Introduction
+  slug: introduction
+  depth: 2
+- title: Pattern matching as a replacement for switch statements
+  slug: pattern-matching-as-a-replacement-for-switch-statements
+  depth: 2
+- title: Match dictionaries and lists
+  slug: match-dictionaries-and-lists
+  depth: 2
+- title: Add conditions
+  slug: add-conditions
+  depth: 2
+- title: Matching constants
+  slug: matching-constants
+  depth: 2
 ---
-
-
-<!--
-BEGIN_TOC
-- Introduction|introduction|2
-- Pattern matching as a replacement for switch statements|pattern-matching-as-a-replacement-for-switch-statements|2
-- Match dictionaries and lists|match-dictionaries-and-lists|2
-- Add conditions|add-conditions|2
-- Matching constants|matching-constants|2
-END_TOC
--->
 
 ## Introduction {#introduction}
 

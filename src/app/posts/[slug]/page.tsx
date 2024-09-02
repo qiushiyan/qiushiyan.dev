@@ -9,6 +9,7 @@ import "./page.scss";
 import { PostDescription } from "@/components/post/post-description";
 import { Badge } from "@/components/ui/badge";
 import { findPost } from "@/lib/content/posts";
+import { routes } from "@/lib/navigation";
 import { Post, posts } from "#content";
 import htmr from "htmr";
 import { ClockIcon } from "lucide-react";
@@ -79,13 +80,13 @@ const PostBanner = ({ post }: { post: Post }) => {
       </div>
       <PostDescription
         className="mb-4 text-sm lg:text-base"
-        description={post.description}
+        description={post.descriptionHtml}
       />
 
       <div className="flex items-center gap-4">
-        <Link href={"/"}>Home</Link>
+        <Link href={routes.home}>Home</Link>
         <span className="text-xl">&gt;</span>
-        <Link href={"/posts"}>Posts</Link>
+        <Link href={routes.posts}>Posts</Link>
       </div>
     </header>
   );

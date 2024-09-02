@@ -1,20 +1,6 @@
-import { createNavigationConfig } from "next-safe-navigation";
-import { z } from "zod";
-
-export const { routes, useSafeParams, useSafeSearchParams } =
-  createNavigationConfig((defineRoute) => ({
-    home: defineRoute("/"),
-    about: defineRoute("/about"),
-    projects: defineRoute("/projects"),
-    project: defineRoute("/projects/[slug]", {
-      params: z.object({
-        slug: z.string(),
-      }),
-    }),
-    posts: defineRoute("/posts"),
-    post: defineRoute("/posts/[slug]", {
-      params: z.object({
-        slug: z.string(),
-      }),
-    }),
-  }));
+export const routes = {
+  home: "/",
+  posts: "/posts",
+  about: "/about",
+  post: (slug: string) => `/posts/${slug}`,
+};

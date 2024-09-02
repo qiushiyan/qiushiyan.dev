@@ -4,6 +4,7 @@ import {
   SidebarLayout,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { getPosts } from "@/lib/content/posts";
 import { posts } from "#content";
 
 import { PostSidebar } from "./post-sidebar";
@@ -42,6 +43,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const { cookies } = await import("next/headers");
+
   return (
     <>
       <SidebarLayout

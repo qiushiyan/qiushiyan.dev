@@ -34,7 +34,8 @@ const nextConfig = {
     includePaths: ["./src/styles"],
   },
   experimental: {
-    optimizePackageImports: ["@icons-pack/react-simple-icons"],
+    typedRoutes: false,
+    // optimizePackageImports: ["@icons-pack/react-simple-icons"],
   },
 };
 
