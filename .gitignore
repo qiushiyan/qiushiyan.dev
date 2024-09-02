@@ -42,6 +42,6 @@ next-env.d.ts
 # Ignore everything in quarto-posts except .qmd files
 quarto-posts/**/index_cache/
 quarto-posts/**/index_files/
-content/posts/**/index_files/
+content/posts/dynamic-rmd-quarto/index_files/
 _freeze
 .wrangler
