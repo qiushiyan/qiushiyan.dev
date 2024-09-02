@@ -18,9 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { postViewTransitionName } from "@/lib/utils";
 import Fuse, { FuseResultMatch } from "fuse.js";
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -54,32 +52,41 @@ const SearchProvider: React.FC<{
   const [searchQuery, setSearchQuery] = useState("");
   const [results, _setResults] = useState<SearchResult[]>([]);
   const [pending, startTransition] = useTransition();
-  const fuse = useRef(
-    new Fuse(data, {
-      keys: [
-        { name: "title", weight: 1 },
-        { name: "description", weight: 1 },
-        { name: "raw", weight: 0.75 },
-      ],
-      includeMatches: true,
-      shouldSort: true,
-      minMatchCharLength: 3,
-      threshold: 0.5,
-    })
-  );
+  const fuse = useRef<Fuse<SearchData>>();
 
-  const search = useCallback((query: string) => {
-    setSearchQuery(query);
-    setResults(
-      fuse.current?.search(query).map((result) => {
-        return {
-          title: result.item.title,
-          matches: result.matches,
-          href: result.item.href,
-        };
-      }) as SearchResult[]
-    );
-  }, []);
+  const search = useCallback(
+    async (query: string) => {
+      const domPurity = (await import("dompurify")).default;
+      if (!fuse.current) {
+        const Fuse = (await import("fuse.js")).default;
+        fuse.current = new Fuse(data, {
+          keys: [
+            { name: "title", weight: 1 },
+            { name: "description", weight: 1 },
+            { name: "raw", weight: 0.75 },
+          ],
+          includeMatches: true,
+          shouldSort: true,
+          minMatchCharLength: 3,
+          threshold: 0.5,
+        });
+      }
+
+      const sanitizedQuery = domPurity.sanitize(query);
+
+      setSearchQuery(sanitizedQuery);
+      setResults(
+        fuse.current?.search(sanitizedQuery).map((result) => {
+          return {
+            title: result.item.title,
+            matches: result.matches,
+            href: result.item.href,
+          };
+        }) as SearchResult[]
+      );
+    },
+    [data]
+  );
 
   const setResults = (results: SearchResult[]) => {
     startTransition(() => {
@@ -165,7 +172,7 @@ const SearchResults: React.FC = () => {
           <Link
             href={result.href}
             key={result.title}
-            className="rounded-md p-2.5 outline-none ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:ring-2"
+            className="rounded-md p-2.5 !text-foreground outline-none ring-ring hover:bg-accent hover:text-accent-foreground hover:!no-underline focus-visible:ring-2"
           >
             <div className="text-base font-medium">
               {titleMatches ? (
