@@ -1,10 +1,6 @@
 import { cache } from "react";
 
 import { getRequestContext } from "@cloudflare/next-on-pages";
-import { eq, sql } from "drizzle-orm";
-
-import { db } from "../db";
-import { postViews } from "../db/schema";
 
 export const incrementView = cache(async (slug: string) => {
   const { env } = getRequestContext();
@@ -35,7 +31,7 @@ export const getViews = cache(async (slug: string) => {
     .bind(slug)
     .first();
 
-  const viewCount = result?.view_count ?? 0;
+  const viewCount = (result?.view_count as number) ?? 0;
 
   return viewCount;
   //   const views = await db
