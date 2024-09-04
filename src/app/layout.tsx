@@ -13,6 +13,7 @@ import "@/styles/highlight.css";
 
 import { RootProvider } from "@/components/providers/root-provider";
 import { cn } from "@/lib/utils";
+import Script from "next/script";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -52,8 +53,19 @@ export default function RootLayout({
           )}
         >
           <RootProvider>{children}</RootProvider>
+          <CloudflareAnalytics />
         </body>
       </html>
     </ViewTransitions>
   );
 }
+
+const CloudflareAnalytics = () => {
+  return (
+    <Script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "b70e590536f848e2a79e74d52ca664c1"}'
+    ></Script>
+  );
+};
