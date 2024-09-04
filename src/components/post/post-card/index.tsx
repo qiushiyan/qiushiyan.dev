@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import {
   Card,
   CardContent,
@@ -11,6 +13,7 @@ import { Link } from "next-view-transitions";
 
 import { Badge } from "../../ui/badge";
 import { PostDescription } from "../post-description";
+import { PostViews } from "../post-views";
 
 export const PostCard = ({ post }: { post: Post }) => {
   return (
@@ -36,6 +39,9 @@ export const PostCard = ({ post }: { post: Post }) => {
         </CardContent>
 
         <CardFooter className="items-center justify-between gap-2">
+          <Suspense fallback={<PostViews.Skeleton />}>
+            <PostViews slug={post.slug} />
+          </Suspense>
           <div className="flex items-center gap-2">
             <CalendarIcon className="h-4 w-4" />
             <time

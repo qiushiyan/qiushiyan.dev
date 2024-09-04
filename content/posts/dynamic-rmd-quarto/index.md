@@ -205,10 +205,9 @@ frames, generate a child document for each using the template document,
 and inserts the result back to the main document. The result is shown
 below:
 
-<div class="column-body-outset"
-style="border: 3px solid #627891; padding: 20px; height: 900px">
+<div class="column-body-outset">
 
-<iframe src="https://bookdown.org/qiushi/dynamic_contents_in_r_markdown_with_knit_child/" frameBorder="0" style="width:100%;height:100%">
+<iframe src="https://bookdown.org/qiushi/dynamic_contents_in_r_markdown_with_knit_child/">
 </iframe>
 
 </div>

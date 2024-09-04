@@ -6,7 +6,11 @@ import { cn, postViewTransitionName } from "@/lib/utils";
 
 import "./page.scss";
 
+import { Suspense } from "react";
+
+import { incrementView } from "@/actions/views";
 import { PostDescription } from "@/components/post/post-description";
+import { PostViews } from "@/components/post/post-views";
 import { Badge } from "@/components/ui/badge";
 import { findPost } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
@@ -25,6 +29,8 @@ export default async function PostPage({
   if (!post) {
     return notFound();
   }
+
+  incrementView(post.slug);
 
   return (
     <main className="overflow-x-hidden">
@@ -78,10 +84,20 @@ const PostBanner = ({ post }: { post: Post }) => {
           <p>{post.metadata.readingTime} min read</p>
         </div>
       </div>
-      <PostDescription
-        className="mb-4 text-sm lg:text-base"
-        description={post.descriptionHtml}
-      />
+
+      <div className="flex flex-nowrap gap-6">
+        <PostDescription
+          className="mb-4 flex-grow text-sm lg:text-base"
+          description={post.descriptionHtml}
+        />
+
+        <Suspense fallback={<PostViews.Skeleton />}>
+          <PostViews
+            className="my-0 flex-shrink-0 whitespace-nowrap text-sm lg:text-base"
+            slug={post.slug}
+          />
+        </Suspense>
+      </div>
 
       <div className="flex items-center gap-4">
         <Link href={routes.home}>Home</Link>

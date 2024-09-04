@@ -7,7 +7,6 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { PanelLeft } from "lucide-react";
-import { useOnClickOutside } from "usehooks-ts";
 
 /**
  * cookie name for sidebar state
@@ -119,21 +118,8 @@ const Sidebar = ({ children, className }: React.ComponentProps<"div">) => {
 };
 
 const SidebarInner = ({ children }: { children: React.ReactNode }) => {
-  const { onOpenChange } = useSidebar();
-  const ref = React.useRef<React.ElementRef<"div">>(null);
-
-  useOnClickOutside(ref, () => {
-    if (
-      document
-        .getElementById("sidebar-trigger")
-        ?.contains(document.activeElement)
-    )
-      return;
-    onOpenChange(false);
-  });
-
   return (
-    <div className={"flex h-full flex-col border-r bg-background"} ref={ref}>
+    <div className="flex h-full flex-col border-r bg-background">
       {children}
     </div>
   );

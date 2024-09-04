@@ -14,7 +14,12 @@
     "format": "prettier --write .",
     "format:quarto": "Rscript scripts/format_quarto.r",
     "quarto": "quarto render quarto-posts",
-    "clean": "rm -rf .next .velite"
+    "clean": "rm -rf .next .velite",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply personal-website --local",
+    "db:migrate:prod": "wrangler d1 migrations apply personal-website --remote",
+    "db:studio:local": "cross-env DB_LOCAL_PATH=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print -quit) drizzle-kit studio",
+    "db:studio:prod": "drizzle-kit studio"
   },
   "dependencies": {
     "@giscus/react": "^3.0.0",
@@ -36,10 +41,12 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.0",
     "@t3-oss/env-nextjs": "^0.11.1",
+    "better-sqlite3": "^11.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "codehike": "1.0.0-beta.9",
     "dompurify": "^3.1.6",
+    "drizzle-orm": "^0.33.0",
     "framer-motion": "^11.3.30",
     "fuse.js": "^7.0.0",
     "github-slugger": "^2.0.0",
@@ -74,6 +81,7 @@
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.2",
+    "@cloudflare/workers-types": "^4.20240821.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@tailwindcss/typography": "^0.5.15",
     "@total-typescript/ts-reset": "^0.6.0",
@@ -85,6 +93,7 @@
     "@types/node": "^20",
     "@types/react": "^18.3.4",
     "@types/react-dom": "^18.3.0",
+    "drizzle-kit": "^0.24.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
     "eslint-config-prettier": "^9.1.0",

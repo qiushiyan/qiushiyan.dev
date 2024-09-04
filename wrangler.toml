@@ -2,3 +2,17 @@ name = "qiushiyan"
 compatibility_date = "2024-07-29"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "personal-website"
+database_id = "327bba3d-2bc5-434a-86a7-67c78582f0fa"
+preview_database_id = "DB"
+
+
+[env.preview]
+name = "preview"
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "personal-website"
+database_id = "327bba3d-2bc5-434a-86a7-67c78582f0fa"

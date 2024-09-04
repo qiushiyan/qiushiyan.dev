@@ -9,22 +9,7 @@ import {
 import { Sidebar, SidebarContent, SidebarItem } from "@/components/ui/sidebar";
 import { useCurrentPost } from "@/hooks/use-current-post";
 import { cn } from "@/lib/utils";
-import {
-  Atom,
-  ChevronRight,
-  Eclipse,
-  Frame,
-  History,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Rabbit,
-  Send,
-  Settings2,
-  SquareTerminal,
-  Star,
-  TableOfContents,
-} from "lucide-react";
+import { ChevronRight, TableOfContents } from "lucide-react";
 import Link from "next/link";
 
 export function PostSidebar() {

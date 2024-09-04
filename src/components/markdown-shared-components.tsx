@@ -4,9 +4,11 @@ import { Image } from "./codehike/image";
 import { InlineCode } from "./codehike/inline-code";
 import { LanguageSwitcher } from "./codehike/language-switcher";
 import { BlogLink } from "./codehike/link";
+import { MyIframe } from "./iframe";
 
 export const MarkdownSharedComponents = {
   "my-callout": Callout,
+  iframe: MyIframe,
   img: (props: ImageProps) => {
     return (
       <Image
