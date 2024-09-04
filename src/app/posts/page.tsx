@@ -9,6 +9,8 @@ import "@/lib/content/posts";
 import { SiteHeader } from "@/components/site-header";
 import { getPosts } from "@/lib/content/posts";
 
+export const runtime = "edge";
+
 export default function Page() {
   return (
     <>
