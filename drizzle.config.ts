@@ -23,6 +23,9 @@ export default env.DB_LOCAL_PATH
       dbCredentials: {
         accountId: env.CF_ACCOUNT_ID!,
         token: env.CF_USER_API_TOKEN!,
-        databaseId: env.DB_PROD_DATABASE_ID!,
+        databaseId:
+          env.NODE_ENV === "preview"
+            ? env.DB_PREVIEW_DATABASE_ID!
+            : env.DB_PROD_DATABASE_ID!,
       },
     });

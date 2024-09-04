@@ -13,6 +13,10 @@ export const env = createEnv({
     CF_ACCOUNT_ID: z.string().optional(),
     CF_USER_API_TOKEN: z.string().optional(),
     DB_PROD_DATABASE_ID: z.string().optional(),
+    DB_PREVIEW_DATABASE_ID: z.string().optional(),
+    NODE_ENV: z
+      .enum(["development", "preview", "production"])
+      .default("development"),
   },
   /*
    * Environment variables available on the client (and server).
@@ -33,6 +37,8 @@ export const env = createEnv({
     DB_PROD_DATABASE_ID: process.env.DB_PROD_DATABASE_ID,
     CF_ACCOUNT_ID: process.env.CF_ACCOUNT_ID,
     CF_USER_API_TOKEN: process.env.CF_USER_API_TOKEN,
+    DB_PREVIEW_DATABASE_ID: process.env.DB_PREVIEW_DATABASE_ID,
+    NODE_ENV: process.env.NODE_ENV,
   },
   emptyStringAsUndefined: true,
 });
