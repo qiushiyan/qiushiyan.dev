@@ -172,7 +172,7 @@ const SearchResults: React.FC = () => {
           <Link
             href={result.href}
             key={result.title}
-            className="rounded-md p-2.5 !text-foreground outline-none ring-ring hover:bg-accent hover:text-accent-foreground hover:!no-underline focus-visible:ring-2"
+            className="rounded-md p-2.5 outline-none ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:ring-2"
           >
             <div className="text-base font-medium">
               {titleMatches ? (

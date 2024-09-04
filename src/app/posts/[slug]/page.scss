@@ -30,6 +30,31 @@
     @apply grid grid-cols-1 lg:grid-cols-2 lg:gap-8;
   }
 
+  h2::after,
+  h3::after {
+    display: inline-block;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    margin-left: 0.5rem;
+    content: "";
+    color: hsl(var(--primary));
+    font-weight: normal;
+  }
+
+  h2:hover::after,
+  h3:hover::after {
+    opacity: 1;
+  }
+
+  h2::after {
+    opacity: 0;
+    content: "##";
+  }
+  h3::after {
+    opacity: 0;
+    content: "###";
+  }
+
   // quarto classes
   .column-margin {
     grid-column: 3 / 4 !important;

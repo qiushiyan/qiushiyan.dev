@@ -52,7 +52,7 @@ export default async function PostPage({
 
 const PostBanner = ({ post }: { post: Post }) => {
   return (
-    <header className="grid gap-1.5 p-6">
+    <header className="grid gap-1.5 py-6">
       <h1
         className={cn("text-balance text-4xl font-extrabold tracking-wide")}
         style={{
@@ -71,7 +71,7 @@ const PostBanner = ({ post }: { post: Post }) => {
         <div className="flex items-center">
           <CalendarIcon className="mr-2 h-4 w-4" />
           <time dateTime={post.date}>
-            Published on {new Date(post.date).toLocaleDateString()}
+            {new Date(post.date).toLocaleDateString()}
           </time>
         </div>
         <div className="flex items-center">
