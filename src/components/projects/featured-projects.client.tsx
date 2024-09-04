@@ -23,7 +23,7 @@ export const FeaturedProjectsClient = ({ repos }: { repos: Repos }) => {
   };
 
   return (
-    <div className="my-4 flex items-stretch gap-6 pb-8">
+    <div className="flex items-stretch gap-6 pb-6 pt-3">
       {repos.map((repo, index) => (
         <ProjectCard
           key={repo.name}
@@ -37,7 +37,7 @@ export const FeaturedProjectsClient = ({ repos }: { repos: Repos }) => {
           }}
           style={{
             transform: `translateX(${calculateTranslate(index)}px) scale(${
-              hoveredIndex === index ? 1.2 : 1
+              hoveredIndex === index ? 1.1 : 1
             })`,
             zIndex: hoveredIndex === index ? 10 : 1,
           }}

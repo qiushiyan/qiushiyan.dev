@@ -40,7 +40,7 @@ export default function Home({
         )}
       >
         <section className="space-y-4">
-          <h2 className="text-4xl font-bold underline underline-offset-8">
+          <h2 className="text-4xl font-bold text-primary underline underline-offset-8">
             Hello, I&apos;m Qiushi Yan
           </h2>
           <BasicProse
@@ -49,7 +49,7 @@ export default function Home({
           ></BasicProse>
         </section>
 
-        <h2 className="text-2xl font-bold">Personal Projects</h2>
+        <Heading className="mb-0">Personal Projects</Heading>
         <section className="full-width">
           <Suspense fallback={<FeaturedProjects.Skeleton />}>
             <FeaturedProjects />

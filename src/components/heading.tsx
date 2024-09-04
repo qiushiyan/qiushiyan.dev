@@ -8,7 +8,7 @@ export const Heading = ({
   className?: string;
 }) => {
   return (
-    <h2 className={cn("my-4 text-3xl font-bold text-primary", className)}>
+    <h2 className={cn("my-4 text-3xl font-bold text-primary/80", className)}>
       {children}
     </h2>
   );

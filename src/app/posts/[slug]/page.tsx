@@ -16,7 +16,7 @@ import { findPost } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 import { Post, posts } from "#content";
 import htmr from "htmr";
-import { ClockIcon } from "lucide-react";
+import { CalendarIcon, ClockIcon, EyeIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 import { notFound } from "next/navigation";
 
@@ -37,6 +37,7 @@ export default async function PostPage({
       <ArticleProse>
         <article className="post">
           <PostBanner post={post} />
+
           <Separator className="full-width" />
           {htmr(post.content, {
             // @ts-ignore
@@ -51,58 +52,36 @@ export default async function PostPage({
 
 const PostBanner = ({ post }: { post: Post }) => {
   return (
-    <header className="py-4 lg:py-8">
-      <div className="flex items-center justify-between">
-        <h1
-          className={cn("text-balance text-4xl font-extrabold tracking-wide")}
-          style={{
-            viewTransitionName: postViewTransitionName(post.slug),
-          }}
-          id="post-banner"
-        >
-          {post.title}
-        </h1>
-        {post.draft && <Badge>Draft</Badge>}
-      </div>
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-1 border-l-2 pl-2">
-          <time dateTime={post.date} className="font-semibold">
+    <header className="grid gap-1.5 p-6">
+      <h1
+        className={cn("text-balance text-4xl font-extrabold tracking-wide")}
+        style={{
+          viewTransitionName: postViewTransitionName(post.slug),
+        }}
+        id="post-banner"
+      >
+        {post.title}
+      </h1>
+      {post.draft && <Badge>Draft</Badge>}
+      <PostDescription
+        className="mb-4 flex-grow text-sm lg:text-base"
+        description={post.descriptionHtml}
+      />
+      <div className="flex flex-wrap items-center space-x-6 text-sm text-muted-foreground">
+        <div className="flex items-center">
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          <time dateTime={post.date}>
             Published on {new Date(post.date).toLocaleDateString()}
           </time>
-          {post.lastModified && (
-            <>
-              <span className="text-muted-foreground">&middot;</span>
-              <time dateTime={post.lastModified}>
-                Updated on {new Date(post.lastModified).toLocaleDateString()}
-              </time>
-            </>
-          )}
         </div>
-
-        <div className="flex items-center gap-2">
-          <ClockIcon className="size-4" />
-          <p>{post.metadata.readingTime} min read</p>
+        <div className="flex items-center">
+          <ClockIcon className="mr-2 h-4 w-4" />
+          <span>{post.metadata.readingTime} min read</span>
         </div>
-      </div>
-
-      <div className="flex flex-nowrap gap-6">
-        <PostDescription
-          className="mb-4 flex-grow text-sm lg:text-base"
-          description={post.descriptionHtml}
-        />
-
-        <Suspense fallback={<PostViews.Skeleton />}>
-          <PostViews
-            className="my-0 flex-shrink-0 whitespace-nowrap text-sm lg:text-base"
-            slug={post.slug}
-          />
-        </Suspense>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <Link href={routes.home}>Home</Link>
-        <span className="text-xl">&gt;</span>
-        <Link href={routes.posts}>Posts</Link>
+        <div className="flex items-center">
+          <EyeIcon className="mr-2 h-4 w-4" />
+          <PostViews slug={post.slug} />
+        </div>
       </div>
     </header>
   );

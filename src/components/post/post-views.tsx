@@ -14,9 +14,9 @@ export const PostViews = async ({
 }) => {
   const views = await getViews(slug);
   return (
-    <p className={cn("text-muted-foreground", className)} {...rest}>
+    <span className={cn("text-muted-foreground", className)} {...rest}>
       {views} views
-    </p>
+    </span>
   );
 };
 

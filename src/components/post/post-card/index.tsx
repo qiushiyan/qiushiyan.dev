@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { postViewTransitionName } from "@/lib/utils";
 import { Post } from "#content";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, TagIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 
 import { Badge } from "../../ui/badge";
@@ -18,16 +18,16 @@ import { PostViews } from "../post-views";
 export const PostCard = ({ post }: { post: Post }) => {
   return (
     <Link href={post.href} className="hover:!no-underline">
-      <Card className="flex h-fit flex-col gap-2 overflow-hidden rounded-md shadow-sm transition-all hover:bg-accent hover:text-accent-foreground">
-        <CardHeader className="flex items-center justify-between">
-          <h2
+      <Card className="group flex h-fit flex-col gap-2 overflow-hidden rounded-md bg-white shadow-sm transition-all hover:scale-105 dark:bg-background">
+        <CardHeader className="flex items-center justify-between pb-2 transition-all group-hover:text-primary/80">
+          <h3
             className="text-pretty text-xl font-bold"
             style={{
               viewTransitionName: postViewTransitionName(post.slug),
             }}
           >
             {post.title}
-          </h2>
+          </h3>
           {post.draft && <Badge>Draft</Badge>}
         </CardHeader>
 
@@ -40,26 +40,22 @@ export const PostCard = ({ post }: { post: Post }) => {
 
         <CardFooter className="items-center justify-between gap-2">
           <Suspense fallback={<PostViews.Skeleton />}>
-            <PostViews slug={post.slug} />
+            <PostViews slug={post.slug} className="text-xs lg:text-sm" />
           </Suspense>
           <div className="flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4" />
+            <CalendarIcon className="size-4" />
             <time
               dateTime={post.date}
-              className="text-sm text-muted-foreground"
+              className="text-xs text-muted-foreground"
             >
               {new Date(post.date).toLocaleDateString()}
             </time>
           </div>
-          <div className="flex items-center gap-1">
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"
-              >
-                {tag}
-              </span>
-            ))}
+          <div className="flex items-center gap-0.5">
+            <TagIcon className="size-4" />
+            <span className="px-1.5 py-1 text-xs font-medium">
+              {post.tags.join(", ")}
+            </span>
           </div>
         </CardFooter>
       </Card>

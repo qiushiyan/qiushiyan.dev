@@ -33,7 +33,7 @@ export const SiteHeader = ({
       <div className="container flex h-[var(--nav-height)] items-center space-x-4 sm:justify-between sm:space-x-2">
         <Link
           href={routes.home}
-          className="font-heading text-2xl font-extrabold tracking-wide"
+          className="font-heading text-2xl font-extrabold tracking-wide text-primary hover:underline hover:underline-offset-8"
         >
           qiushiyan.dev
         </Link>
@@ -44,7 +44,7 @@ export const SiteHeader = ({
           <Link
             href={routes.about}
             style={{ viewTransitionName: "about" }}
-            className="hidden font-heading text-lg !text-foreground"
+            className="hidden font-heading text-lg text-primary/80 hover:underline hover:underline-offset-8"
           >
             About
           </Link>

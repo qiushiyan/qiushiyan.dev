@@ -105,10 +105,6 @@
     @apply text-primary transition-all duration-150 hover:text-primary/80 hover:underline hover:underline-offset-4;
   }
 
-  a {
-    @apply link;
-  }
-
   pre,
   code {
     @apply whitespace-pre font-mono !important;

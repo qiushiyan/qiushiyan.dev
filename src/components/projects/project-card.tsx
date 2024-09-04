@@ -20,15 +20,17 @@ interface ProjectCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const ProjectCard = ({ data, className, ...rest }: ProjectCardProps) => {
   return (
-    <Link href={data.href} className="!text-foreground hover:!no-underline">
+    <Link href={data.href}>
       <div
         className={cn(
-          "flex h-full w-80 flex-col justify-between gap-2 rounded-md border-2 p-4 transition-all duration-300 ease-out hover:shadow-lg",
+          "group flex h-full w-80 flex-col justify-between gap-2 rounded-md border-2 p-4 transition-all duration-300 ease-out hover:shadow-lg",
           className
         )}
         {...rest}
       >
-        <h3 className="text-lg font-semibold">{data.name}</h3>
+        <h3 className="text-lg font-semibold transition-all group-hover:text-primary/80">
+          {data.name}
+        </h3>
         <p className="mb-2 text-sm text-muted-foreground">{data.description}</p>
         <footer className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">

@@ -1,4 +1,5 @@
 import { getAllTags, getPostsByTags } from "@/lib/content/posts";
+import { CalendarIcon, TagIcon } from "lucide-react";
 
 import { PostCard } from "./post-card";
 import { PostTags } from "./post-tags";
