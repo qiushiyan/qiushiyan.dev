@@ -65,7 +65,7 @@ const CloudflareAnalytics = () => {
     <Script
       defer
       src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token": "b70e590536f848e2a79e74d52ca664c1"}'
+      data-cf-beacon='{"token": "ebc8e642434a45cd9fcb862ef2d97a67"}'
     ></Script>
   );
 };
