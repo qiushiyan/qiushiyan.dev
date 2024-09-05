@@ -77,18 +77,19 @@ const SidebarTrigger = React.forwardRef<
   const { open, onOpenChange } = useSidebar();
 
   return (
-    <Button
+    <button
       ref={ref}
       id="sidebar-trigger"
-      variant="ghost"
-      size="icon"
-      className={cn("size-6", className)}
+      className={cn(
+        "flex size-6 transition-all hover:text-primary/80",
+        className
+      )}
       onClick={() => onOpenChange(!open)}
       {...props}
     >
       <PanelLeft className="size-6" />
       <span className="sr-only">Toggle Sidebar</span>
-    </Button>
+    </button>
   );
 });
 SidebarTrigger.displayName = "SidebarTrigger";

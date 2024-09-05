@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { postViewTransitionName } from "@/lib/utils";
 import { Post } from "#content";
-import { CalendarIcon, TagIcon } from "lucide-react";
+import { CalendarIcon, EyeIcon, TagIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 
 import { Badge } from "../../ui/badge";
@@ -39,10 +39,7 @@ export const PostCard = ({ post }: { post: Post }) => {
         </CardContent>
 
         <CardFooter className="items-center justify-between gap-2">
-          <Suspense fallback={<PostViews.Skeleton />}>
-            <PostViews slug={post.slug} className="text-xs lg:text-sm" />
-          </Suspense>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <CalendarIcon className="size-4" />
             <time
               dateTime={post.date}
@@ -51,11 +48,18 @@ export const PostCard = ({ post }: { post: Post }) => {
               {new Date(post.date).toLocaleDateString()}
             </time>
           </div>
-          <div className="flex items-center gap-0.5">
-            <TagIcon className="size-4" />
-            <span className="px-1.5 py-1 text-xs font-medium">
-              {post.tags.join(", ")}
-            </span>
+
+          <div className="ml-auto flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <EyeIcon className="size-4" />
+              <Suspense fallback={<PostViews.Skeleton />}>
+                <PostViews slug={post.slug} className="text-xs" numberOnly />
+              </Suspense>
+            </div>
+            <div className="flex items-center gap-1">
+              <TagIcon className="size-4" />
+              <span className="py-1 text-xs">{post.tags.join(", ")}</span>
+            </div>
           </div>
         </CardFooter>
       </Card>

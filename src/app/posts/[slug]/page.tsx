@@ -52,9 +52,11 @@ export default async function PostPage({
 
 const PostBanner = ({ post }: { post: Post }) => {
   return (
-    <header className="grid gap-1.5 py-6">
+    <header className="grid gap-2 py-6">
       <h1
-        className={cn("text-balance text-4xl font-extrabold tracking-wide")}
+        className={cn(
+          "mb-4 text-balance text-4xl font-extrabold tracking-wide"
+        )}
         style={{
           viewTransitionName: postViewTransitionName(post.slug),
         }}
@@ -64,7 +66,7 @@ const PostBanner = ({ post }: { post: Post }) => {
       </h1>
       {post.draft && <Badge>Draft</Badge>}
       <PostDescription
-        className="mb-4 flex-grow text-sm lg:text-base"
+        className="flex-grow text-sm lg:text-base"
         description={post.descriptionHtml}
       />
       <div className="flex flex-wrap items-center space-x-6 text-sm text-muted-foreground">
@@ -83,6 +85,14 @@ const PostBanner = ({ post }: { post: Post }) => {
           <PostViews slug={post.slug} />
         </div>
       </div>
+      {post.lastModified && (
+        <div className="flex items-center gap-2">
+          <ClockIcon className="size-4" />
+          <span className="text-sm text-muted-foreground">
+            Last modified: {new Date(post.lastModified).toLocaleDateString()}
+          </span>
+        </div>
+      )}
     </header>
   );
 };
