@@ -1,6 +1,5 @@
 import React from "react";
 
-import type { Metadata } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import {
   Roboto_Mono as FontMono,
@@ -12,6 +11,7 @@ import "@/styles/globals.css";
 import "@/styles/highlight.css";
 
 import { RootProvider } from "@/components/providers/root-provider";
+import { host } from "@/constants";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
 
@@ -31,9 +31,26 @@ const fontMono = FontMono({
   variable: "--font-mono",
 });
 
-export const metadata: Metadata = {
-  title: "Qiushi Yan",
-  description: "Qiushi Yan's personal website",
+export const generateMetadata = () => {
+  return {
+    title: {
+      template: "%s | Qiushi Yan",
+      default: "Qiushi Yan",
+    },
+    description: "Qiushi Yan's personal website",
+    metadataBase: host,
+    openGraph: {
+      title: "Qiushi Yan",
+      description: "Qiushi Yan's personal website",
+      type: "article",
+      url: host.toString(),
+      images: [
+        {
+          url: "/api/og",
+        },
+      ],
+    },
+  };
 };
 
 export default function RootLayout({

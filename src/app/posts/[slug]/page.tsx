@@ -6,18 +6,14 @@ import { cn, postViewTransitionName } from "@/lib/utils";
 
 import "./page.scss";
 
-import { Suspense } from "react";
-
 import { incrementView } from "@/actions/views";
 import { PostDescription } from "@/components/post/post-description";
 import { PostViews } from "@/components/post/post-views";
 import { Badge } from "@/components/ui/badge";
 import { findPost } from "@/lib/content/posts";
-import { routes } from "@/lib/navigation";
-import { Post, posts } from "#content";
+import { Post } from "#content";
 import htmr from "htmr";
 import { CalendarIcon, ClockIcon, EyeIcon } from "lucide-react";
-import { Link } from "next-view-transitions";
 import { notFound } from "next/navigation";
 
 export default async function PostPage({

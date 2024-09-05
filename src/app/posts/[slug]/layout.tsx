@@ -4,6 +4,7 @@ import {
   SidebarLayout,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { host } from "@/constants";
 import { getPosts } from "@/lib/content/posts";
 import { posts } from "#content";
 
@@ -30,9 +31,15 @@ export const generateMetadata = ({ params }: { params: { slug: string } }) => {
     title,
     description,
     openGraph: {
-      title: `Post - ${title}`,
+      title,
       description,
       type: "article",
+      url: `${host}${page.href}`,
+      images: [
+        {
+          url: `/api/og?title=${title}&description=${description}`,
+        },
+      ],
     },
   };
 };

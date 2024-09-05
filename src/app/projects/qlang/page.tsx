@@ -5,6 +5,7 @@ import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { Block, CodeBlock, parseRoot } from "codehike/blocks";
 import { highlight, Pre, RawCode } from "codehike/code";
+import { Metadata } from "next";
 import Link from "next/link";
 import { z } from "zod";
 
@@ -15,6 +16,11 @@ const Schema = Block.extend({
   intro: Block,
   steps: z.array(Block.extend({ code: CodeBlock })),
 });
+
+export const metadata: Metadata = {
+  title: "QLang",
+  description: "A programming language with a mix of R, Python and JavaScript",
+};
 
 export default function Page() {
   const { intro, steps } = parseRoot(Content, Schema);
