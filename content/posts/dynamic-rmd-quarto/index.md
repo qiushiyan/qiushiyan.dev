@@ -228,12 +228,12 @@ knitr::knit_expand(
 #> [1] "The value of `a` is 1"
 ```
 
-Since you can also pass in a `file` argument in `knit_expand`, I was
+Since you can also pass a `file` argument to `knit_expand`, I was
 tempted to use this function with `knit_child` when I started to write
 this post. For example
 
 ``` r
-res <- knnitr::knit_expand(
+res <- knitr::knit_expand(
     file = "template.Rmd",
     data = iris[1:5, ]
 )
@@ -275,7 +275,7 @@ which is not valid R syntax.
 It you are using Quarto with a different engine than `knitr`, I found no
 similar construct as `knitr::knit_child`. Although Quarto offers a
 native [variables](https://quarto.org/docs/authoring/variables.html)
-mechanism for reading values from configuration files, it’s more
-suitable for static data shared across many documents. It also suffers
-the same problem as `knitr::knit_expand` that you are limited to
+mechanism for reading values from configuration files, it’s intended for
+static data that should be shared across multiple documents. It also
+suffers the same problem as `knitr::knit_expand` that you are limited to
 whatever data structure that is supported by YAML.

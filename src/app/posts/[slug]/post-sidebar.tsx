@@ -6,12 +6,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarItem,
-  SidebarLabel,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarItem } from "@/components/ui/sidebar";
 import { useCurrentPost } from "@/hooks/use-current-post";
 import { getPostsByTags } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";

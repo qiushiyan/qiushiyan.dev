@@ -1,3 +1,4 @@
+import { PythonScriptLoader, RScriptLoader } from "@/lib/content/loaders";
 import { timestamp } from "@/lib/content/schema";
 import { routes } from "@/lib/navigation";
 import { slug } from "github-slugger";
@@ -103,14 +104,34 @@ const posts = defineCollection({
     }),
 });
 
+export const recipes = defineCollection({
+  name: "Recipe",
+  pattern: "./recipes/**/*.{py,r}",
+  schema: s
+    .object({
+      title: s.string().optional(),
+      code: s.string(),
+      lang: s.enum(["python", "r"]),
+    })
+    .transform((data, { meta }) => {
+      return {
+        ...data,
+        slug: meta.basename?.replace(/\.[^.]+$/, "") as string,
+        filename: meta.basename as string,
+      };
+    }),
+});
+
 export default defineConfig({
   root: "content",
   collections: {
     home,
-    posts,
     about,
+    posts,
+    recipes,
   },
   markdown: {
     remarkPlugins: [remarkHeadingAttrs],
   },
+  loaders: [PythonScriptLoader, RScriptLoader],
 });

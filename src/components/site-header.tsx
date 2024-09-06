@@ -4,6 +4,7 @@ import { getPosts } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { SiGithub } from "@icons-pack/react-simple-icons";
+import { recipes } from "#content";
 import { Link } from "next-view-transitions";
 
 import { SiteSearch } from "./site-search";
@@ -20,6 +21,8 @@ const searchData = getPosts().map((post) => ({
   raw: post.raw,
 }));
 export type SearchData = (typeof searchData)[number];
+
+const firstRecipe = recipes[0];
 
 export const SiteHeader = ({
   className,
@@ -48,15 +51,20 @@ export const SiteHeader = ({
           </Link>
         </div>
 
-        <div className="ml-auto flex items-center justify-end space-x-4">
+        <div className="ml-auto flex items-center justify-end gap-6">
+          <Link
+            href={routes.recipe(firstRecipe.lang, firstRecipe.slug)}
+            className="font-serif text-lg transition-all hover:text-primary/80"
+          >
+            Recipes
+          </Link>
           <SiteSearch data={searchData} />
-
-          <nav className="flex items-center gap-2">
+          <nav className="flex items-center gap-3">
             {renderRight?.()}
             <Link
               href={routes.about}
               style={{ viewTransitionName: "about" }}
-              className="hidden font-heading text-lg transition-all hover:text-primary/80"
+              className="hidden text-lg transition-all hover:text-primary/80"
             >
               About
             </Link>

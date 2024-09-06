@@ -56,12 +56,12 @@ match error_code:
 ```
 
 Here, we check case by case if `error_code` is equal to a value, if it’s
-not one of 400, 403, 500, `_` will be a catch-all wildcard. Also,
+not one of `400`, `403`, `500`, `_` will be a catch-all wildcard. Also,
 pattern matching will break when it hits a match, so each `case` should
 be independent.
 
 To run examples in this article, be sure you are using python higher
-than 3.10. To check, use
+than 3.10.
 
 ``` python
 import sys

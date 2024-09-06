@@ -1,11 +1,6 @@
 import { SiteHeader } from "@/components/site-header";
-import {
-  SIDEBAR_STATE_COOKIE,
-  SidebarLayout,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { host } from "@/constants";
-import { getPosts } from "@/lib/content/posts";
 import { posts } from "#content";
 
 import { PostSidebar } from "./post-sidebar";
