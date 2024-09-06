@@ -9,7 +9,6 @@ database_name = "personal-website"
 database_id = "327bba3d-2bc5-434a-86a7-67c78582f0fa"
 preview_database_id = "DB"
 
-[env.production.vars]
 
 [env.preview]
 name = "preview"
