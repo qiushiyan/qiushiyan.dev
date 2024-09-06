@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import { PostGrid } from "@/components/post/post-grid";
 import { BasicProse } from "@/components/prose-wrapper";
 import { SiteHeader } from "@/components/site-header";
+import { MAIN_CONTENT_ID } from "@/constants";
 import { getAllTags } from "@/lib/content/posts";
 import { home } from "#content";
 
@@ -38,6 +39,7 @@ export default function Home({
           "home",
           "flex h-full min-h-screen flex-col gap-6 py-4 lg:py-8"
         )}
+        id={MAIN_CONTENT_ID}
       >
         <section className="space-y-4">
           <h2 className="text-4xl font-bold text-primary underline underline-offset-8">
@@ -49,15 +51,17 @@ export default function Home({
           ></BasicProse>
         </section>
 
-        <Heading className="mb-0">Personal Projects</Heading>
-        <section className="full-width">
+        <Heading className="mb-0" id="projects-heading">
+          Personal Projects
+        </Heading>
+        <section aria-labelledby="projects-heading">
           <Suspense fallback={<FeaturedProjects.Skeleton />}>
             <FeaturedProjects />
           </Suspense>
         </section>
 
-        <section>
-          <Heading>Posts</Heading>
+        <section aria-labelledby="posts-heading">
+          <Heading id="posts-heading">Posts</Heading>
           <PostGrid selectedTags={tags} />
         </section>
       </main>

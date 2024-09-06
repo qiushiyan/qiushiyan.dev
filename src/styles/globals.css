@@ -115,6 +115,26 @@
   h3 {
     @apply font-heading;
   }
+
+  .skip-link {
+    position: absolute;
+    clip-path: rect(0px, 0px, 0px, 0px);
+    margin: -1px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .skip-link:focus {
+    position: static;
+    clip-path: auto;
+    padding: 12px;
+    width: auto;
+    height: auto;
+    overflow: auto;
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--primary));
+    text-underline-offset: 0.4em;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

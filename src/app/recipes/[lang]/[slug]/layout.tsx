@@ -17,8 +17,20 @@ export const generateMetadata = ({ params }: { params: { slug: string } }) => {
   if (!recipe) {
     return {};
   }
+  const title = recipe.title || recipe.filename;
+  const description = `A ${recipe.lang} code example`;
   return {
-    title: recipe.title || recipe.filename,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: `/api/og?title=${title}&description=${description}`,
+        },
+      ],
+    },
   };
 };
 

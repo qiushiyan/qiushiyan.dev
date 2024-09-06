@@ -10,6 +10,7 @@ import { incrementView } from "@/actions/views";
 import { PostDescription } from "@/components/post/post-description";
 import { PostViews } from "@/components/post/post-views";
 import { Badge } from "@/components/ui/badge";
+import { MAIN_CONTENT_ID } from "@/constants";
 import { findPost } from "@/lib/content/posts";
 import { Post } from "#content";
 import htmr from "htmr";
@@ -29,7 +30,7 @@ export default async function PostPage({
   incrementView(post.slug);
 
   return (
-    <main className="overflow-x-hidden">
+    <main className="overflow-x-hidden" id={MAIN_CONTENT_ID}>
       <ArticleProse>
         <article className="post">
           <PostBanner post={post} />

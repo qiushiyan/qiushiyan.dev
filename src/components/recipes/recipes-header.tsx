@@ -24,7 +24,14 @@ export const RecipesHeader = ({ title, lang }: Props) => {
         <div className="flex items-center gap-2">
           <div className={"flex items-center gap-2"}>
             <BoxIcon className="size-6" />
-            <h1 className="text-2xl font-bold">Recipes</h1>
+            <h1
+              className="text-2xl font-bold"
+              style={{
+                viewTransitionName: "recipes",
+              }}
+            >
+              Recipes
+            </h1>
           </div>
           <ChevronRightIcon className="size-6" />
           <h2 className="flex items-center gap-2 font-sans text-xl font-bold text-accent-foreground">

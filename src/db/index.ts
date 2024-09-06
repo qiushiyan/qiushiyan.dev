@@ -1,17 +1,9 @@
-import { env } from "@/env.mjs";
 import { getRequestContext } from "@cloudflare/next-on-pages";
-import type { D1Database } from "@cloudflare/workers-types";
 import { drizzle } from "drizzle-orm/d1";
 
 import * as schema from "./schema";
 
 export const runtime = "edge";
-
-declare global {
-  interface CloudflareEnv {
-    DB: D1Database;
-  }
-}
 
 function initDbConnection() {
   if (process.env.NODE_ENV === "development") {
