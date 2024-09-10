@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "gen:types": "pnpm wrangler types --env-interface CloudflareEnv",
-    "build:pages": "pnpm gen:types && pnpm dlx @cloudflare/next-on-pages",
+    "build:pages": "pnpm dlx @cloudflare/next-on-pages",
     "shadcn": "pnpx shadcn-ui@latest",
     "preview": "pnpm run build:pages && wrangler pages dev",
     "deploy": "pnpm run build:pages && wrangler pages deploy",

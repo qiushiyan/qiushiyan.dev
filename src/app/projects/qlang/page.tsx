@@ -9,6 +9,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { z } from "zod";
 
+// @ts-ignore
 import Content from "./content.md";
 import { Selectable, Selection, SelectionProvider } from "./utils";
 

@@ -69,7 +69,7 @@ const posts = defineCollection({
         )
         .transform((headings) =>
           headings.map((heading) => ({
-            html: htmlProcessor.processSync(heading.title).value,
+            html: htmlProcessor.processSync(heading.title).toString(),
             slug: heading.slug,
             depth: heading.depth,
           }))
