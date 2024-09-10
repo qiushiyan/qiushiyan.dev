@@ -12,9 +12,9 @@ export const getProject = memoize(
     return octokit.rest.repos.get({ owner, repo: repoName });
   },
   {
-    log: isProduction ? undefined : ["dedupe", "datacache", "verbose"],
+    // log: isProduction ? undefined : ["dedupe", "datacache", "verbose"],
     revalidateTags: (repo: string) => ["get-project", repo],
-    logid: "get-project",
+    // logid: "get-project",
     persist: true,
     duration: 60 * 60,
   }
@@ -26,9 +26,9 @@ export const getProjects = memoize(
     return results;
   },
   {
-    log: isProduction ? undefined : ["dedupe", "datacache", "verbose"],
+    // log: isProduction ? undefined : ["dedupe", "datacache", "verbose"],
     revalidateTags: ["get-projects"],
-    logid: "get-projects",
+    // logid: "get-projects",
     persist: true,
     duration: 60 * 60,
   }

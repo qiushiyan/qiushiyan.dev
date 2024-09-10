@@ -1,59 +1,59 @@
 ---
 title: A Taste of dplyr 1.0.0
-date: '2020-06-02'
+date: "2020-06-02"
 description: |
   A quick summary of some exciting features coming in dplyr 1.0, e.g. `across()`, row-wise operations and context-dependent expressions
 tags:
-- R
+  - R
 headings:
-- title: Working within columns
-  slug: working-within-columns
-  depth: 2
-- title: Working within rows
-  slug: working-within-rows
-  depth: 2
-- title: List-columns
-  slug: list-columns
-  depth: 3
-- title: Simulation
-  slug: simulation
-  depth: 3
-- title: Group-wise models
-  slug: group-wise-models
-  depth: 2
-- title: New `summarize` features
-  slug: new-summarize-features
-  depth: 2
-- title: Multiple rows and columns
-  slug: multiple-rows-and-columns
-  depth: 3
-- title: non-summary context
-  slug: non-summary-context
-  depth: 3
-- title: Move columns around within data frames
-  slug: move-columns-around-within-data-frames
-  depth: 2
-- title: Row mutation
-  slug: row-mutation
-  depth: 2
-- title: Context dependent expressions
-  slug: context-dependent-expressions
-  depth: 2
-- title: Superseded functions
-  slug: superseded-functions
-  depth: 2
-- title: Other changes
-  slug: other-changes
-  depth: 2
-- title: Recipes
-  slug: recipes
-  depth: 2
-- title: Replace missing values in many columns
-  slug: replace-missing-values-in-many-columns
-  depth: 3
-- title: Rolling regression
-  slug: rolling-regression
-  depth: 3
+  - title: Working within columns
+    slug: working-within-columns
+    depth: 2
+  - title: Working within rows
+    slug: working-within-rows
+    depth: 2
+  - title: List-columns
+    slug: list-columns
+    depth: 3
+  - title: Simulation
+    slug: simulation
+    depth: 3
+  - title: Group-wise models
+    slug: group-wise-models
+    depth: 2
+  - title: New `summarize` features
+    slug: new-summarize-features
+    depth: 2
+  - title: Multiple rows and columns
+    slug: multiple-rows-and-columns
+    depth: 3
+  - title: non-summary context
+    slug: non-summary-context
+    depth: 3
+  - title: Move columns around within data frames
+    slug: move-columns-around-within-data-frames
+    depth: 2
+  - title: Row mutation
+    slug: row-mutation
+    depth: 2
+  - title: Context dependent expressions
+    slug: context-dependent-expressions
+    depth: 2
+  - title: Superseded functions
+    slug: superseded-functions
+    depth: 2
+  - title: Other changes
+    slug: other-changes
+    depth: 2
+  - title: Recipes
+    slug: recipes
+    depth: 2
+  - title: Replace missing values in many columns
+    slug: replace-missing-values-in-many-columns
+    depth: 3
+  - title: Rolling regression
+    slug: rolling-regression
+    depth: 3
 ---
 
 <my-callout> This article has been updated to keep up with dplyr 1.1.
@@ -63,16 +63,16 @@ This post uses the penguins dataset modified by [Allison
 Horst](https://github.com/allisonhorst/penguins) in all the code
 examples (as an alternative to `iris`).
 
-``` r
+```r
 library(dplyr)
 # !collapse(1:8)
-#> 
+#>
 #> Attaching package: 'dplyr'
 #> The following objects are masked from 'package:stats':
-#> 
+#>
 #>     filter, lag
 #> The following objects are masked from 'package:base':
-#> 
+#>
 #>     intersect, setdiff, setequal, union
 library(ggplot2)
 
@@ -80,7 +80,7 @@ packageVersion("dplyr")
 #> [1] '1.1.2'
 ```
 
-``` r
+```r
 penguins <- palmerpenguins::penguins
 penguins
 # !collapse(1:15) collapsed
@@ -101,7 +101,7 @@ penguins
 #> # ℹ 2 more variables: sex <fct>, year <int>
 ```
 
-``` r
+```r
 penguins %>%
   ggplot(aes(bill_length_mm, bill_depth_mm, color = species, shape = species)) +
   geom_point()
@@ -121,7 +121,7 @@ pick variables by position, name, and type. The second argument, `.fns`,
 is a function or list of functions to apply to each column. This can
 also be a purrr style formula
 
-``` r
+```r
 penguins_grouped <- penguins %>% group_by(species)
 
 penguins_grouped %>%
@@ -140,7 +140,7 @@ penguins_grouped %>%
 For conditional selection (previous `_if` variants), predicate function
 should be wrapped in `where`.
 
-``` r
+```r
 # double all numeric columns
 penguins %>%
   mutate(across(where(is.numeric), ~ .x * 2))
@@ -170,7 +170,7 @@ penguins %>%
 Apply multiple functions using list and use the `.names` argument to
 control column names.
 
-``` r
+```r
 penguins_grouped %>%
   summarize(across(matches("mm"),
     list(
@@ -195,7 +195,7 @@ penguins_grouped %>%
 Row-wise operations require a special type of grouping where each group
 consists of a single row. You create this with `rowwise()`.
 
-``` r
+```r
 df <- tibble(
   student_id = 1:4,
   test1 = 10:13,
@@ -206,7 +206,7 @@ df <- tibble(
 df %>% rowwise()
 # !collapse(1:8)
 #> # A tibble: 4 × 5
-#> # Rowwise: 
+#> # Rowwise:
 #>   student_id test1 test2 test3 test4
 #>        <int> <int> <int> <int> <int>
 #> 1          1    10    20    30    40
@@ -222,7 +222,7 @@ helpful when you want to keep a row identifier.
 Like `group_by`, `rowwise` doesn’t really do anything itself; it just
 changes how the other verbs work.
 
-``` r
+```r
 df %>% mutate(avg = mean(c(test1, test2, test3, test4)))
 # !collapse(1:8)
 #> # A tibble: 4 × 6
@@ -238,7 +238,7 @@ df %>%
   mutate(avg = mean(c(test1, test2, test3, test4)))
 # !collapse(1:8)
 #> # A tibble: 4 × 6
-#> # Rowwise: 
+#> # Rowwise:
 #>   student_id test1 test2 test3 test4   avg
 #>        <int> <int> <int> <int> <int> <dbl>
 #> 1          1    10    20    30    40    25
@@ -253,7 +253,7 @@ over the rows in the dataframe. In this case, the `mean()` function is
 vectorized. But, if a function is already vectorized, then `rowwise` is
 not needed.
 
-``` r
+```r
 df %>% mutate(s = test1 + test2 + test3)
 # !collapse(1:8)
 #> # A tibble: 4 × 6
@@ -269,7 +269,7 @@ df %>%
   mutate(s = test1 + test2 + test3)
 # !collapse(1:8)
 #> # A tibble: 4 × 6
-#> # Rowwise: 
+#> # Rowwise:
 #>   student_id test1 test2 test3 test4     s
 #>        <int> <int> <int> <int> <int> <int>
 #> 1          1    10    20    30    40    60
@@ -281,7 +281,7 @@ df %>%
 Another family of summary functions have “parallel” extensions where you
 can provide multiple variables in the arguments:
 
-``` r
+```r
 df %>%
   mutate(
     min = pmin(test1, test2, test3, test4),
@@ -290,8 +290,8 @@ df %>%
   )
 # !collapse(1:7)
 #> # A tibble: 4 × 8
-#>   student_id test1 test2 test3 test4   min   max string     
-#>        <int> <int> <int> <int> <int> <int> <int> <chr>      
+#>   student_id test1 test2 test3 test4   min   max string
+#>        <int> <int> <int> <int> <int> <int> <int> <chr>
 #> 1          1    10    20    30    40    10    40 10-20-30-40
 #> 2          2    11    21    31    41    11    41 11-21-31-41
 #> 3          3    12    22    32    42    12    42 12-22-32-42
@@ -307,7 +307,7 @@ paired with `c_across()`, which works like `c()` but uses the same
 tidyselect syntax as `across()`. That makes it easy to operate on
 multiple variables:
 
-``` r
+```r
 df %>%
   rowwise() %>%
   mutate(
@@ -316,7 +316,7 @@ df %>%
   )
 # !collapse(1:8)
 #> # A tibble: 4 × 7
-#> # Rowwise: 
+#> # Rowwise:
 #>   student_id test1 test2 test3 test4   min   max
 #>        <int> <int> <int> <int> <int> <int> <int>
 #> 1          1    10    20    30    40    10    40
@@ -328,7 +328,7 @@ df %>%
 Plus, a rowwise df will naturally contain exactly the same rows after
 `summarize()`, the same as `mutate`
 
-``` r
+```r
 df %>%
   rowwise() %>%
   summarize(across(starts_with("test"), ~ .x, .names = "{col}_same"))
@@ -349,7 +349,7 @@ related objects together, regardless of what type of thing they are.
 List-columns give you a convenient storage mechanism and `rowwise` gives
 you a convenient computation mechanism.
 
-``` r
+```r
 df <- tibble(
   x = list(1, 2:3, 4:6),
   y = list(TRUE, 1, "a"),
@@ -358,14 +358,14 @@ df <- tibble(
 df
 # !collapse(1:6)
 #> # A tibble: 3 × 3
-#>   x         y         z     
+#>   x         y         z
 #>   <list>    <list>    <list>
-#> 1 <dbl [1]> <lgl [1]> <fn>  
-#> 2 <int [2]> <dbl [1]> <fn>  
+#> 1 <dbl [1]> <lgl [1]> <fn>
+#> 2 <int [2]> <dbl [1]> <fn>
 #> 3 <int [3]> <chr [1]> <fn>
 ```
 
-``` r
+```r
 df %>%
   rowwise() %>%
   summarize(
@@ -377,8 +377,8 @@ df %>%
 #> # A tibble: 3 × 3
 #>   x_length y_type    z_call
 #>      <int> <chr>      <dbl>
-#> 1        1 logical    15   
-#> 2        2 double      3   
+#> 1        1 logical    15
+#> 2        2 double      3
 #> 3        3 character   1.58
 ```
 
@@ -387,7 +387,7 @@ df %>%
 The basic idea of using `rowwise` to perform simulation is to store all
 your simulation parameters in a data frame, similar to `purrr::pmap`.
 
-``` r
+```r
 df <- tribble(
   ~id, ~n, ~min, ~max,
   1, 3, 0, 1,
@@ -399,15 +399,15 @@ df <- tribble(
 Then you can either generate a list-column containing the simulated
 values with `mutate`:
 
-``` r
+```r
 df %>%
   rowwise() %>%
   mutate(sim = list(runif(n, min, max)))
 # !collapse(1:7)
 #> # A tibble: 3 × 5
-#> # Rowwise: 
-#>      id     n   min   max sim      
-#>   <dbl> <dbl> <dbl> <dbl> <list>   
+#> # Rowwise:
+#>      id     n   min   max sim
+#>   <dbl> <dbl> <dbl> <dbl> <list>
 #> 1     1     3     0     1 <dbl [3]>
 #> 2     2     2    10   100 <dbl [2]>
 #> 3     3     2   100  1000 <dbl [2]>
@@ -416,7 +416,7 @@ df %>%
 Or taking advantage of `summarize`’s new features to return multiple
 rows per group
 
-``` r
+```r
 df %>%
   rowwise(everything()) %>%
   summarize(sim = runif(n, min, max))
@@ -435,9 +435,9 @@ df %>%
 #> 1     1     3     0     1   0.170
 #> 2     1     3     0     1   0.614
 #> 3     1     3     0     1   0.592
-#> 4     2     2    10   100  29.2  
-#> 5     2     2    10   100  91.4  
-#> 6     3     2   100  1000 919.   
+#> 4     2     2    10   100  29.2
+#> 5     2     2    10   100  91.4
+#> 6     3     2   100  1000 919.
 #> 7     3     2   100  1000 349.
 ```
 
@@ -446,7 +446,7 @@ df %>%
 In dplyr 1.1, you should use `reframe()` instead of `summarize()` to
 return multiple rows.
 
-``` r
+```r
 df |>
   rowwise(everything()) |>
   reframe(sim = runif(n, min, max))
@@ -457,13 +457,13 @@ df |>
 Without `rowwise`, you would need to use `purrr::pmap` to perform the
 simulation.
 
-``` r
+```r
 df %>%
   mutate(sim = purrr::pmap(., ~ runif(..2, ..3, ..4)))
 # !collapse(1:6)
 #> # A tibble: 3 × 5
-#>      id     n   min   max sim      
-#>   <dbl> <dbl> <dbl> <dbl> <list>   
+#>      id     n   min   max sim
+#>   <dbl> <dbl> <dbl> <dbl> <list>
 #> 1     1     3     0     1 <dbl [3]>
 #> 2     2     2    10   100 <dbl [2]>
 #> 3     3     2   100  1000 <dbl [2]>
@@ -473,7 +473,7 @@ df %>%
 
 The new `nest_by()` function works similarly to `group_nest()`
 
-``` r
+```r
 by_species <- penguins %>% nest_by(species)
 by_species
 # !collapse(1:7)
@@ -488,7 +488,7 @@ by_species
 
 Now we can use `mutate` to fit a model to each data frame:
 
-``` r
+```r
 by_species <- by_species %>%
   rowwise(species) %>%
   mutate(model = list(lm(bill_length_mm ~ bill_depth_mm, data = data)))
@@ -497,10 +497,10 @@ by_species
 # !collapse(1:7)
 #> # A tibble: 3 × 3
 #> # Rowwise:  species
-#>   species                 data model 
+#>   species                 data model
 #>   <fct>     <list<tibble[,7]>> <list>
-#> 1 Adelie             [152 × 7] <lm>  
-#> 2 Chinstrap           [68 × 7] <lm>  
+#> 1 Adelie             [152 × 7] <lm>
+#> 2 Chinstrap           [68 × 7] <lm>
 #> 3 Gentoo             [124 × 7] <lm>
 ```
 
@@ -508,7 +508,7 @@ And then extract model summaries or coefficients with `summarize()` and
 `broom` functions (note that `by_species` is still a rowwise data
 frame):
 
-``` r
+```r
 by_species %>%
   summarize(broom::glance(model))
 # !collapse(1:11) collapsed
@@ -547,7 +547,7 @@ by_species %>%
 
 An alternative approach
 
-``` r
+```r
 penguins %>%
   group_by(species) %>%
   group_modify(~ broom::tidy(lm(bill_length_mm ~ bill_depth_mm, data = .x)))
@@ -583,7 +583,7 @@ expression can now return:
 
 - A data frame, creating multiple columns.
 
-``` r
+```r
 penguins_grouped %>%
   summarize(
     bill_length_dist = quantile(bill_length_mm,
@@ -605,19 +605,19 @@ penguins_grouped %>%
 #>   species   bill_length_dist     q
 #>   <fct>                <dbl> <dbl>
 #> 1 Adelie                36.8  0.25
-#> 2 Adelie                38.8  0.5 
+#> 2 Adelie                38.8  0.5
 #> 3 Adelie                40.8  0.75
 #> 4 Chinstrap             46.3  0.25
-#> 5 Chinstrap             49.6  0.5 
+#> 5 Chinstrap             49.6  0.5
 #> 6 Chinstrap             51.1  0.75
 #> 7 Gentoo                45.3  0.25
-#> 8 Gentoo                47.3  0.5 
+#> 8 Gentoo                47.3  0.5
 #> 9 Gentoo                49.6  0.75
 ```
 
 Or return multiple columns from a single summary expression:
 
-``` r
+```r
 penguins_grouped %>%
   summarize(tibble(
     min = min(bill_depth_mm, na.rm = TRUE),
@@ -639,7 +639,7 @@ reduce the duplication so that we don’t have to type the quantile values
 twice. We can now write a simple function because summary expressions
 can now be data frames or tibbles:
 
-``` r
+```r
 quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
   tibble(x = quantile(x, q, na.rm = na.rm), q = q)
 }
@@ -659,20 +659,20 @@ penguins_grouped %>%
 #>   species       x     q
 #>   <fct>     <dbl> <dbl>
 #> 1 Adelie     17.5  0.25
-#> 2 Adelie     18.4  0.5 
+#> 2 Adelie     18.4  0.5
 #> 3 Adelie     19    0.75
 #> 4 Chinstrap  17.5  0.25
-#> 5 Chinstrap  18.4  0.5 
+#> 5 Chinstrap  18.4  0.5
 #> 6 Chinstrap  19.4  0.75
 #> 7 Gentoo     14.2  0.25
-#> 8 Gentoo     15    0.5 
+#> 8 Gentoo     15    0.5
 #> 9 Gentoo     15.7  0.75
 ```
 
 When combining glue syntax and tidy evaluation, it is easy to
 dynamically name the column names.
 
-``` r
+```r
 quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
   tibble(
     "{{ x }}_quantile" := quantile(x, q, na.rm = na.rm),
@@ -695,13 +695,13 @@ penguins_grouped %>%
 #>   species   flipper_length_mm_quantile flipper_length_mm_q
 #>   <fct>                          <dbl>               <dbl>
 #> 1 Adelie                           186                0.25
-#> 2 Adelie                           190                0.5 
+#> 2 Adelie                           190                0.5
 #> 3 Adelie                           195                0.75
 #> 4 Chinstrap                        191                0.25
-#> 5 Chinstrap                        196                0.5 
+#> 5 Chinstrap                        196                0.5
 #> 6 Chinstrap                        201                0.75
 #> 7 Gentoo                           212                0.25
-#> 8 Gentoo                           216                0.5 
+#> 8 Gentoo                           216                0.5
 #> 9 Gentoo                           221                0.75
 ```
 
@@ -710,7 +710,7 @@ will be packed in the result, which can be solved by `tidyr::unpack`.
 That’s because when we leave the name off, the data frame result is
 automatically unpacked.
 
-``` r
+```r
 penguins_grouped %>%
   summarize(df = quibble(flipper_length_mm))
 # !collapse(1:20) collapsed
@@ -726,13 +726,13 @@ penguins_grouped %>%
 #>   species   df$flipper_length_mm_quantile $flipper_length_mm_q
 #>   <fct>                             <dbl>                <dbl>
 #> 1 Adelie                              186                 0.25
-#> 2 Adelie                              190                 0.5 
+#> 2 Adelie                              190                 0.5
 #> 3 Adelie                              195                 0.75
 #> 4 Chinstrap                           191                 0.25
-#> 5 Chinstrap                           196                 0.5 
+#> 5 Chinstrap                           196                 0.5
 #> 6 Chinstrap                           201                 0.75
 #> 7 Gentoo                              212                 0.25
-#> 8 Gentoo                              216                 0.5 
+#> 8 Gentoo                              216                 0.5
 #> 9 Gentoo                              221                 0.75
 ```
 
@@ -745,7 +745,7 @@ a `map()` function.
 For example, to read all the all the .csv files in the current
 directory, you could write:
 
-``` r
+```r
 tibble(path = dir(pattern = "\\.csv$")) %>%
   rowwise(path) %>%
   summarize(read_csv(path))
@@ -757,7 +757,7 @@ New verb `relocate` is provided to change column positions with the same
 syntax as `select`. The default behavior is to move selected columns to
 the left-hand side
 
-``` r
+```r
 penguins %>% relocate(island)
 # !collapse(1:16) collapsed
 #> # A tibble: 344 × 8
@@ -801,8 +801,8 @@ penguins %>% relocate(sex, body_mass_g, .after = species)
 #>    <fct>   <fct>        <int> <fct>              <dbl>         <dbl>
 #>  1 Adelie  male          3750 Torgersen           39.1          18.7
 #>  2 Adelie  female        3800 Torgersen           39.5          17.4
-#>  3 Adelie  female        3250 Torgersen           40.3          18  
-#>  4 Adelie  <NA>            NA Torgersen           NA            NA  
+#>  3 Adelie  female        3250 Torgersen           40.3          18
+#>  4 Adelie  <NA>            NA Torgersen           NA            NA
 #>  5 Adelie  female        3450 Torgersen           36.7          19.3
 #>  6 Adelie  male          3650 Torgersen           39.3          20.6
 #>  7 Adelie  female        3625 Torgersen           38.9          17.8
@@ -816,7 +816,7 @@ penguins %>% relocate(sex, body_mass_g, .after = species)
 Similarly, `mutate` gains new arguments `.after` and `.before` to
 control where new columns should appear.
 
-``` r
+```r
 penguins %>%
   mutate(mass_double = body_mass_g * 2, .before = 1)
 # !collapse(1:15) collapsed
@@ -858,7 +858,7 @@ functions, they all work with a pair of data frames:
 The `rows_` functions match x and y using **keys**. All of them check
 that the keys of x and y are valid (i.e. unique) before doing anything.
 
-``` r
+```r
 df <- tibble(a = 1:3, b = letters[c(1:2, NA)], c = 0.5 + 0:2)
 df
 # !collapse(1:6)
@@ -872,7 +872,7 @@ df
 
 We can use `rows_insert()` to add new rows:
 
-``` r
+```r
 new <- tibble(a = c(4, 5), b = c("d", "e"), c = c(3.5, 4.5))
 
 rows_insert(df, new)
@@ -891,7 +891,7 @@ rows_insert(df, new)
 Note that `rows_insert()` will fail if we attempt to insert a row that
 already exists:
 
-``` r
+```r
 df %>% rows_insert(tibble(a = 3, b = "c"))
 #> Matching, by = "a"
 #> Error in `rows_insert()`:
@@ -913,7 +913,7 @@ df %>% rows_insert(tibble(a = 3, b = "c"), by = c("a", "b"))
 If you want to update existing values, use `rows_update()`. It will
 throw an error if one of the rows to update does not exist:
 
-``` r
+```r
 df %>% rows_update(tibble(a = 3, b = "c"))
 # !collapse(1:8)
 #> Matching, by = "a"
@@ -935,7 +935,7 @@ df %>% rows_update(tibble(a = 4, b = "d"))
 `rows_patch()` is a variant of `rows_update()` that will only update
 values in x that are `NA`.
 
-``` r
+```r
 df %>% rows_patch(tibble(a = 1:3, b = "patch"))
 # !collapse(1:7)
 #> Matching, by = "a"
@@ -949,7 +949,7 @@ df %>% rows_patch(tibble(a = 1:3, b = "patch"))
 
 `row_upsert` update a df or insert new rows.
 
-``` r
+```r
 df %>%
   rows_upsert(tibble(a = 3, b = "c")) %>% # update
   rows_upsert(tibble(a = 4, b = "d")) # insert
@@ -994,7 +994,7 @@ variable, so only work inside specific contexts like `summarize()` and
 
 </my-callout>
 
-``` r
+```r
 df <- tibble(
   g = sample(rep(letters[1:3], 1:3)),
   x = runif(6),
@@ -1015,16 +1015,16 @@ gf %>% reframe(row = cur_group_rows())
 #> 6 c         5
 gf %>% reframe(data = list(cur_group()))
 #> # A tibble: 3 × 2
-#>   g     data            
-#>   <chr> <list>          
+#>   g     data
+#>   <chr> <list>
 #> 1 a     <tibble [1 × 1]>
 #> 2 b     <tibble [1 × 1]>
 #> 3 c     <tibble [1 × 1]>
 gf %>% reframe(data = list(pick(everything())))
 # !collapse(1:7)
 #> # A tibble: 3 × 2
-#>   g     data            
-#>   <chr> <list>          
+#>   g     data
+#>   <chr> <list>
 #> 1 a     <tibble [1 × 2]>
 #> 2 b     <tibble [2 × 2]>
 #> 3 c     <tibble [3 × 2]>
@@ -1034,9 +1034,9 @@ gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
 # !collapse(1:10)
 #> # A tibble: 6 × 3
 #> # Groups:   g [3]
-#>   g     x      y     
-#>   <chr> <chr>  <chr> 
-#> 1 c     x 0.5  y 0.8 
+#>   g     x      y
+#>   <chr> <chr>  <chr>
+#> 1 c     x 0.5  y 0.8
 #> 2 b     x 0.45 y 0.78
 #> 3 c     x 0.31 y 0.32
 #> 4 a     x 0.85 y 0.76
@@ -1050,7 +1050,7 @@ gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
 favor of a new family of slice helpers: `slice_min()`, `slice_max()`,
 `slice_head()`, `slice_tail()`, `slice_random()`.
 
-``` r
+```r
 # select penguins per group on body mass
 penguins_grouped %>%
   slice_max(body_mass_g, n = 1)
@@ -1078,7 +1078,7 @@ penguins_grouped %>%
 #> # ℹ 2 more variables: sex <fct>, year <int>
 ```
 
-``` r
+```r
 # random sampling
 penguins %>%
   slice_sample(n = 10)
@@ -1135,7 +1135,7 @@ of theh result.
 The new `rename_with()` makes it easier to rename variables
 programmatically:
 
-``` r
+```r
 penguins %>%
   rename_with(stringr::str_to_upper)
 # !collapse(1:15) collapsed
@@ -1159,7 +1159,7 @@ penguins %>%
 You can optionally choose which columns to apply the transformation to
 with the second argument:
 
-``` r
+```r
 penguins %>%
   rename_with(stringr::str_to_upper, starts_with("bill"))
 # !collapse(1:15) collapsed
@@ -1183,7 +1183,7 @@ penguins %>%
 `mutate()` gains argument `.keep` that allows you to control which
 columns are retained in the output:
 
-``` r
+```r
 penguins %>% mutate(
   double_mass = body_mass_g * 2,
   island_lower = stringr::str_to_lower(island),
@@ -1192,17 +1192,17 @@ penguins %>% mutate(
 # !collapse(1:15) collapsed
 #> # A tibble: 344 × 4
 #>    island    body_mass_g double_mass island_lower
-#>    <fct>           <int>       <dbl> <chr>       
-#>  1 Torgersen        3750        7500 torgersen   
-#>  2 Torgersen        3800        7600 torgersen   
-#>  3 Torgersen        3250        6500 torgersen   
-#>  4 Torgersen          NA          NA torgersen   
-#>  5 Torgersen        3450        6900 torgersen   
-#>  6 Torgersen        3650        7300 torgersen   
-#>  7 Torgersen        3625        7250 torgersen   
-#>  8 Torgersen        4675        9350 torgersen   
-#>  9 Torgersen        3475        6950 torgersen   
-#> 10 Torgersen        4250        8500 torgersen   
+#>    <fct>           <int>       <dbl> <chr>
+#>  1 Torgersen        3750        7500 torgersen
+#>  2 Torgersen        3800        7600 torgersen
+#>  3 Torgersen        3250        6500 torgersen
+#>  4 Torgersen          NA          NA torgersen
+#>  5 Torgersen        3450        6900 torgersen
+#>  6 Torgersen        3650        7300 torgersen
+#>  7 Torgersen        3625        7250 torgersen
+#>  8 Torgersen        4675        9350 torgersen
+#>  9 Torgersen        3475        6950 torgersen
+#> 10 Torgersen        4250        8500 torgersen
 #> # ℹ 334 more rows
 
 penguins %>% mutate(double_mass = body_mass_g * 2, .keep = "none")
@@ -1234,7 +1234,7 @@ Since `tidyr::replace_na` does not support tidy select syntax, replacing
 NA values in multiple columns could be a drudgery. Now this is made easy
 with `coalesce` and `across`
 
-``` r
+```r
 penguins %>% summarize(across(starts_with("bill"), ~ sum(is.na(.x))))
 #> # A tibble: 1 × 2
 #>   bill_length_mm bill_depth_mm
@@ -1255,13 +1255,13 @@ penguins %>%
 We can easily perform rolling computation with the `slider` package and
 `pick()`.
 
-``` r
+```r
 library(slider)
 library(lubridate)
-#> 
+#>
 #> Attaching package: 'lubridate'
 #> The following objects are masked from 'package:base':
-#> 
+#>
 #>     date, intersect, setdiff, union
 # historical stock prices from 2014-2018 for Google, Amazon, Facebook and Apple
 stock <- tsibbledata::gafa_stock %>% select(Symbol, Date, Close, Volume)
@@ -1283,7 +1283,7 @@ stock
 #> # ℹ 5,022 more rows
 ```
 
-``` r
+```r
 # Arrange and group by `Symbol` (i.e. Google)
 stock <- stock %>%
   arrange(Symbol, Date) %>%
@@ -1305,7 +1305,7 @@ stock %>%
 # !collapse(1:15) collapsed
 #> # A tibble: 5,032 × 5
 #> # Groups:   Symbol [4]
-#>    Symbol Date       Close    Volume model 
+#>    Symbol Date       Close    Volume model
 #>    <chr>  <date>     <dbl>     <dbl> <list>
 #>  1 AAPL   2014-01-02  79.0  58671200 <NULL>
 #>  2 AAPL   2014-01-03  77.3  98116900 <NULL>
@@ -1314,8 +1314,8 @@ stock %>%
 #>  5 AAPL   2014-01-08  77.6  64632400 <NULL>
 #>  6 AAPL   2014-01-09  76.6  69787200 <NULL>
 #>  7 AAPL   2014-01-10  76.1  76244000 <NULL>
-#>  8 AAPL   2014-01-13  76.5  94623200 <lm>  
-#>  9 AAPL   2014-01-14  78.1  83140400 <lm>  
-#> 10 AAPL   2014-01-15  79.6  97909700 <lm>  
+#>  8 AAPL   2014-01-13  76.5  94623200 <lm>
+#>  9 AAPL   2014-01-14  78.1  83140400 <lm>
+#> 10 AAPL   2014-01-15  79.6  97909700 <lm>
 #> # ℹ 5,022 more rows
 ```

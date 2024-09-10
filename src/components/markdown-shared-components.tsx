@@ -1,8 +1,8 @@
 import { Callout } from "./callout";
 import { CodeBlock } from "./codehike/code-block";
+import { CodeSwitcher } from "./codehike/code-switcher";
 import { Image } from "./codehike/image";
 import { InlineCode } from "./codehike/inline-code";
-import { LanguageSwitcher } from "./codehike/language-switcher";
 import { BlogLink } from "./codehike/link";
 import { MyIframe } from "./iframe";
 
@@ -20,14 +20,17 @@ export const MarkdownSharedComponents = {
       />
     );
   },
-  "code-block": ({ value, lang, filename, caption }: CodeBlockProps) => {
-    return <CodeBlock value={value} lang={lang} meta={{ filename, caption }} />;
-  },
+
   a: BlogLink,
-  "code-inline": ({ value, lang }: CodeInlineProps) => (
-    <InlineCode codeblock={{ value, lang, meta: "" }} />
-  ),
-  "language-switcher": LanguageSwitcher,
+  "code-block": ({ value, lang, filename, caption }: CodeBlockProps) => {
+    return (
+      <CodeBlock value={value} lang={lang} customMeta={{ filename, caption }} />
+    );
+  },
+  "code-inline": ({ value, lang }: CodeInlineProps) => {
+    return <InlineCode value={value} lang={lang} />;
+  },
+  "code-switcher": CodeSwitcher,
 };
 
 type ImageProps = {

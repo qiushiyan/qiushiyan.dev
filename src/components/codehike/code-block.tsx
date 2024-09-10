@@ -13,10 +13,14 @@ type CodeBlockMeta = {
 type CodeBlockProps = {
   value: string;
   lang?: string;
-  meta?: CodeBlockMeta;
+  customMeta?: CodeBlockMeta;
 };
 
-export const CodeBlock = async ({ value, lang, meta }: CodeBlockProps) => {
+export const CodeBlock = async ({
+  value,
+  lang,
+  customMeta,
+}: CodeBlockProps) => {
   const highlighted = await highlight(
     { value, lang: lang ?? "", meta: "" },
     "github-from-css"
@@ -30,13 +34,13 @@ export const CodeBlock = async ({ value, lang, meta }: CodeBlockProps) => {
     a.data = { n: index + 1 };
   });
 
-  const hasFilename = meta?.filename !== undefined;
+  const hasFilename = customMeta?.filename !== undefined;
 
   return (
     <figure className="my-2 py-2">
       {hasFilename && (
         <div className="relative my-0 rounded-tl-md rounded-tr-md border border-border bg-muted px-4 py-2 font-mono text-base text-muted-foreground">
-          <p className="my-0">{meta.filename}</p>
+          <p className="my-0">{customMeta.filename}</p>
           <CopyButton
             text={value}
             className="top-1/2 -translate-y-1/2 text-foreground hover:bg-background"
@@ -62,11 +66,11 @@ export const CodeBlock = async ({ value, lang, meta }: CodeBlockProps) => {
           ))}
         </ul>
       )}
-      {meta?.caption && (
+      {customMeta?.caption && (
         <figcaption
           className="my-1 text-center text-sm text-muted-foreground"
           dangerouslySetInnerHTML={{
-            __html: meta.caption,
+            __html: customMeta.caption,
           }}
         />
       )}

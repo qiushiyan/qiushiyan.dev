@@ -54,7 +54,7 @@ export default function Home({
         <Heading className="mb-0" id="projects-heading">
           Personal Projects
         </Heading>
-        <section aria-labelledby="projects-heading">
+        <section aria-labelledby="projects-heading" className="full-width">
           <Suspense fallback={<FeaturedProjects.Skeleton />}>
             <FeaturedProjects />
           </Suspense>

@@ -53,20 +53,3 @@ function Header(el)
     end
     return el
 end
-
--- Function to create table of contents comment
-local function create_toc_comment()
-    local toc = "BEGIN_TOC\n"
-    for _, h in ipairs(headings) do
-        local indent = string.rep("  ", h.depth - 2)
-        toc = toc .. string.format("%s- %s|%s|%d\n", indent, h.title, h.slug, h.depth)
-    end
-    toc = toc .. "END_TOC"
-    return pandoc.RawBlock('html', '<!--\n' .. toc .. '\n-->')
-end
-
-function Pandoc(doc)
-    local toc_comment = create_toc_comment()
-    table.insert(doc.blocks, 1, toc_comment)
-    return doc
-end

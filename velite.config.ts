@@ -1,4 +1,5 @@
 import { PythonScriptLoader, RScriptLoader } from "@/lib/content/loaders";
+import { htmlProcessor } from "@/lib/content/processor";
 import { timestamp } from "@/lib/content/schema";
 import { routes } from "@/lib/navigation";
 import { slug } from "github-slugger";
@@ -18,13 +19,6 @@ import {
   rehypeUnwrapImages,
   remarkUseDirective,
 } from "./src/lib/content/plugins";
-
-const htmlProcessor = unified().use([
-  remarkParse,
-  remarkRehype,
-  rehypeRaw,
-  rehypeStringify,
-]);
 
 const descriptionProcessor = unified().use([
   remarkParse,
@@ -55,7 +49,6 @@ const about = defineCollection({
 const posts = defineCollection({
   name: "Post",
   pattern: "./posts/**/*.md",
-
   schema: s
     .object({
       title: s.string(),
@@ -76,7 +69,7 @@ const posts = defineCollection({
         )
         .transform((headings) =>
           headings.map((heading) => ({
-            html: htmlProcessor.processSync(heading.title).toString(),
+            html: htmlProcessor.processSync(heading.title).value,
             slug: heading.slug,
             depth: heading.depth,
           }))
@@ -91,7 +84,7 @@ const posts = defineCollection({
         rehypePlugins: [rehypeCode, rehypeUnwrapImages],
       }),
     })
-    .transform((data, { meta }) => {
+    .transform((data) => {
       const postSlug = data.slug || slug(data.title);
       return {
         ...data,

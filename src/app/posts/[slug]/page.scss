@@ -61,6 +61,7 @@
     @apply relative pl-8 text-sm text-muted-foreground;
 
     &::before {
+      @apply hidden lg:block;
       position: absolute;
       top: 0;
       left: 0;

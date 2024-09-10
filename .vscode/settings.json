@@ -28,5 +28,6 @@
   },
   "[lua]": {
     "editor.defaultFormatter": "sumneko.lua"
-  }
+  },
+  "cSpell.words": ["retext", "Retext"]
 }

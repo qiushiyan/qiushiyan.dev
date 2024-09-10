@@ -54,7 +54,7 @@ export const SiteHeader = ({
           </Link>
         </div>
 
-        <div className="ml-auto flex items-center justify-end gap-6">
+        <div className="ml-auto flex items-center justify-end gap-4">
           <Link
             href={routes.recipe(firstRecipe.lang, firstRecipe.slug)}
             style={{ viewTransitionName: "recipes" }}
@@ -63,17 +63,15 @@ export const SiteHeader = ({
             Recipes
           </Link>
           <SiteSearch data={searchData} />
-          <nav className="flex items-center gap-3">
-            {renderRight?.()}
-            <Link
-              href={routes.about}
-              style={{ viewTransitionName: "about" }}
-              className="hidden text-lg transition-all hover:text-primary/80"
-            >
-              About
-            </Link>
-            <ThemeToggle />
-          </nav>
+          {renderRight?.()}
+          <Link
+            href={routes.about}
+            style={{ viewTransitionName: "about" }}
+            className="hidden text-lg transition-all hover:text-primary/80"
+          >
+            About
+          </Link>
+          <ThemeToggle />
         </div>
       </div>
     </header>

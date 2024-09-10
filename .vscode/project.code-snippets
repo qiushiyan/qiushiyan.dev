@@ -1,0 +1,21 @@
+{
+  "front": {
+    "scope": "markdown,md",
+    "prefix": "front",
+    "body": [
+      "---",
+      "title: $1",
+      "slug: $1",
+      "date: \"$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE\"",
+      "description: $2",
+      "tags:",
+      "  - $3",
+      "draft: ${4|true,false|}",
+      "headings: []",
+      "---",
+      "",
+      "$0",
+    ],
+    "description": "Front matter for a blog post",
+  },
+}

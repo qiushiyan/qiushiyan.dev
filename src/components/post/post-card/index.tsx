@@ -19,7 +19,7 @@ export const PostCard = ({ post }: { post: Post }) => {
   return (
     <Link href={post.href}>
       <Card className="group flex h-fit flex-col gap-2 overflow-hidden rounded-md bg-white shadow-sm transition-all hover:scale-105 dark:bg-background">
-        <CardHeader className="flex items-center justify-between pb-2 transition-all group-hover:text-primary/80">
+        <CardHeader className="flex flex-row items-start justify-between pb-2 transition-all group-hover:text-primary/80">
           <h3
             className="text-pretty text-xl font-bold"
             style={{

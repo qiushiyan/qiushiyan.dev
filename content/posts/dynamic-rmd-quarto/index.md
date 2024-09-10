@@ -12,7 +12,7 @@ headings:
   depth: 2
 - title: A note on `knitr::knit_expand`
   slug: a-note-on-knitrknitexpand
-  depth: 2
+  depth: 3
 - title: Without `knitr`
   slug: without-knitr
   depth: 2
@@ -56,18 +56,18 @@ engine.
 
 ## Using the `knitr` engine {#using-the-knitr-engine}
 
-The `knitr` engine has built-in supports for dyanmic, parameterized
+The `knitr` engine has built-in supports for dynamic, parameterized
 documents. For R Markdown, you can pass data to the document using the
 `params` argument in `rmarkdown::render()`, learn more at
 <https://bookdown.org/yihui/rmarkdown/parameterized-reports.html>. This
-is intented for rendering one big parameterized `.Rmd` document.
+is intended for rendering one big parameterized `.Rmd` document.
 
-When it comes to inserting subcontents into either `.qmd` or `.Rmd`
+When it comes to inserting sub-contents into either `.qmd` or `.Rmd`
 files, `knitr:::knit_child` is the function you need. Similar to
 `params` in `rmarkdown::render`, you can pass a environment object to
 `knitr:::knit_child` using the `envir` argument. The returned value of
 `knit_child` is simply the character string that can be directly
-embedded into a documnet, it’s also used in conjunction with the chunk
+embedded into a document, it’s also used in conjunction with the chunk
 option `output = 'asis'` (Quarto) or `results = 'asis'` (R Markdown),
 
 `knit_child` accepts both an inline string `text` or a file path `file`.
@@ -212,7 +212,7 @@ below:
 
 </div>
 
-## A note on `knitr::knit_expand` {#a-note-on-knitrknitexpand}
+### A note on `knitr::knit_expand` {#a-note-on-knitrknitexpand}
 
 [R Markdown
 Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/knit-expand.html)

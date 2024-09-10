@@ -8,10 +8,12 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { SKIP, visit } from "unist-util-visit";
 
+import { htmlProcessor } from "./processor";
+
 export const rehypeCode = () => {
   return (tree: Root) => {
     visit(tree, "element", (node, index, parent) => {
-      if (node.tagName === "language-switcher") {
+      if (node.tagName === "code-switcher") {
         const pres = node.children
           .filter(
             (child) => child.type === "element" && child.tagName === "pre"
@@ -28,6 +30,7 @@ export const rehypeCode = () => {
           nodes.map((node) => ({
             lang: node.properties.lang,
             code: node.properties.value,
+            filename: node.properties.filename,
           }))
         );
 
@@ -149,12 +152,7 @@ const transformCode = (node: Text, lang: string) => {
       lang,
       filename: meta?.filename,
       caption: meta?.caption
-        ? unified()
-            .use(remarkParse)
-            .use(remarkRehype)
-            .use(rehypeStringify)
-            .processSync(meta.caption)
-            .toString()
+        ? htmlProcessor.processSync(meta.caption).value
         : undefined,
     },
   };

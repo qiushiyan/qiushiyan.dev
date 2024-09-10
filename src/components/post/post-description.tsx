@@ -16,7 +16,7 @@ export const PostDescription = ({
         transform: {
           // @ts-ignore
           "code-inline": ({ value, lang }: { value: string; lang: string }) => (
-            <InlineCode codeblock={{ value, lang, meta: "" }} />
+            <InlineCode value={value} lang={lang} />
           ),
         },
       })}
