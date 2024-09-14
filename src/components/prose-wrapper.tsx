@@ -13,7 +13,7 @@ export const ArticleProse = ({ children, className, ...rest }: Props) => {
     <div
       className={cn(
         basicProseClasses,
-        "prose-headings:my-4 md:text-lg md:leading-relaxed xl:text-xl xl:leading-loose xl:prose-pre:text-lg",
+        "md:text-lg md:leading-relaxed xl:text-xl xl:leading-loose xl:prose-pre:text-lg",
         className
       )}
       {...rest}

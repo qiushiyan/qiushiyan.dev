@@ -6,6 +6,7 @@ import {
   Inter as FontSans,
   Space_Grotesk as FontSerif,
 } from "next/font/google";
+import { Toaster } from "sonner";
 
 import "@/styles/globals.css";
 import "@/styles/highlight.css";
@@ -69,6 +70,7 @@ export default function RootLayout({
             fontMono.variable
           )}
         >
+          <Toaster visibleToasts={1} />
           <RootProvider>{children}</RootProvider>
           <CloudflareAnalytics />
         </body>

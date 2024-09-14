@@ -6,6 +6,8 @@ description: |
   Automate report generation in Quarto with parameterized documents.
 tags:
 - Quarto
+components:
+- iframe
 headings:
 - title: Using the `knitr` engine
   slug: using-the-knitr-engine

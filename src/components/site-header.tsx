@@ -1,6 +1,5 @@
 import React from "react";
 
-import { MAIN_CONTENT_ID } from "@/constants";
 import { getPosts } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -20,7 +19,6 @@ const searchData = getPosts().map((post) => ({
   title: post.title,
   description: post.description,
   href: post.href,
-  raw: post.raw,
 }));
 export type SearchData = (typeof searchData)[number];
 

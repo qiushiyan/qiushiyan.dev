@@ -1,7 +1,5 @@
 import yaml
 import re
-import markdown
-from bs4 import BeautifulSoup
 import uuid
 
 
@@ -38,7 +36,7 @@ def extract_headings(markdown_text):
     processed_text, placeholders = replace_code_blocks(markdown_text)
 
     # Regular expression to match headings and capture custom IDs
-    heading_pattern = re.compile(r"^(#{1,6})\s+(.*?)(?:\s+{#([^}]+)})?$", re.MULTILINE)
+    heading_pattern = re.compile(r"^(#{2,3})\s+(.*?)(?:\s+{#([^}]+)})?$", re.MULTILINE)
 
     headings = []
     for match in heading_pattern.finditer(processed_text):

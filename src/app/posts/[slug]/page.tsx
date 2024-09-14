@@ -1,5 +1,5 @@
 import Comments from "@/components/comments";
-import { MarkdownSharedComponents } from "@/components/markdown-shared-components";
+import { getComponents } from "@/components/components-registry";
 import { ArticleProse } from "@/components/prose-wrapper";
 import { Separator } from "@/components/ui/separator";
 
@@ -26,16 +26,18 @@ export default async function PostPage({
 
   return (
     <main className="overflow-x-hidden" id={MAIN_CONTENT_ID}>
-      <ArticleProse>
+      <ArticleProse className="prose-h2:my-8 prose-h2:underline prose-h2:underline-offset-8 prose-h3:my-4 prose-p:my-4">
         <article className="post">
           <PostBanner post={post} />
 
           <Separator className="full-width" />
           {htmr(post.content, {
             // @ts-ignore
-            transform: MarkdownSharedComponents,
+            transform: await getComponents(post.components),
           })}
-          <Comments />
+          <div className="mt-16">
+            <Comments />
+          </div>
         </article>
       </ArticleProse>
     </main>

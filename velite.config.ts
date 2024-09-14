@@ -74,7 +74,7 @@ const posts = defineCollection({
             depth: heading.depth,
           }))
         ),
-      raw: s.raw(),
+      components: s.array(s.string()).optional(),
       content: s.markdown({
         remarkPlugins: [
           remarkDirective,

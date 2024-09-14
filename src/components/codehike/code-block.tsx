@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { highlight, Pre } from "codehike/code";
+import { FileCodeIcon } from "lucide-react";
 
 import { CopyButton } from "./copy-button";
 import { FootnoteNumber } from "./footnotes";
@@ -39,8 +40,11 @@ export const CodeBlock = async ({
   return (
     <figure className="my-2 py-2">
       {hasFilename && (
-        <div className="relative my-0 rounded-tl-md rounded-tr-md border border-border bg-muted px-4 py-2 font-mono text-base text-muted-foreground">
-          <p className="my-0">{customMeta.filename}</p>
+        <div className="relative my-0 rounded-tl-md rounded-tr-md border border-border px-4 py-2 font-mono text-base text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <FileCodeIcon className="size-4" />
+            <span>{customMeta.filename}</span>
+          </div>
           <CopyButton
             text={value}
             className="top-1/2 -translate-y-1/2 text-foreground hover:bg-background"
