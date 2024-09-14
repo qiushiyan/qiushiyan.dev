@@ -13,7 +13,7 @@ components:
 
 ## What are Durable Objects and why they are needed
 
-Cloudflare workers are one of the most impactful serverless solutions. Each worker is replicated over the Cloudflare global network in hundreds of cities worldwide, also called the **edge**. When a user makes a request to the worker, a worker instance will be spawned close to the user's geographic location to serve the request with minimal latency.
+Cloudflare workers are one of the most impactful serverless solutions. Each worker is replicated over the Cloudflare global network in hundreds of cities worldwide, also called the **Edge**. When a user makes a request, a worker instance will be spawned close to the user's geographic location to serve the request with minimal latency.
 
 <img src="https://workers.cloudflare.com/resources/illustrations/global-network-dark-theme.svg" alt="Cloudflare network where each circle represents an edge location in which workers can be spawned">
 
@@ -26,20 +26,26 @@ In contrast to workers, DO can act as a single source of truth across clients an
 - **Uniqueness**: durable objects are literally "objects" as they are instances of a JavaScript class. They are uniquely identified by an ID, you call _js`MY_DO_CLASS.get(id)`_ to spawn an object and it exists in only one location in the world. All workers will talk to the same DO so long as they are using the same ID.
 
 
-- **Persistence**: Do can manage states as persistent disk storage. All workers can send messages to it, mutates the state and get fast, consistent results. When an object becomes idle, it will be garbage collected but the persistent state will be preserved and restored when the same ID is used again.
+- **Persistence**: Do can manage states as persistent disk storage. All workers can send messages to it, mutate the state, and get fast, consistent responses. When an object becomes idle, it will be garbage collected, but the state will be restored when the same ID is used again.
 
 
 
 
 ## Configure durable objects
 
-If you have used other Cloudflare products such as **KV** or **D1**, you will be used to adding bindings using the `wrangler` cli, e.g.,
+If you have used other Cloudflare products such as **KV** or **D1**, you will be used to adding bindings using the `wrangler` cli, e.g.:
 
 ```bash
 wrangler create d1 <name>
 ```
 
-However, with durable objects, we need to manually add entries to the `wrangler.toml` configuration file, e.g.
+However, with durable objects, we need to manually add entries to the `wrangler.toml` configuration file. Let's generate a minimal worker project with the command:
+
+```bash
+pnpm create cloudflare --type=hello-world --lang=ts
+```
+
+Go into each of the following files and update the code as:
 
 <code-switcher>
 
