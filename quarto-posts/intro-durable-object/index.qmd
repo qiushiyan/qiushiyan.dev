@@ -347,6 +347,12 @@ app.post("/:name/decrement", async (c) => {
 export * from "./counter";
 ```
 
+::: {.column-margin}
+
+What is shown here is a simplified version. The actual service adds a rate limiter to prevent excessive requests from the same IP address, the rate limiter is also a DO. Browse full code on [Github](https://github.com/qiushiyan/durable-object-counter).
+
+:::
+
 We can access bindings via `c.env` in the hono app. To get autocompletion we are also adding a generic type `{ Bindings: CloudflareBindings }`. `CloudflareBindings` is a generated type produced by running `pnpm cf-typegen`.
 
 The worker and DO can now be readily deployed using `pnpm deploy`. I have set up a simple UI to test the endpoints. Each card below represents a DO with name `card-1` and `card-2`. Clicking on the plus or minus button will send requests to `/card-1/increment` and `/card-2/decrement` respectively.

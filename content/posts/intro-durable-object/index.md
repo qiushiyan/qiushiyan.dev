@@ -440,6 +440,15 @@ app.post("/:name/decrement", async (c) => {
 export * from "./counter";
 ```
 
+<div class="column-margin">
+
+What is shown here is a simplified version. The actual service adds a
+rate limiter to prevent excessive requests from the same IP address, the
+rate limiter is also a DO. Browse full code on
+[Github](https://github.com/qiushiyan/durable-object-counter).
+
+</div>
+
 We can access bindings via `c.env` in the hono app. To get
 autocompletion we are also adding a generic type
 `{ Bindings: CloudflareBindings }`. `CloudflareBindings` is a generated
