@@ -1,6 +1,7 @@
 import htmr from "htmr";
 
 import { InlineCode } from "../codehike/inline-code";
+import { HtmlRenderer } from "../html-renderer";
 import { BasicProse } from "../prose-wrapper";
 
 export const PostDescription = ({
@@ -12,14 +13,14 @@ export const PostDescription = ({
 }) => {
   return (
     <BasicProse className={className}>
-      {htmr(description, {
-        transform: {
-          // @ts-ignore
+      <HtmlRenderer
+        content={description}
+        components={{
           "code-inline": ({ value, lang }: { value: string; lang: string }) => (
             <InlineCode value={value} lang={lang} />
           ),
-        },
-      })}
+        }}
+      />
     </BasicProse>
   );
 };

@@ -7,9 +7,8 @@ import { CodeBlock } from "./codehike/code-block";
 import { Image } from "./codehike/image";
 import { InlineCode } from "./codehike/inline-code";
 import { BlogLink } from "./codehike/link";
-import { MyIframe } from "./iframe";
 
-const sharedComponents = {
+export const sharedComponents = {
   "my-callout": Callout,
 
   img: (props: ImageProps) => {

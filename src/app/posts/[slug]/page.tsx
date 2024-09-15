@@ -6,10 +6,10 @@ import { Separator } from "@/components/ui/separator";
 import "./page.scss";
 
 import { incrementView } from "@/actions/views";
+import { HtmlRenderer } from "@/components/html-renderer";
 import { PostBanner } from "@/components/post/post-banner";
 import { MAIN_CONTENT_ID } from "@/constants";
 import { findPost } from "@/lib/content/posts";
-import htmr from "htmr";
 import { notFound } from "next/navigation";
 
 export default async function PostPage({
@@ -25,16 +25,16 @@ export default async function PostPage({
   incrementView(post.slug);
 
   return (
-    <main className="overflow-x-hidden" id={MAIN_CONTENT_ID}>
+    <main id={MAIN_CONTENT_ID}>
       <ArticleProse className="prose-h2:my-8 prose-h2:underline prose-h2:underline-offset-8 prose-h3:my-4 prose-p:my-4">
         <article className="post">
           <PostBanner post={post} />
 
           <Separator className="full-width" />
-          {htmr(post.content, {
-            // @ts-ignore
-            transform: await getComponents(post.components),
-          })}
+          <HtmlRenderer
+            content={post.content}
+            components={await getComponents(post.components)}
+          />
           <div className="mt-16">
             <Comments />
           </div>

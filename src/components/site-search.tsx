@@ -19,12 +19,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { searchData, SearchData } from "@/lib/content/posts";
 import Fuse, { FuseResultMatch } from "fuse.js";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { useDebounceValue } from "usehooks-ts";
 
-import { SearchData } from "./site-header";
 import { Spinner } from "./ui/spinner";
 
 type SearchResult = {
@@ -46,46 +46,42 @@ const useSearch = () => useContext(SearchContext);
 
 const SearchProvider: React.FC<{
   children: React.ReactNode;
-  data: SearchData[];
-}> = ({ children, data }) => {
+}> = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, _setResults] = useState<SearchResult[]>([]);
   const [pending, startTransition] = useTransition();
   const fuse = useRef<Fuse<SearchData>>();
 
-  const search = useCallback(
-    async (query: string) => {
-      const domPurity = (await import("dompurify")).default;
-      if (!fuse.current) {
-        const Fuse = (await import("fuse.js")).default;
-        fuse.current = new Fuse(data, {
-          keys: [
-            { name: "title", weight: 1 },
-            { name: "description", weight: 1 },
-            { name: "raw", weight: 0.75 },
-          ],
-          includeMatches: true,
-          shouldSort: true,
-          minMatchCharLength: 3,
-          threshold: 0.5,
-        });
-      }
+  const search = useCallback(async (query: string) => {
+    const domPurity = (await import("dompurify")).default;
+    if (!fuse.current) {
+      const Fuse = (await import("fuse.js")).default;
+      fuse.current = new Fuse(searchData, {
+        keys: [
+          { name: "title", weight: 1 },
+          { name: "description", weight: 1 },
+          { name: "raw", weight: 0.75 },
+        ],
+        includeMatches: true,
+        shouldSort: true,
+        minMatchCharLength: 3,
+        threshold: 0.5,
+      });
+    }
 
-      const sanitizedQuery = domPurity.sanitize(query);
+    const sanitizedQuery = domPurity.sanitize(query);
 
-      setSearchQuery(sanitizedQuery);
-      setResults(
-        fuse.current?.search(sanitizedQuery).map((result) => {
-          return {
-            title: result.item.title,
-            matches: result.matches,
-            href: result.item.href,
-          };
-        }) as SearchResult[]
-      );
-    },
-    [data]
-  );
+    setSearchQuery(sanitizedQuery);
+    setResults(
+      fuse.current?.search(sanitizedQuery).map((result) => {
+        return {
+          title: result.item.title,
+          matches: result.matches,
+          href: result.item.href,
+        };
+      }) as SearchResult[]
+    );
+  }, []);
 
   const setResults = (results: SearchResult[]) => {
     startTransition(() => {
@@ -102,11 +98,11 @@ const SearchProvider: React.FC<{
   );
 };
 
-export function SiteSearch({ data }: { data: SearchData[] }) {
+export function SiteSearch() {
   const isMobile = useIsMobile();
 
   return (
-    <SearchProvider data={data}>
+    <SearchProvider>
       {isMobile ? <SiteSearchMobile /> : <SearchDesktop />}
     </SearchProvider>
   );

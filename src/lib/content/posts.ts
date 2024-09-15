@@ -30,3 +30,11 @@ export const getAllTags = cache(() => {
   }, new Map<string, boolean>());
   return Array.from(tags.keys());
 });
+
+export const searchData = getPosts().map((post) => ({
+  title: post.title,
+  description: post.description,
+  href: post.href,
+}));
+
+export type SearchData = (typeof searchData)[number];

@@ -6,7 +6,8 @@ import { PostCard } from "@/components/post/post-card";
 
 import "@/lib/content/posts";
 
-import { SiteHeader } from "@/components/site-header";
+import { Container } from "@/components/container";
+import { SiteNav } from "@/components/nav/site-nav";
 import { getPosts } from "@/lib/content/posts";
 
 export const runtime = "edge";
@@ -14,8 +15,8 @@ export const runtime = "edge";
 export default function Page() {
   return (
     <>
-      <SiteHeader />
-      <div className="posts">
+      <SiteNav />
+      <Container className="posts">
         <Heading className="text-foreground">Posts</Heading>
         <ol className="space-y-4">
           {getPosts().map((post) => (
@@ -24,7 +25,7 @@ export default function Page() {
             </li>
           ))}
         </ol>
-      </div>
+      </Container>
     </>
   );
 }

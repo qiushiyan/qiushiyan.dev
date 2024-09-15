@@ -47,7 +47,7 @@ export default function Layout({
   }
 
   return (
-    <SidebarLayout className="flex-col">
+    <SidebarLayout defaultOpen={true} className="flex-col">
       <RecipesSidebar />
       <RecipesHeader
         title={recipe.title || recipe.filename}

@@ -2,12 +2,12 @@ import React from "react";
 
 import "./layout.scss";
 
-import { SiteHeader } from "@/components/site-header";
+import { SiteNav } from "@/components/nav/site-nav";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <SiteHeader />
+      <SiteNav />
       <main>{children}</main>
     </>
   );
