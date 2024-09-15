@@ -7,17 +7,15 @@ import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
 
 import { NavLinks } from "../config";
-import { MotionDiv } from "../framer-motion";
 import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <Button
           variant="ghost"
           className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -53,24 +51,23 @@ export function MobileNav() {
           </svg>
           <span className="sr-only">Toggle Menu</span>
         </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="pr-0">
-        <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-          <div className="flex flex-col space-y-3">
-            {NavLinks.Mobile.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-                className="flex items-center gap-2 text-base font-medium text-accent-foreground"
-              >
-                <link.icon className="size-4" />
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </ScrollArea>
-      </SheetContent>
-    </Sheet>
+      </PopoverTrigger>
+      <PopoverContent side="bottom" align="start" className="p-4">
+        <div className="flex flex-col space-y-3">
+          {NavLinks.Mobile.map((link, index) => (
+            <MobileLink
+              onOpenChange={setOpen}
+              key={index}
+              href={link.href}
+              className="flex items-center gap-2 text-base font-medium text-accent-foreground"
+            >
+              <link.icon className="size-4" />
+              {link.label}
+            </MobileLink>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
