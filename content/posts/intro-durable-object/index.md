@@ -467,7 +467,7 @@ represents a DO with name `card-1` and `card-2`. Clicking on the plus or
 minus button will send requests to `/card-1/increment` and
 `/card-2/decrement` respectively.
 
-<do-counter-example> \</do-counter-example
+<do-counter-example />
 
 ## Other notes {#other-notes}
 
