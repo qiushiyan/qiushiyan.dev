@@ -29,7 +29,6 @@
     "@codemirror/lang-python": "^6.1.6",
     "@codemirror/view": "^6.33.0",
     "@giscus/react": "^3.0.0",
-    "@headlessui/react": "^2.1.8",
     "@icons-pack/react-simple-icons": "^10.0.0",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",

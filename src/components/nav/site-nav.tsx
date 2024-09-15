@@ -1,4 +1,3 @@
-import { searchData } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import Link from "next/link";
@@ -18,10 +17,13 @@ function DesktopNav({
   return (
     <nav className="relative hidden lg:flex">
       {NavLinks.Main.map(({ href, label, viewTransitionName }) => (
-        <PlusGridItem key={href} className="relative flex">
+        <PlusGridItem
+          key={href}
+          className="relative flex transition-colors hover:bg-muted"
+        >
           <Link
             href={href}
-            className="flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply data-[hover]:bg-black/[2.5%]"
+            className="flex items-center px-4 py-3 text-base font-medium text-accent-foreground bg-blend-multiply"
             title={label}
             style={{
               viewTransitionName,
