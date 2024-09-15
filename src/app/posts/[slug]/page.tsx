@@ -32,7 +32,6 @@ export default async function PostPage({
       <ArticleProse className="prose-h2:my-8 prose-h2:underline prose-h2:underline-offset-8 prose-h3:my-4 prose-p:my-4">
         <article className="post center-grid">
           <PostBanner post={post} />
-
           <Separator className="full-width" />
           <HtmlRenderer
             content={post.content}

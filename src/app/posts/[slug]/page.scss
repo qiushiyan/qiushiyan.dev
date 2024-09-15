@@ -19,6 +19,10 @@
   & > * {
     grid-column: 2;
   }
+
+  .left {
+    @apply lg:col-start-1;
+  }
 }
 
 .post {

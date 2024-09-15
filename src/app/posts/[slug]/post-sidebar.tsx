@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -11,7 +13,12 @@ import { useCurrentPost } from "@/hooks/use-current-post";
 import { getPostsByTags } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import { AtomIcon, ChevronRight, TableOfContents } from "lucide-react";
+import {
+  ArrowRightIcon,
+  AtomIcon,
+  ChevronRight,
+  TableOfContents,
+} from "lucide-react";
 import Link from "next/link";
 
 export function PostSidebar() {
@@ -31,11 +38,13 @@ export function PostSidebar() {
 
 const SimilarPosts = () => {
   const post = useCurrentPost();
+
   if (!post) return null;
 
   const similarPosts = getPostsByTags(post.tags).filter(
     (p) => p.slug !== post.slug
   );
+
   if (similarPosts.length === 0) return null;
 
   return (
@@ -63,7 +72,9 @@ const SimilarPosts = () => {
           {similarPosts.map((post) => (
             <li key={post.slug}>
               <Link
-                className="flex overflow-hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2"
+                className={cn(
+                  "flex overflow-hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2"
+                )}
                 href={routes.post(post.slug)}
               >
                 <div className="line-clamp-2">{post.title}</div>
@@ -78,6 +89,29 @@ const SimilarPosts = () => {
 
 export const PostToc = () => {
   const post = useCurrentPost();
+  const [activeHeading, setActiveHeading] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!post) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveHeading(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-40px 0px -80% 0px" }
+    );
+
+    post.headings.forEach((heading) => {
+      const element = document.getElementById(heading.slug);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, [post]);
+
   if (!post) return null;
 
   return (
@@ -101,7 +135,7 @@ export const PostToc = () => {
       </CollapsibleTrigger>
 
       <CollapsibleContent className="px-4 py-0.5">
-        <ul className="grid border-l px-2">
+        <ul className="grid border-l">
           {post.headings.map((item) => (
             <li
               key={item.slug}
@@ -111,8 +145,21 @@ export const PostToc = () => {
                 slug={item.slug}
                 data-depth={item.depth}
                 data-heading-slug={item.slug}
+                className={
+                  activeHeading === item.slug
+                    ? "translate-x-2 font-semibold text-primary transition-all"
+                    : ""
+                }
               >
-                <span dangerouslySetInnerHTML={{ __html: item.html }} />
+                <ArrowRightIcon
+                  className={cn(
+                    "size-3 shrink-0 transition-transform duration-300",
+                    activeHeading === item.slug
+                      ? "translate-x-0"
+                      : "-translate-x-2 opacity-0"
+                  )}
+                />
+                <div dangerouslySetInnerHTML={{ __html: item.html }} />
               </TocItem>
             </li>
           ))}
@@ -126,11 +173,19 @@ interface TocItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
   slug: string;
   children: React.ReactNode;
 }
-export const TocItem = ({ slug, children, ...props }: TocItemProps) => {
+export const TocItem = ({
+  slug,
+  children,
+  className,
+  ...props
+}: TocItemProps) => {
   return (
     <Link
       href={`#${slug}`}
-      className="flex min-w-8 items-center gap-2 overflow-hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2"
+      className={cn(
+        "flex min-w-8 items-center gap-2 overflow-hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2",
+        className
+      )}
       {...props}
     >
       {children}

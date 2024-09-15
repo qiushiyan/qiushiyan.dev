@@ -40,7 +40,7 @@ export const CodeBlock = async ({
   return (
     <figure className="my-2 py-2">
       {hasFilename && (
-        <div className="relative my-0 rounded-tl-md rounded-tr-md border border-border px-4 py-2 font-mono text-base text-muted-foreground">
+        <div className="relative my-0 rounded-tl-md rounded-tr-md border px-4 py-2 font-mono text-base text-muted-foreground">
           <div className="flex items-center gap-2">
             <FileCodeIcon className="size-4" />
             <span>{customMeta.filename}</span>
