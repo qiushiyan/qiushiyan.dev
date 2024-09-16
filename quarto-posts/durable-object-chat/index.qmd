@@ -153,7 +153,7 @@ The key here is that we keep track of all connections in an array. When a messag
 
 While the Edge Platform on which Durable Objects run offers a subset of Node.js APIs, the process is quite similar. We use DO instances to model a chat room or a game match. Workers send requests to the DO instance (the server), which then broadcasts messages to all other connected clients.
 
-Let's explore how we can migrate the Node.js example to the Edge using Durable Objects and Workers. Our goal is to build a chat app with multiple rooms. Users can send messages that are broadcast to all other users in the same room, with messages persisted and isolated at the room level. Browse the finished version [here](https://durable-objects-chat.qiushiyan.dev/) and code on [Github](https://github.com/qiushiyan/durable-object-chat).
+Let's explore how we can migrate the Node.js example to the Edge using Durable Objects and Workers. Our goal is to build a chat app with multiple rooms. Users can send messages that are broadcast to all other users in the same room, with messages persisted and isolated at the room level. Browse the finished version [here](https://durable-object-chat.qiushiyan.dev/) and code on [Github](https://github.com/qiushiyan/durable-object-chat).
 
 ![screenshot of the finished chat app](https://github.com/qiushiyan/durable-object-chat/blob/main/image.png?raw=true)
 
@@ -546,4 +546,4 @@ You may also want to set up an [alarm handler](https://developers.cloudflare.com
 
 :::
 
-This wraps up our chat application. The complete code is available on [Github](https://github.com/qiushiyan/durable-object-chat/blob/main/api/src/room.ts) with two additional features: a rate limiter and enhanced message types. A demo is available at https://durable-objects-chat.qiushiyan.dev/.
+This wraps up our chat application. The complete code is available on [Github](https://github.com/qiushiyan/durable-object-chat/blob/main/api/src/room.ts) with two additional features: a rate limiter and enhanced message types. A demo is available at https://durable-object-chat.qiushiyan.dev/.

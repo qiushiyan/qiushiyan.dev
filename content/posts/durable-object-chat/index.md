@@ -186,7 +186,7 @@ Durable Objects and Workers. Our goal is to build a chat app with
 multiple rooms. Users can send messages that are broadcast to all other
 users in the same room, with messages persisted and isolated at the room
 level. Browse the finished version
-[here](https://durable-objects-chat.qiushiyan.dev/) and code on
+[here](https://durable-object-chat.qiushiyan.dev/) and code on
 [Github](https://github.com/qiushiyan/durable-object-chat).
 
 ![screenshot of the finished chat
@@ -640,4 +640,4 @@ to clean up historical messages periodically.
 This wraps up our chat application. The complete code is available on
 [Github](https://github.com/qiushiyan/durable-object-chat/blob/main/api/src/room.ts)
 with two additional features: a rate limiter and enhanced message types.
-A demo is available at https://durable-objects-chat.qiushiyan.dev/.
+A demo is available at https://durable-object-chat.qiushiyan.dev/.
