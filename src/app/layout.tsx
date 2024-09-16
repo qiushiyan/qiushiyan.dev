@@ -44,7 +44,7 @@ export const generateMetadata = () => {
       title: "Qiushi Yan",
       description: "Qiushi Yan's personal website",
       type: "article",
-      url: host.toString(),
+      url: host,
       images: [
         {
           url: "/api/og",

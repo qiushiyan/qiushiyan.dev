@@ -29,7 +29,7 @@ export const generateMetadata = ({ params }: { params: { slug: string } }) => {
       title,
       description,
       type: "article",
-      url: `${host}${page.href}`,
+      url: new URL(page.href, host),
       images: [
         {
           url: `/api/og?title=${title}&description=${description}`,
