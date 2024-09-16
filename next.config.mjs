@@ -33,6 +33,14 @@ const nextConfig = {
   sassOptions: {
     includePaths: ["./src/styles"],
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "github.com",
+      },
+    ],
+  },
   experimental: {
     typedRoutes: false,
     // optimizePackageImports: ["@icons-pack/react-simple-icons"],

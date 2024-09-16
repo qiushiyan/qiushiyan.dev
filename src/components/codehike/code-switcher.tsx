@@ -8,6 +8,7 @@ import { highlight, Pre } from "codehike/code";
 import { FileCodeIcon } from "lucide-react";
 
 import { callout } from "./callout";
+import { mark } from "./mark";
 
 export const CodeSwitcher = async ({ data }: { data: string }) => {
   const entries = await Promise.all(
@@ -51,7 +52,7 @@ export const CodeSwitcher = async ({ data }: { data: string }) => {
           className="rounded-md border"
         >
           <Pre
-            handlers={[callout]}
+            handlers={[callout, mark]}
             code={entry.highlightedCode}
             lang={entry.lang}
             style={entry.highlightedCode.style}

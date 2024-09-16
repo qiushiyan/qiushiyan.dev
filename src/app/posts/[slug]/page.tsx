@@ -54,8 +54,8 @@ const Pager = ({ slug }: { slug: string }) => {
   if (idx === -1) {
     return null;
   }
-  const prevPost = posts.at(idx - 1);
-  const nextPost = posts.at(idx + 1);
+  const prevPost = idx === 0 ? undefined : posts.at(idx - 1);
+  const nextPost = idx === posts.length - 1 ? undefined : posts.at(idx + 1);
 
   return (
     <div className="grid grid-cols-2 gap-8">
@@ -70,7 +70,7 @@ const Pager = ({ slug }: { slug: string }) => {
       )}
       {nextPost && (
         <Link
-          className="group flex items-center gap-2 rounded-md px-2 py-3 text-right text-sm text-muted-foreground no-underline transition-all hover:bg-accent lg:text-base"
+          className="group col-start-2 flex items-center gap-2 rounded-md px-2 py-3 text-right text-sm text-muted-foreground no-underline transition-all hover:bg-accent lg:text-base"
           href={routes.post(nextPost.slug)}
         >
           <span>{nextPost.title}</span>

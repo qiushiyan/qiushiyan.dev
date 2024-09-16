@@ -25,29 +25,30 @@ export const callout: AnnotationHandler = {
         <div className="flex items-start">
           {children}
           <div
-            style={{ minWidth: `${column + 4}ch` }}
             className={cn(
-              "relative mb-1 ml-[1ch] w-fit whitespace-break-spaces rounded border border-current bg-secondary px-2 text-foreground"
+              "relative mb-1 w-fit whitespace-break-spaces rounded border border-current bg-secondary px-4 text-foreground"
             )}
           >
-            <div className="absolute top-1/2 h-2 w-2 -translate-x-3 -translate-y-1/2 rotate-45 border-b border-l border-current bg-secondary text-foreground" />
+            <div className="absolute top-1/2 h-2 w-2 -translate-x-5 -translate-y-1/2 rotate-45 border-b border-l border-current bg-secondary text-foreground" />
             {annotation.query}
           </div>
         </div>
       );
     }
 
+    const marginLeft = column < 20 ? 1 : column / 1.5;
+
     return (
       <>
         {children}
         <div
-          style={{ minWidth: `${column + 4}ch` }}
+          style={{ marginLeft: `${marginLeft}ch` }}
           className={cn(
-            "relative ml-[1ch] mt-1 w-fit whitespace-break-spaces rounded border border-current bg-secondary px-2 text-foreground"
+            "relative mt-1 w-fit whitespace-break-spaces rounded border border-current bg-secondary px-4 text-foreground"
           )}
         >
           <div
-            style={{ left: `${column}ch` }}
+            style={{ left: `${column - marginLeft}ch` }}
             className="absolute -top-[1px] h-2 w-2 -translate-y-1/2 rotate-45 border-l border-t border-current bg-secondary text-foreground"
           />
           {annotation.query}

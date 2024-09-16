@@ -1,17 +1,16 @@
 {
   "front": {
-    "scope": "markdown,md",
+    "scope": "markdown,md,quarto",
     "prefix": "front",
     "body": [
       "---",
       "title: $1",
-      "slug: $1",
+      "slug: $2",
       "date: \"$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE\"",
       "description: $2",
       "tags:",
       "  - $3",
       "draft: ${4|true,false|}",
-      "headings: []",
       "---",
       "",
       "$0",

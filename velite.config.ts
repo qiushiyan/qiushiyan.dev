@@ -67,6 +67,7 @@ const posts = defineCollection({
             depth: s.number(),
           })
         )
+        .default([])
         .transform((headings) =>
           headings.map((heading) => ({
             html: htmlProcessor.processSync(heading.title).toString(),
