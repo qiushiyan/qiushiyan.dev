@@ -110,12 +110,6 @@
     @apply whitespace-pre font-mono !important;
   }
 
-  h1,
-  h2,
-  h3 {
-    @apply font-heading;
-  }
-
   .skip-link {
     position: absolute;
     clip-path: rect(0px, 0px, 0px, 0px);

@@ -1,11 +1,8 @@
 import React from "react";
 
+import { GeistSans } from "geist/font/sans";
 import { ViewTransitions } from "next-view-transitions";
-import {
-  Roboto_Mono as FontMono,
-  Inter as FontSans,
-  Space_Grotesk as FontSerif,
-} from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
 import "@/styles/globals.css";
@@ -16,18 +13,7 @@ import { host } from "@/constants";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const fontHeading = FontSerif({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-heading",
-});
-
-const fontMono = FontMono({
+const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 });
@@ -65,8 +51,7 @@ export default function RootLayout({
         <body
           className={cn(
             "flex min-h-screen flex-col bg-background font-sans text-foreground antialiased",
-            fontSans.variable,
-            fontHeading.variable,
+            GeistSans.variable,
             fontMono.variable
           )}
         >

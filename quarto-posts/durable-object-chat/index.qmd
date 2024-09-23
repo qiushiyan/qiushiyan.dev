@@ -1,5 +1,5 @@
 ---
-title: Building a WebSocket server with Cloudflare Durable Objects
+title: Building a WebSockets server with Cloudflare Durable Objects
 slug: durable-object-chat
 date: "2024-09-15"
 description: |
@@ -94,7 +94,7 @@ connection (highlighted in the code). We verify that we receive the correct requ
 
 Once the connection is established, we can send messages to the client
 using `socket.write()`, and react to incoming messages using the
-`socket.on('data')` event.
+`socket.on('data')` callback.
 
 A client can connect to the server using the `WebSocket` constructor:
 

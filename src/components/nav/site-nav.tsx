@@ -61,7 +61,7 @@ export function SiteNav({
                 <div className="flex items-center gap-2">
                   <Link
                     href={routes.home}
-                    className="font-heading text-2xl font-extrabold tracking-wide text-primary/80 transition-all hover:text-primary"
+                    className="text-2xl font-extrabold tracking-wide text-primary/80 transition-all hover:text-primary"
                     title="Home"
                   >
                     qiushiyan.dev

@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import { Container } from "@/components/container";
 import { SiteNav } from "@/components/nav/site-nav";
 import { PostGrid } from "@/components/post/post-grid";
+import { PostTags } from "@/components/post/post-tags";
 import { BasicProse } from "@/components/prose-wrapper";
 import { MAIN_CONTENT_ID } from "@/constants";
 import { getAllTags } from "@/lib/content/posts";
@@ -60,7 +61,10 @@ export default function Home({
           </section>
 
           <section aria-labelledby="posts-heading">
-            <Heading id="posts-heading">Posts</Heading>
+            <div className="flex items-center gap-1">
+              <Heading id="posts-heading">Posts</Heading>
+              <PostTags selectedTags={tags} />
+            </div>
             <PostGrid selectedTags={tags} />
           </section>
         </main>

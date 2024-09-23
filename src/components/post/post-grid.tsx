@@ -1,17 +1,9 @@
-import { getAllTags, getPostsByTags } from "@/lib/content/posts";
-import { CalendarIcon, TagIcon } from "lucide-react";
+import { getPostsByTags } from "@/lib/content/posts";
 
 import { PostCard } from "./post-card";
-import { PostTags } from "./post-tags";
 
 export const PostGrid = ({ selectedTags }: { selectedTags: string[] }) => {
-  const allTags = getAllTags();
-  return (
-    <>
-      <PostTags selectedTags={selectedTags} allTags={allTags} />
-      <PostCards selectedTags={selectedTags} />
-    </>
-  );
+  return <PostCards selectedTags={selectedTags} />;
 };
 
 const PostCards = ({ selectedTags }: { selectedTags: string[] }) => {
