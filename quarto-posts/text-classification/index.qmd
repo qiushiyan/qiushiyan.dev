@@ -1,5 +1,5 @@
 ---
-title: Text classification with penalized logistic regression
+title: Text Classification with Penalized Logistic Regression
 date: '2020-05-02'
 description: |
     Train a classification model with tidymodels to distinguish Charlotte Brontë from Emily Brontë.
@@ -91,7 +91,7 @@ tidy_books <- clean_books %>%
     ungroup()
 ```
 
-## Comparing word frequency
+## Comparing Word Frequency
 
 Before building an actual predictive model, let's do some EDA to see different tendency to use a particular word! This will also shed light on what we would expect from the text classification. Now, we will compare word frequency (proportion) between the two sisters.
 
@@ -138,7 +138,7 @@ What does this plot tell us? Judged only by word frequency, it looks that there 
 
 ## Modeling
 
-### Data preprocessing
+### Data Preprocessing
 
 There are `r nrow(dplyr::count(tidy_books, word))` and features (words) and `r nrow(dplyr::count(tidy_books, line_index))` observations in total. Approximately 18% of the response are 1 (Emily Brontë).
 
@@ -170,7 +170,7 @@ model_df
 
 
 
-### Train a penalized logistic regression model
+### Train a Penalized Logistic Regression Model
 
 Split the data into training set and testing set.
 

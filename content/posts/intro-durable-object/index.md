@@ -1,5 +1,5 @@
 ---
-title: Managing state in Cloudflare Worker with Durable Objects
+title: Managing State in Cloudflare Worker with Durable Objects
 slug: intro-durable-object
 date: '2024-09-06'
 description: |
@@ -10,27 +10,27 @@ components:
 - code-switcher
 - do-counter-example
 headings:
-- title: What are Durable Objects and why they are needed
+- title: What are Durable Objects and Why They are Needed
   slug: what-are-durable-objects-and-why-they-are-needed
   depth: 2
-- title: Configure durable objects
+- title: Configure Durable Objects
   slug: configure-durable-objects
   depth: 2
-- title: Communication between workers and durable objects
+- title: Communication Between Workers and Durable Objects
   slug: communication-between-workers-and-durable-objects
   depth: 2
-- title: Persist state with the `storage` API
+- title: Persist State with the `storage` API
   slug: persist-state-with-the-storage-api
   depth: 2
-- title: Build a counter service with hono
+- title: Build a Counter Service with hono
   slug: build-a-counter-service-with-hono
   depth: 2
-- title: Other notes
+- title: Other Notes
   slug: other-notes
   depth: 2
 ---
 
-## What are Durable Objects and why they are needed {#what-are-durable-objects-and-why-they-are-needed}
+## What are Durable Objects and Why They are Needed {#what-are-durable-objects-and-why-they-are-needed}
 
 Cloudflare workers are one of the most impactful serverless solutions.
 Each worker is replicated over the Cloudflare global network in hundreds
@@ -69,7 +69,7 @@ clients and ensure strong consistency with the following features:
   collected, but the state will be restored when the same ID is used
   again.
 
-## Configure durable objects {#configure-durable-objects}
+## Configure Durable Objects {#configure-durable-objects}
 
 If you have used other Cloudflare products such as **KV** or **D1**, you
 will be used to adding bindings using the `wrangler` cli, e.g.:
@@ -135,7 +135,7 @@ Let’s break down the code:
 
 <my-steps>
 
-#### Add the binding
+#### Add the Binding
 
 We configure the DO binding in `wrangler.toml`. The
 `durable_objects.bindings.name` field will be used by the worker to
@@ -181,7 +181,7 @@ const id = env.MY_DURABLE_OBJECT.idFromName(ip);
 const obj = env.MY_DURABLE_OBJECT.get(id)
 ```
 
-## Communication between workers and durable objects {#communication-between-workers-and-durable-objects}
+## Communication Between Workers and Durable Objects {#communication-between-workers-and-durable-objects}
 
 DO are designed to operate within a worker instead of being a public
 interface for http clients. In our starter example, our DO defines a
@@ -267,7 +267,7 @@ more information.
 
 </my-callout>
 
-## Persist state with the `storage` API {#persist-state-with-the-storage-api}
+## Persist State with the `storage` API {#persist-state-with-the-storage-api}
 
 In the RPC example above, we are using the property `value` to store the
 counter value. This is not ideal if we want the value to be persisted.
@@ -332,7 +332,7 @@ export default {
 
 </code-switcher>
 
-## Build a counter service with hono {#build-a-counter-service-with-hono}
+## Build a Counter Service with hono {#build-a-counter-service-with-hono}
 
 Let’s enhance our counter example by turning it into a full-fledged API
 service. We will use [hono](https://hono.dev/) to scaffold routes for
@@ -469,7 +469,7 @@ minus button will send requests to `/card-1/increment` and
 
 <do-counter-example />
 
-## Other notes {#other-notes}
+## Other Notes {#other-notes}
 
 - Durable objects support the Workers Runtime Websocket API and can
   become a WebSocket server (see

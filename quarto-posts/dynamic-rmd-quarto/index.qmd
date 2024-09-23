@@ -1,5 +1,5 @@
 ---
-title: Generating dynamic contents in R Markdown and Quarto
+title: Generating Dynamic Contents in R Markdown and Quarto
 slug: dynamic-rmd-quarto
 date: '2023-01-22'
 description: |
@@ -45,7 +45,7 @@ summary_fn(data_b)
 This becomes a pain when they are just so many objects and I have to change the name one by one. This post introduces a programmatic way of automating this task using `knit_child` from the `knitr` rendering engine.
 
 
-## Using the `knitr` engine
+## Using the `knitr` Engine
 
 The `knitr` engine has built-in supports for dynamic, parameterized documents. For R Markdown, you can pass data to the document using the `params` argument in `rmarkdown::render()`, learn more at <https://bookdown.org/yihui/rmarkdown/parameterized-reports.html>. This is intended for rendering one big parameterized `.Rmd` document.
 
@@ -126,7 +126,7 @@ When you run the main document, it will generate a list of random data frames, g
 
 
 
-### A note on `knitr::knit_expand`
+### A Note on `knitr::knit_expand`
 
 
 [R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/knit-expand.html) also introduces a function called `knitr::knit_expand()` that can be used to insert contents into a template content. An example is shown below:

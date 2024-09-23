@@ -31,6 +31,10 @@ export const CodeSwitcher = async ({ data }: { data: string }) => {
     })
   );
 
+  if (entries.length === 0) {
+    return null;
+  }
+
   return (
     <Tabs defaultValue={entries[0].key}>
       <TabsList className="mb-2 flex font-mono">

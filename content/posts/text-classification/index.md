@@ -1,5 +1,5 @@
 ---
-title: Text classification with penalized logistic regression
+title: Text Classification with Penalized Logistic Regression
 date: '2020-05-02'
 description: "Train a classification model with tidymodels to distinguish Charlotte\
   \ Bront\xEB from Emily Bront\xEB.\n"
@@ -7,16 +7,16 @@ tags:
 - R
 - Machine Learning
 headings:
-- title: Comparing word frequency
+- title: Comparing Word Frequency
   slug: comparing-word-frequency
   depth: 2
 - title: Modeling
   slug: modeling
   depth: 2
-- title: Data preprocessing
+- title: Data Preprocessing
   slug: data-preprocessing
   depth: 3
-- title: Train a penalized logistic regression model
+- title: Train a Penalized Logistic Regression Model
   slug: train-a-penalized-logistic-regression-model
   depth: 3
 - title: Tuning lambda
@@ -113,7 +113,7 @@ tidy_books <- clean_books %>%
 #> Joining with `by = join_by(author)`
 ```
 
-## Comparing word frequency {#comparing-word-frequency}
+## Comparing Word Frequency {#comparing-word-frequency}
 
 Before building an actual predictive model, let’s do some EDA to see
 different tendency to use a particular word! This will also shed light
@@ -167,7 +167,7 @@ further in the model.
 
 ## Modeling {#modeling}
 
-### Data preprocessing {#data-preprocessing}
+### Data Preprocessing {#data-preprocessing}
 
 There are 430 and features (words) and 32029 observations in total.
 Approximately 18% of the response are 1 (Emily Brontë).
@@ -204,7 +204,7 @@ library(tidymodels)
 #> ✖ recipes::fixed() masks stringr::fixed()
 #> ✖ dplyr::lag()     masks stats::lag()
 #> ✖ recipes::step()  masks stats::step()
-#> • Use tidymodels_prefer() to resolve common conflicts.
+#> • Use suppressPackageStartupMessages() to eliminate package startup messages
 set.seed(2020)
 doParallel::registerDoParallel()
 
@@ -241,7 +241,7 @@ model_df
 #> #   times <int>, guess <int>, wind <int>, house <int>, set <int>, …
 ```
 
-### Train a penalized logistic regression model {#train-a-penalized-logistic-regression-model}
+### Train a Penalized Logistic Regression Model {#train-a-penalized-logistic-regression-model}
 
 Split the data into training set and testing set.
 

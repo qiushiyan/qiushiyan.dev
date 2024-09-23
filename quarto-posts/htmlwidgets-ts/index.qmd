@@ -1,5 +1,5 @@
 ---
-title: Developing htmlwidgets in R with TypeScript and esbuild
+title: Developing htmlwidgets in R with TypeScript and Esbuild
 date: '2022-01-29'
 description: |
     Frontend tools that add type safety and speed to htmlwidgets development.
@@ -40,7 +40,7 @@ Now, whenever we create a widget from R, the rendering context will automaticall
 
 For this reason, it makes sense to have more control over how javascript dependencies are managed, rather than just downloding and including a dist file. The end result is still the same, we need to include one or several javascript files for the plot. It's just we will not be using files already provided by cdn, but to download the javascript package and do the bundling ourselves. The [`packer`](https://github.com/JohnCoene/packer) package provides an solution to this.
 
-## The `packer` package
+## The `packer` Package
 
 In the JavaScript world, dependency management is done through node and a package manager of choice, like npm, yarn or pnpm. These package managers call be used to create a project-specific environment into which various packages will be insalled.  Then, we would use a bundler like webpack to extract all files into a single file, which is served every time a widget is created from R. `packer` can be used to scaffold a project structure for this need, and provides an R interface so that we can still do all the work through R commands. The following two commands scaffold an htmlwidgets package powered by packer:
 

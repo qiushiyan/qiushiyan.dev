@@ -1,5 +1,5 @@
 ---
-title: Developing htmlwidgets in R with TypeScript and esbuild
+title: Developing htmlwidgets in R with TypeScript and Esbuild
 date: '2022-01-29'
 description: |
   Frontend tools that add type safety and speed to htmlwidgets development.
@@ -7,7 +7,7 @@ tags:
 - R
 - TypeScript
 headings:
-- title: The `packer` package
+- title: The `packer` Package
   slug: the-packer-package
   depth: 2
 - title: Using TypeScript and esbuild
@@ -84,7 +84,7 @@ and do the bundling ourselves. The
 [`packer`](https://github.com/JohnCoene/packer) package provides an
 solution to this.
 
-## The `packer` package {#the-packer-package}
+## The `packer` Package {#the-packer-package}
 
 In the JavaScript world, dependency management is done through node and
 a package manager of choice, like npm, yarn or pnpm. These package

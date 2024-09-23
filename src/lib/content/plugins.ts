@@ -33,7 +33,6 @@ export const rehypeCode = () => {
             filename: node.properties.filename,
           }))
         );
-
         return;
       }
 

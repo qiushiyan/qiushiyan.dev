@@ -1,5 +1,5 @@
 ---
-title: Structural pattern matching in Python 3.10
+title: Structural Pattern Matching in Python 3.10
 slug: python310-pattern-matching
 date: '2022-02-20'
 description: |
@@ -53,7 +53,7 @@ sys.version
 ```
 
 
-## Pattern matching as a replacement for switch statements
+## Pattern Matching as a Replacement for `switch` Statements
 
 The most apparent usage of pattern matching is implementing `switch ... case` statements in many other programming languages, which is a replacement for multiple if else statements. Imagine we are building a game, and we have a `move` function for controlling figure movement.
 
@@ -70,7 +70,7 @@ def move(self, direction):
             self.move_right()
 ```
 
-## Match dictionaries and lists
+## Match Against Dictionaries and Lists
 
 The real power of pattern matching resides in destructuring data structures like lists and dictionaries.
 
@@ -162,7 +162,7 @@ match command.split():
         current_room = current_room.neighbor(direction)
 ```
 
-## Add conditions
+## Add Conditions
 
 Pattern matching allows if conditions the same way as list comprehension, we can append an _py`if ... else`_ clause like so
 
@@ -215,7 +215,7 @@ match p:
 
 In general, any class can be used for validation. This is also called a **class pattern**.
 
-## Matching constants
+## Matching Against Constants
 
 Care should be taken when matching constants, since it's common to store the constant in an variable and then use it in `case`. The following code will not work:
 

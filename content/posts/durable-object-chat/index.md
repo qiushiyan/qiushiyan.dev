@@ -1,5 +1,5 @@
 ---
-title: Building a WebSocket server with Cloudflare Durable Objects
+title: Building a WebSockets Server with Cloudflare Durable Objects
 slug: durable-object-chat
 date: '2024-09-15'
 description: |
@@ -10,17 +10,17 @@ components:
 - code-switcher
 - iframe
 headings:
-- title: WebSockets basics
+- title: WebSockets Basics
   slug: websockets-basics
   depth: 2
-- title: WebSockets server on Durable Objects
+- title: WebSockets Server on Durable Objects
   slug: websockets-server-on-durable-objects
   depth: 2
 - title: WebSockets Hibernation
   slug: websockets-hibernation
   depth: 2
-- title: Displaying historical messages
-  slug: displaying-historical-messages
+- title: Displaying Previous Messages
+  slug: displaying-previous-messages
   depth: 2
 ---
 
@@ -32,7 +32,7 @@ Objects: the [WebSocket
 API](https://developers.cloudflare.com/durable-objects/api/websockets/),
 which enables us to easily create real-time, collaborative applications.
 
-## WebSockets basics {#websockets-basics}
+## WebSockets Basics {#websockets-basics}
 
 Let’s first recap the general idea of WebSockets outside of Cloudflare.
 WebSockets are a standard protocol that maintains bidirectional,
@@ -116,7 +116,7 @@ connections and will be needed in the Workers runtime as well.
 
 Once the connection is established, we can send messages to the client
 using `socket.write()`, and react to incoming messages using the
-`socket.on('data')` event.
+`socket.on('data')` callback.
 
 A client can connect to the server using the `WebSocket` constructor:
 
@@ -173,7 +173,7 @@ The key here is that we keep track of all connections in an array. When
 a message arrives, we loop through the array and send the message to
 each connected client.
 
-## WebSockets server on Durable Objects {#websockets-server-on-durable-objects}
+## WebSockets Server on Durable Objects {#websockets-server-on-durable-objects}
 
 While the Edge Platform on which Durable Objects run offers a subset of
 Node.js APIs, the process is quite similar. We use DO instances to model
@@ -209,9 +209,9 @@ import { Hono } from "hono";
 const app = new Hono<{ Bindings: Env }>();
 
 app.get("/rooms/:name/ws", async (c) => {
-  // !callout[/upgrade/] health check
-  // !mark(1:4)
+    // !mark(1:4)
     const upgrade = c.req.header("Upgrade");
+  // !callout[/upgrade/] health check
     if (!upgrade || upgrade !== "websocket") {
         return c.text("Upgrade header must be websocket", 426);
     }
@@ -285,14 +285,14 @@ Let’s break this down:
 
 <my-steps>
 
-#### Define the route and derive DO
+#### Derive DO from Route
 
 *js`app.get("/rooms/:name/ws", handler)`* defines a handler that will be
 called when a GET request is sent to `/rooms/<name>/ws`, where `<name>`
 dynamic route parameter. We derive the DO instance ID from the name and
 pass on the request.
 
-#### Accept the connection
+#### Accept Connection
 
 `WebSocketPair()` returns an object containing two sockets:
 
@@ -312,7 +312,7 @@ example.
 Note that `WebSocketPair` is a Cloudflare Workers runtime only API, and
 is not available in standard Node.js.
 
-#### Handle message events
+#### Handle Message Events
 
 `webSocketMessage` and `webSocketClose` are conventional methods for
 handling message events, and will be automatically invoked when a
@@ -524,7 +524,7 @@ joins the chat, we put the updated session data in memory to survive
 hibernation. When the DO wakes up, the constructor is called it will be
 populate all sessions with the latest data.
 
-## Displaying historical messages {#displaying-historical-messages}
+## Displaying Previous Messages {#displaying-previous-messages}
 
 A final requirement is that when a user connects, they should see a list
 of all previous messages in the room. How we store the messages can

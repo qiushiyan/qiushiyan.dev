@@ -1,5 +1,5 @@
 ---
-title: Structural pattern matching in Python 3.10
+title: Structural Pattern Matching in Python 3.10
 slug: python310-pattern-matching
 date: '2022-02-20'
 description: |
@@ -10,17 +10,17 @@ headings:
 - title: Introduction
   slug: introduction
   depth: 2
-- title: Pattern matching as a replacement for switch statements
+- title: Pattern Matching as a Replacement for `switch` Statements
   slug: pattern-matching-as-a-replacement-for-switch-statements
   depth: 2
-- title: Match dictionaries and lists
-  slug: match-dictionaries-and-lists
+- title: Match Against Dictionaries and Lists
+  slug: match-against-dictionaries-and-lists
   depth: 2
-- title: Add conditions
+- title: Add Conditions
   slug: add-conditions
   depth: 2
-- title: Matching constants
-  slug: matching-constants
+- title: Matching Against Constants
+  slug: matching-against-constants
   depth: 2
 ---
 
@@ -69,7 +69,7 @@ sys.version
 #> '3.10.14 (main, Mar 19 2024, 21:46:16) [Clang 15.0.0 (clang-1500.3.9.4)]'
 ```
 
-## Pattern matching as a replacement for switch statements {#pattern-matching-as-a-replacement-for-switch-statements}
+## Pattern Matching as a Replacement for `switch` Statements {#pattern-matching-as-a-replacement-for-switch-statements}
 
 The most apparent usage of pattern matching is implementing
 `switch ... case` statements in many other programming languages, which
@@ -90,7 +90,7 @@ def move(self, direction):
             self.move_right()
 ```
 
-## Match dictionaries and lists {#match-dictionaries-and-lists}
+## Match Against Dictionaries and Lists {#match-against-dictionaries-and-lists}
 
 The real power of pattern matching resides in destructuring data
 structures like lists and dictionaries.
@@ -223,7 +223,7 @@ match command.split():
         current_room = current_room.neighbor(direction)
 ```
 
-## Add conditions {#add-conditions}
+## Add Conditions {#add-conditions}
 
 Pattern matching allows if conditions the same way as list
 comprehension, we can append an *py`if ... else`* clause like so
@@ -280,7 +280,7 @@ match p:
 In general, any class can be used for validation. This is also called a
 **class pattern**.
 
-## Matching constants {#matching-constants}
+## Matching Against Constants {#matching-against-constants}
 
 Care should be taken when matching constants, since it’s common to store
 the constant in an variable and then use it in `case`. The following

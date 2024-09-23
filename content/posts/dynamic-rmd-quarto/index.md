@@ -1,5 +1,5 @@
 ---
-title: Generating dynamic contents in R Markdown and Quarto
+title: Generating Dynamic Contents in R Markdown and Quarto
 slug: dynamic-rmd-quarto
 date: '2023-01-22'
 description: |
@@ -9,10 +9,10 @@ tags:
 components:
 - iframe
 headings:
-- title: Using the `knitr` engine
+- title: Using the `knitr` Engine
   slug: using-the-knitr-engine
   depth: 2
-- title: A note on `knitr::knit_expand`
+- title: A Note on `knitr::knit_expand`
   slug: a-note-on-knitrknitexpand
   depth: 3
 - title: Without `knitr`
@@ -56,7 +56,7 @@ change the name one by one. This post introduces a programmatic way of
 automating this task using `knit_child` from the `knitr` rendering
 engine.
 
-## Using the `knitr` engine {#using-the-knitr-engine}
+## Using the `knitr` Engine {#using-the-knitr-engine}
 
 The `knitr` engine has built-in supports for dynamic, parameterized
 documents. For R Markdown, you can pass data to the document using the
@@ -214,7 +214,7 @@ below:
 
 </div>
 
-### A note on `knitr::knit_expand` {#a-note-on-knitrknitexpand}
+### A Note on `knitr::knit_expand` {#a-note-on-knitrknitexpand}
 
 [R Markdown
 Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/knit-expand.html)

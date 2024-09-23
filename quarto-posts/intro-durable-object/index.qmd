@@ -1,5 +1,5 @@
 ---
-title: Managing state in Cloudflare Worker with Durable Objects
+title: Managing State in Cloudflare Worker with Durable Objects
 slug: intro-durable-object
 date: "2024-09-06"
 description: |
@@ -11,7 +11,7 @@ components:
   - do-counter-example
 ---
 
-## What are Durable Objects and why they are needed
+## What are Durable Objects and Why They are Needed
 
 Cloudflare workers are one of the most impactful serverless solutions. Each worker is replicated over the Cloudflare global network in hundreds of cities worldwide, also called the **Edge**. When a user makes a request, a worker instance will be spawned close to the user's geographic location to serve the request with minimal latency.
 
@@ -31,7 +31,7 @@ In contrast to workers, DO can act as a single source of truth across clients an
 
 
 
-## Configure durable objects
+## Configure Durable Objects
 
 If you have used other Cloudflare products such as **KV** or **D1**, you will be used to adding bindings using the `wrangler` cli, e.g.:
 
@@ -96,7 +96,7 @@ Let's break down the code:
 
 <my-steps>
 
-#### Add the binding
+#### Add the Binding
 
 We configure the DO binding in `wrangler.toml`. The `durable_objects.bindings.name` field will be used by the worker to refer to the durable object in `env`, and `durable_objects.bindings.class_name` will be the name of a class you implement the durable object behavior. With `class_name = MyDurableObject`, you must export a `MyDurableObject` class from the entry point of your worker.
 
@@ -121,7 +121,7 @@ const id = env.MY_DURABLE_OBJECT.idFromName(ip);
 const obj = env.MY_DURABLE_OBJECT.get(id)
 ```
 
-## Communication between workers and durable objects
+## Communication Between Workers and Durable Objects
 
 DO are designed to operate within a worker instead of being a public interface for http clients. In our starter example, our DO defines a `fetch` method that returns a `Response` object, and our worker is simply a proxy that creates a new DO instance and forwards the request to it.
 
@@ -195,7 +195,7 @@ RPC (Remote Procedure Call) is a standard communication protocol for Cloudflare 
 </my-callout>
 
 
-## Persist state with the `storage` API
+## Persist State with the `storage` API
 
 In the RPC example above, we are using the property `value` to store the counter value. This is not ideal if we want the value to be persisted. After a period of inactivity, the DO will be garbage collected and the value will be lost. Although you can get the same object with _js`MY_DURABLE_OBJECT.get(id)`_, the constructor method will be called again and `value` will be reset to 0.
 
@@ -252,7 +252,7 @@ export default {
 </code-switcher>
 
 
-## Build a counter service with hono
+## Build a Counter Service with hono
 
 Let's enhance our counter example by turning it into a full-fledged API service. We will use [hono](https://hono.dev/) to scaffold routes for our worker and call the DO for storage. hono is a trending web framework that is fully compatible with the Edge platform. A worker can be scaffolded with hono using the following command:
 
@@ -365,7 +365,7 @@ The worker and DO can now be readily deployed using `pnpm deploy`. I have set up
 
 <do-counter-example />
 
-## Other notes
+## Other Notes
 
 - Durable objects support the Workers Runtime Websocket API and can become a WebSocket server (see https://developers.cloudflare.com/durable-objects/api/websockets/). I will write a separate post later to build a chatroom application with DO + WebSocket.
 
