@@ -7,6 +7,11 @@ import { CodeBlock } from "./codehike/code-block";
 import { Image } from "./codehike/image";
 import { InlineCode } from "./codehike/inline-code";
 import { BlogLink } from "./codehike/link";
+import {
+  WiderContent,
+  WiderContentAside,
+  WiderContentMain,
+} from "./wider-content";
 
 export const sharedComponents = {
   "my-callout": Callout,
@@ -32,6 +37,9 @@ export const sharedComponents = {
     return <InlineCode value={value} lang={lang} />;
   },
   "my-steps": Steps,
+  "wider-content": WiderContent,
+  "wider-content-main": WiderContentMain,
+  "wider-content-aside": WiderContentAside,
 };
 
 const registry: Record<string, any> = {
