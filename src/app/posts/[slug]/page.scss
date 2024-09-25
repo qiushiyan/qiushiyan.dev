@@ -12,9 +12,9 @@
 
 .center-grid {
   display: grid;
-  grid-template-columns: 1fr min(70ch, calc(100% - 64px)) 1fr;
+  grid-template-columns: 1fr min(65ch, calc(100% - 64px)) 1fr;
   grid-column-gap: 16px;
-  padding: 0 1rem;
+  padding: 0 2rem;
 
   & > * {
     grid-column: 2;
