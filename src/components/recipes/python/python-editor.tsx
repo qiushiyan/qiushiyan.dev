@@ -3,13 +3,13 @@
 import { python } from "@codemirror/lang-python";
 
 import { CodeEditor } from "../code-editor";
-import { usePython } from "./python-provider";
+import { useEditor } from "../editor-provider";
 
 export const PythonEditor = () => {
-  const { input, setInput } = usePython();
+  const { codes, file, setInput } = useEditor();
   return (
     <CodeEditor
-      code={input}
+      code={codes[file]}
       onChange={setInput}
       lang="python"
       extensions={[python()]}

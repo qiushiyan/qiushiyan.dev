@@ -1,0 +1,16 @@
+python:
+  - title: Polymorphism over if/else
+    slug: polymorphism-over-if-else
+    files:
+      - python/polymorphism-over-if-else/main.py
+
+  - title: Creating data pipelines with generators
+    slug: creating-data-pipelines-with-generators
+    files:
+      - python/generator-pipelines/main.py
+# css:
+#   - title: Figure caption with overlapping grid
+#     slug: overlapping-grid
+#     files:
+#       - css/overlapping-grid/index.html
+#       - css/overlapping-grid/style.css

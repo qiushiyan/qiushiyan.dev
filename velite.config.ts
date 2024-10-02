@@ -1,4 +1,6 @@
-import { PythonScriptLoader, RScriptLoader } from "@/lib/content/loaders";
+import { readFile } from "fs/promises";
+import path from "path";
+
 import { htmlProcessor } from "@/lib/content/processor";
 import { timestamp } from "@/lib/content/schema";
 import { routes } from "@/lib/navigation";
@@ -98,21 +100,48 @@ const posts = defineCollection({
     }),
 });
 
+const RecipeSchema = s.object({
+  title: s.string(),
+  slug: s.string(),
+  description: s.string().optional(),
+  files: s.array(s.string()),
+  codes: s
+    .array(
+      s.object({
+        filename: s.string(),
+        content: s.string(),
+      })
+    )
+    .optional(),
+});
+
 export const recipes = defineCollection({
   name: "Recipe",
-  pattern: "./recipes/**/*.{py,r}",
+  pattern: "./recipes/index.yaml",
+  single: true,
   schema: s
-    .object({
-      title: s.string().optional(),
-      code: s.string(),
-      lang: s.enum(["python", "r"]),
-    })
-    .transform((data, { meta }) => {
-      return {
-        ...data,
-        slug: meta.basename?.replace(/\.[^.]+$/, "") as string,
-        filename: meta.basename as string,
-      };
+    .record(s.string(), s.array(RecipeSchema))
+    .transform(async (data) => {
+      for (const [group, langRecipes] of Object.entries(data)) {
+        const newRecipes = [];
+        for (const recipe of langRecipes) {
+          const codes = recipe.files.map(async (p) => {
+            const file = await readFile(
+              path.join(process.cwd(), "content", "recipes", p)
+            );
+            return {
+              filename: path.basename(p),
+              content: file.toString(),
+            };
+          });
+          recipe.codes = await Promise.all(codes);
+          newRecipes.push(recipe);
+        }
+        // @ts-ignore
+        data[group] = newRecipes;
+      }
+
+      return data;
     }),
 });
 
@@ -127,5 +156,4 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkHeadingAttrs],
   },
-  loaders: [PythonScriptLoader, RScriptLoader],
 });

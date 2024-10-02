@@ -2,22 +2,23 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import { SiPython } from "@icons-pack/react-simple-icons";
+import { SiHtml5, SiPython } from "@icons-pack/react-simple-icons";
 import { Recipe } from "#content";
 import { BoxIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 
 type Props = {
   title: string;
-  lang: Recipe["lang"];
+  group: string;
 };
 
 const iconMap = {
   python: <SiPython className="size-4 text-primary" />,
+  web: <SiHtml5 className="size-4 text-primary" />,
 } as Record<string, React.ReactNode | undefined>;
 
-export const RecipesHeader = ({ title, lang }: Props) => {
-  const icon = iconMap[lang] || null;
+export const RecipesHeader = ({ title, group }: Props) => {
+  const icon = iconMap[group] || null;
   return (
     <header className={cn("w-full bg-background p-4")}>
       <div className="flex h-[var(--nav-height)] items-center space-x-4 sm:justify-between sm:space-x-2">

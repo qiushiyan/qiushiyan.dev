@@ -6,19 +6,26 @@ import { recipes } from "#content";
 import { notFound } from "next/navigation";
 
 export const generateStaticParams = () => {
-  return recipes.map((recipe) => ({
-    slug: recipe.slug,
-    lang: recipe.lang,
-  }));
+  const allRecipes = Object.entries(recipes).flatMap(([group, recipes]) =>
+    recipes.map((recipe) => ({
+      slug: recipe.slug,
+      group,
+    }))
+  );
+  return allRecipes;
 };
 
-export const generateMetadata = ({ params }: { params: { slug: string } }) => {
-  const recipe = findRecipe(params.slug);
+export const generateMetadata = ({
+  params,
+}: {
+  params: { group: string; slug: string };
+}) => {
+  const recipe = findRecipe(params.group, params.slug);
   if (!recipe) {
     return {};
   }
-  const title = recipe.title || recipe.filename;
-  const description = `A ${recipe.lang} code example`;
+  const title = recipe.title;
+  const description = `A code snippet`;
   return {
     title,
     description,
@@ -39,9 +46,9 @@ export default function Layout({
   params,
 }: {
   children: React.ReactNode;
-  params: { slug: string };
+  params: { group: string; slug: string };
 }) {
-  const recipe = findRecipe(params.slug);
+  const recipe = findRecipe(params.group, params.slug);
   if (!recipe) {
     return notFound();
   }
@@ -49,10 +56,7 @@ export default function Layout({
   return (
     <SidebarLayout defaultOpen={true} className="flex-col">
       <RecipesSidebar />
-      <RecipesHeader
-        title={recipe.title || recipe.filename}
-        lang={recipe.lang}
-      />
+      <RecipesHeader title={recipe.title} group={params.group} />
       <main className="flex max-h-[calc(100vh-var(--nav-height))] flex-1 flex-col gap-2 px-2">
         {children}
       </main>

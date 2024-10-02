@@ -1,7 +1,3 @@
-"""
-title: Creating data pipelines with generators
-"""
-
 # example from https://realpython.com/introduction-to-python-generators
 from pprint import pprint
 

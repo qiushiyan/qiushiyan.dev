@@ -1,10 +1,4 @@
-"""
-title: Polymorphism over if/else
-"""
-
 # example from https://www.youtube.com/watch?v=P0kfKqMHioQ
-
-
 def get_github_events(github_username):
     return []
 
@@ -37,6 +31,7 @@ class GitHubUserEvents:
         return text
 
 
+# abstract class for event types: commit, start, etc.
 class EventList:
     def __init__(self):
         self.events = []

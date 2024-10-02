@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Loader2, RotateCcwIcon, TriangleIcon } from "lucide-react";
+import { Loader2, TriangleIcon } from "lucide-react";
 
 import { usePython } from "./python-provider";
 
-export const EditorControl = ({ initialCode }: { initialCode: string }) => {
-  const { run, isRunning, isLoading, setInput } = usePython();
+export const PythonControl = () => {
+  const { run, isRunning, isLoading } = usePython();
 
   return (
     <div className="flex items-center gap-3">
@@ -17,21 +17,21 @@ export const EditorControl = ({ initialCode }: { initialCode: string }) => {
         onClick={() => run()}
         disabled={isRunning || isLoading}
       >
-        {isRunning ? (
+        {isRunning || isLoading ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (
           <TriangleIcon className="size-4 rotate-90" />
         )}
         <span>Run</span>
       </Button>
-      <Button
+      {/* <Button
         variant={"outline"}
         className="items-center gap-2"
         onClick={() => setInput(initialCode)}
       >
         <RotateCcwIcon className="size-4" />
         <span>Reset</span>
-      </Button>
+      </Button> */}
       <SidebarTrigger />
     </div>
   );

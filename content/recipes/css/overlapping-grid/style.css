@@ -1,0 +1,18 @@
+figure {
+  display: grid;
+  grid-template-rows: 70% 30%;
+  grid-template-columns: 1fr;
+}
+
+img {
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+}
+
+figcaption {
+  grid-row: 2 / 3;
+  grid-column: 1 / -1;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 1rem;
+  color: white;
+}

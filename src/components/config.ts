@@ -1,11 +1,10 @@
 import { routes } from "@/lib/navigation";
-import { recipes } from "#content";
 import { HomeIcon, InfoIcon, NotebookPenIcon } from "lucide-react";
 
 export const NavLinks = {
   Main: [
     {
-      href: routes.recipe(recipes[0].lang, recipes[0].slug),
+      href: routes.recipes,
       label: "Recipes",
       viewTransitionName: "recipes",
     },
