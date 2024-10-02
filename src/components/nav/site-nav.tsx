@@ -9,41 +9,6 @@ import { ThemeToggle } from "../theme-toggle";
 import { MobileNav } from "./mobile-nav";
 import { PlusGrid, PlusGridItem, PlusGridRow } from "./plus-grid";
 
-function DesktopNav({
-  additionalControls,
-}: {
-  additionalControls?: React.ReactNode;
-}) {
-  return (
-    <nav className="relative hidden lg:flex">
-      {NavLinks.Main.map(({ href, label, viewTransitionName }) => (
-        <PlusGridItem
-          key={href}
-          className="relative flex transition-colors hover:bg-muted"
-        >
-          <Link
-            href={href}
-            className="flex items-center px-4 py-3 text-base font-medium text-accent-foreground bg-blend-multiply"
-            title={label}
-            style={{
-              viewTransitionName,
-            }}
-          >
-            {label}
-          </Link>
-        </PlusGridItem>
-      ))}
-      <PlusGridItem className="relative flex px-4 py-3">
-        <div className="flex items-center gap-4">
-          {additionalControls}
-          <SiteSearch />
-          <ThemeToggle />
-        </div>
-      </PlusGridItem>
-    </nav>
-  );
-}
-
 export function SiteNav({
   banner,
   additionalControls,
@@ -90,5 +55,40 @@ export function SiteNav({
         </PlusGrid>
       </header>
     </Container>
+  );
+}
+
+function DesktopNav({
+  additionalControls,
+}: {
+  additionalControls?: React.ReactNode;
+}) {
+  return (
+    <nav className="relative hidden lg:flex">
+      {NavLinks.Main.map(({ href, label, viewTransitionName }) => (
+        <PlusGridItem
+          key={href}
+          className="relative flex transition-colors hover:bg-muted"
+        >
+          <Link
+            href={href}
+            className="flex items-center px-4 py-3 text-base font-medium text-accent-foreground bg-blend-multiply"
+            title={label}
+            style={{
+              viewTransitionName,
+            }}
+          >
+            {label}
+          </Link>
+        </PlusGridItem>
+      ))}
+      <PlusGridItem className="relative flex px-4 py-3">
+        <div className="flex items-center gap-4">
+          {additionalControls}
+          <SiteSearch />
+          <ThemeToggle />
+        </div>
+      </PlusGridItem>
+    </nav>
   );
 }

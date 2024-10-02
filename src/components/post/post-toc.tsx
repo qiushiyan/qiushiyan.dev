@@ -1,33 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import { useActiveHeading } from "@/hooks/use-active-heading";
 import { cn } from "@/lib/utils";
 import { Post } from "#content";
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 
 export const PostToc = ({ headings }: { headings: Post["headings"] }) => {
-  const [activeHeading, setActiveHeading] = useState<string | null>(null);
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveHeading(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: "-40px 0px -80% 0px" }
-    );
+  const activeHeading = useActiveHeading({ headings });
 
-    headings.forEach((heading) => {
-      const element = document.getElementById(heading.slug);
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, [headings]);
   return (
     <ul className="grid list-none px-2">
       {headings.map((item) => (
@@ -70,7 +51,7 @@ export const TocItem = ({
     <Link
       href={`#${slug}`}
       className={cn(
-        "flex items-center gap-2 overflow-hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2",
+        "flex items-center gap-2 overflow-hidden rounded-md px-2 py-1 text-base font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2",
         className
       )}
       {...props}

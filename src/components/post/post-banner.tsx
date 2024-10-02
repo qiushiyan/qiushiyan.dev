@@ -8,7 +8,7 @@ import { PostViews } from "./post-views";
 
 export const PostBanner = ({ post }: { post: Post }) => {
   return (
-    <header className="grid gap-2 py-6">
+    <header className="center-grid grid gap-2 py-6">
       <div className="flex flex-row items-center gap-2">
         <h1
           className={cn(

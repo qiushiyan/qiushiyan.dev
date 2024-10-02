@@ -1,4 +1,5 @@
 import { SiteNav } from "@/components/nav/site-nav";
+import { PostActiveHeading } from "@/components/post/post-active-heading";
 import { SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { host } from "@/constants";
 import { posts } from "#content";
@@ -52,7 +53,10 @@ export default async function Layout({
         defaultOpen={cookies().get("sidebar:state")?.value === "true"}
         className="flex-col"
       >
-        <SiteNav additionalControls={<SidebarTrigger />} />
+        <SiteNav
+          additionalControls={<SidebarTrigger />}
+          banner={<PostActiveHeading />}
+        />
         <PostSidebar />
         {children}
       </SidebarLayout>
