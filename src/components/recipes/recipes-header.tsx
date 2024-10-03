@@ -1,7 +1,7 @@
 import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { routes } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
+import { cn, recipeViewTransitionName } from "@/lib/utils";
 import { SiHtml5, SiPython } from "@icons-pack/react-simple-icons";
 import { Recipe } from "#content";
 import { BoxIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -9,6 +9,7 @@ import Link from "next/link";
 
 type Props = {
   title: string;
+  slug: string;
   group: string;
 };
 
@@ -17,7 +18,7 @@ const iconMap = {
   web: <SiHtml5 className="size-4 text-primary" />,
 } as Record<string, React.ReactNode | undefined>;
 
-export const RecipesHeader = ({ title, group }: Props) => {
+export const RecipesHeader = ({ title, slug, group }: Props) => {
   const icon = iconMap[group] || null;
   return (
     <header className={cn("w-full bg-background p-4")}>
@@ -25,17 +26,15 @@ export const RecipesHeader = ({ title, group }: Props) => {
         <div className="flex items-center gap-2">
           <div className={"flex items-center gap-2"}>
             <BoxIcon className="size-6" />
-            <h1
-              className="text-2xl font-bold"
-              style={{
-                viewTransitionName: "recipes",
-              }}
-            >
-              Recipes
-            </h1>
+            <h1 className="text-2xl font-bold">Recipes</h1>
           </div>
           <ChevronRightIcon className="size-6" />
-          <h2 className="flex items-center gap-2 font-sans text-xl font-bold text-accent-foreground">
+          <h2
+            className="flex items-center gap-2 font-sans text-xl font-bold text-accent-foreground"
+            style={{
+              viewTransitionName: recipeViewTransitionName(slug),
+            }}
+          >
             <span>{title}</span>
             {icon}
           </h2>

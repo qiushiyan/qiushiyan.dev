@@ -12,6 +12,7 @@ export function PostTags({ selectedTags }: { selectedTags: string[] }) {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant={"ghost"}>
+          <span className="sr-only">filter post by tags</span>
           <TagsIcon className="size-6" />
         </Button>
       </PopoverTrigger>

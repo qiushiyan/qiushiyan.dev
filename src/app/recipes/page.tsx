@@ -2,8 +2,9 @@ import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { SiteNav } from "@/components/nav/site-nav";
 import { routes } from "@/lib/navigation";
+import { recipeViewTransitionName } from "@/lib/utils";
 import { recipes } from "#content";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 
 import { bgPattern } from "./patterns";
 
@@ -58,7 +59,10 @@ function RecipeCard({
           style={bgPattern("#9C92AC", 0.8)}
         />
         <div className="col-start-1 row-start-2 row-end-3 flex items-center justify-center bg-accent opacity-60">
-          <h3 className="text-lg font-medium capitalize opacity-100">
+          <h3
+            className="text-lg font-medium capitalize opacity-100"
+            style={{ viewTransitionName: recipeViewTransitionName(slug) }}
+          >
             {title}
           </h3>
         </div>

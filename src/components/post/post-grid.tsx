@@ -10,9 +10,11 @@ const PostCards = ({ selectedTags }: { selectedTags: string[] }) => {
   const posts = getPostsByTags(selectedTags);
 
   return (
-    <div className="grid auto-rows-min grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 lg:auto-rows-min lg:grid-cols-2">
       {posts.length > 0 ? (
-        posts.map((post) => <PostCard key={post.slug} post={post} />)
+        posts.map((post, index) => (
+          <PostCard key={post.slug} post={post} featured={index === 0} />
+        ))
       ) : (
         <div className="col-span-2 text-muted-foreground">No posts found</div>
       )}

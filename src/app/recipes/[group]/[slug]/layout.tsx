@@ -56,7 +56,11 @@ export default function Layout({
   return (
     <SidebarLayout defaultOpen={true} className="flex-col">
       <RecipesSidebar />
-      <RecipesHeader title={recipe.title} group={params.group} />
+      <RecipesHeader
+        title={recipe.title}
+        slug={recipe.slug}
+        group={params.group}
+      />
       <main className="flex max-h-[calc(100vh-var(--nav-height))] flex-1 flex-col gap-2 px-2">
         {children}
       </main>

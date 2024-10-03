@@ -111,6 +111,7 @@ export function SiteSearch() {
 const SiteSearchMobile: React.FC = () => (
   <Drawer>
     <DrawerTrigger className="transition-all hover:text-primary/80">
+      <span className="sr-only">search</span>
       <Search className="size-6 shrink-0" />
     </DrawerTrigger>
     <DrawerContent>
@@ -124,6 +125,7 @@ const SiteSearchMobile: React.FC = () => (
 const SearchDesktop: React.FC = () => (
   <Popover>
     <PopoverTrigger className="transition-all hover:text-primary/80">
+      <span className="sr-only">search</span>
       <Search className="size-6 shrink-0" />
     </PopoverTrigger>
     <PopoverContent

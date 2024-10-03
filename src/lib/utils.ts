@@ -1,4 +1,3 @@
-import { Post } from "#content";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -8,4 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export const postViewTransitionName = (slug: string) => {
   return `post-${slug}`;
+};
+
+export const recipeViewTransitionName = (slug: string) => {
+  return `recipe-${slug}`;
 };
