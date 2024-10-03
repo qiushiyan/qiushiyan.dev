@@ -18,10 +18,10 @@ import { PostViews } from "../post-views";
 
 export const PostCard = ({
   post,
-  featured,
+  featured = false,
 }: {
   post: Post;
-  featured: boolean;
+  featured?: boolean;
 }) => {
   if (featured) {
     return <FeaturedPostCard post={post} />;
