@@ -6,7 +6,7 @@ export const NavLinks = {
     {
       href: routes.recipes,
       label: "Recipes",
-      viewTransitionName: "recipes",
+      viewTransitionName: undefined,
     },
     {
       href: routes.about,

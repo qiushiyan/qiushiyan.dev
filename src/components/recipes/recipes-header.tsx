@@ -3,9 +3,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { routes } from "@/lib/navigation";
 import { cn, recipeViewTransitionName } from "@/lib/utils";
 import { SiHtml5, SiPython } from "@icons-pack/react-simple-icons";
-import { Recipe } from "#content";
 import { BoxIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 
 type Props = {
   title: string;
@@ -26,7 +25,12 @@ export const RecipesHeader = ({ title, slug, group }: Props) => {
         <div className="flex items-center gap-2">
           <div className={"flex items-center gap-2"}>
             <BoxIcon className="size-6" />
-            <h1 className="text-2xl font-bold">Recipes</h1>
+            <Link
+              href={routes.recipes}
+              style={{ viewTransitionName: "recipes" }}
+            >
+              <h1 className="text-2xl font-bold">Recipes</h1>
+            </Link>
           </div>
           <ChevronRightIcon className="size-6" />
           <h2
