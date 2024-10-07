@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import "@/styles/globals.css";
 import "@/styles/highlight.css";
 
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { RootProvider } from "@/components/providers/root-provider";
 import { host } from "@/constants";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,7 @@ export default function RootLayout({
           <RootProvider>{children}</RootProvider>
           <CloudflareAnalytics />
         </body>
+        <GoogleAnalytics />
       </html>
     </ViewTransitions>
   );
