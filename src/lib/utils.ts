@@ -12,3 +12,7 @@ export const postViewTransitionName = (slug: string) => {
 export const recipeViewTransitionName = (slug: string) => {
   return `recipe-${slug}`;
 };
+
+export const noteViewTransitionName = (slug: string) => {
+  return `note-${slug}`;
+};

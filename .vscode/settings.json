@@ -32,5 +32,7 @@
   },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "cSpell.caseSensitive": false,
+  "cSpell.words": ["Diffing"]
 }

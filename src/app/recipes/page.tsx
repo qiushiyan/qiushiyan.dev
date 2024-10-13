@@ -1,8 +1,9 @@
 import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { SiteNav } from "@/components/nav/site-nav";
+import { getNotes } from "@/lib/content/notes";
 import { routes } from "@/lib/navigation";
-import { recipeViewTransitionName } from "@/lib/utils";
+import { noteViewTransitionName, recipeViewTransitionName } from "@/lib/utils";
 import { recipes } from "#content";
 import { Link } from "next-view-transitions";
 
@@ -13,29 +14,61 @@ export default function RecipesPage() {
     <>
       <SiteNav />
       <Container>
-        <Heading>Recipes</Heading>
-        <p className="text-muted-foreground">
-          Miscellaneous code snippets in various languages and frameworks. You
-          are welcome to copy and use them however you like.
-        </p>
-        <div className="mt-8 grid grid-cols-1 gap-8">
-          {Object.entries(recipes).map(([key, recipe]) => (
-            <div key={key} className="space-y-4">
-              <h3 className="text-xl font-medium capitalize lg:text-3xl">
-                {key}
-              </h3>
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                {recipe.map((item) => (
-                  <RecipeCard
-                    key={item.title}
-                    title={item.title}
-                    slug={item.slug}
-                    lang={key}
-                  />
-                ))}
-              </div>
+        <div className="grid gap-12 lg:gap-24">
+          <section aria-labelledby="recipes-heading">
+            <Heading id="recipes-heading">Recipes</Heading>
+            <p className="text-muted-foreground">
+              Miscellaneous code snippets in various languages and frameworks.
+              You are welcome to copy and use them however you like.
+            </p>
+            <div className="mt-4 grid grid-cols-1 gap-4 lg:gap-8">
+              {Object.entries(recipes).map(([key, recipe]) => (
+                <div key={key} className="space-y-4">
+                  <h3 className="text-xl font-medium capitalize lg:text-2xl">
+                    {key}
+                  </h3>
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    {recipe.map((item) => (
+                      <RecipeCard
+                        key={item.title}
+                        title={item.title}
+                        slug={item.slug}
+                        lang={key}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </section>
+
+          <section aria-labelledby="notes-heading">
+            <Heading id="notes-heading">Notes</Heading>
+            <p className="text-muted-foreground">
+              My personal notes on books, courses, etc. Warning: they can be
+              contextless and does not make sense to anyone but me, or maybe not
+              even to me a month later.
+            </p>
+            <ul className="mt-4 flex flex-col gap-4 lg:gap-8">
+              {getNotes().map((note) => (
+                <li key={note.href}>
+                  <Link
+                    href={note.href}
+                    className="underline underline-offset-4"
+                  >
+                    <h3
+                      className="text-lg font-medium tracking-tight lg:text-xl"
+                      style={{
+                        viewTransitionName: noteViewTransitionName(note.slug),
+                      }}
+                    >
+                      {note.title}
+                    </h3>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       </Container>
     </>

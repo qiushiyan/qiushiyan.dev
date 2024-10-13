@@ -1,1 +1,1 @@
-styler::style_dir("quarto-posts")
+styler::style_dir("quarto-contents")

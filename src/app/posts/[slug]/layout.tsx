@@ -2,6 +2,7 @@ import { SiteNav } from "@/components/nav/site-nav";
 import { PostActiveHeading } from "@/components/post/post-active-heading";
 import { SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { host } from "@/constants";
+import { getPosts } from "@/lib/content/posts";
 import { posts } from "#content";
 
 import { PostSidebar } from "./post-sidebar";
@@ -9,11 +10,11 @@ import { PostSidebar } from "./post-sidebar";
 export const runtime = "edge";
 
 export const generateStaticParams = async () => {
-  return posts.map((post) => ({ slug: post.slug }));
+  return getPosts().map((post) => ({ slug: post.slug }));
 };
 
 export const generateMetadata = ({ params }: { params: { slug: string } }) => {
-  const page = posts.find((page) => page.slug === params.slug);
+  const page = getPosts().find((page) => page.slug === params.slug);
   if (!page) {
     return {
       title: "Not Found",

@@ -430,15 +430,15 @@ df %>%
 #> using the `.groups` argument.
 #> # A tibble: 7 × 5
 #> # Groups:   id, n, min, max [3]
-#>      id     n   min   max     sim
-#>   <dbl> <dbl> <dbl> <dbl>   <dbl>
-#> 1     1     3     0     1   0.468
-#> 2     1     3     0     1   0.325
-#> 3     1     3     0     1   0.120
-#> 4     2     2    10   100  37.0  
-#> 5     2     2    10   100  58.1  
-#> 6     3     2   100  1000 607.   
-#> 7     3     2   100  1000 286.
+#>      id     n   min   max      sim
+#>   <dbl> <dbl> <dbl> <dbl>    <dbl>
+#> 1     1     3     0     1   0.448 
+#> 2     1     3     0     1   0.0171
+#> 3     1     3     0     1   0.388 
+#> 4     2     2    10   100  57.9   
+#> 5     2     2    10   100  52.9   
+#> 6     3     2   100  1000 837.    
+#> 7     3     2   100  1000 272.
 ```
 
 <my-callout>
@@ -1007,12 +1007,12 @@ gf %>% reframe(row = cur_group_rows())
 #> # A tibble: 6 × 2
 #>   g       row
 #>   <chr> <int>
-#> 1 a         5
-#> 2 b         2
+#> 1 a         4
+#> 2 b         5
 #> 3 b         6
 #> 4 c         1
-#> 5 c         3
-#> 6 c         4
+#> 5 c         2
+#> 6 c         3
 gf %>% reframe(data = list(cur_group()))
 #> # A tibble: 3 × 2
 #>   g     data            
@@ -1036,12 +1036,12 @@ gf %>% mutate(across(everything(), ~ paste(cur_column(), round(.x, 2))))
 #> # Groups:   g [3]
 #>   g     x      y     
 #>   <chr> <chr>  <chr> 
-#> 1 c     x 0.44 y 0.03
-#> 2 b     x 0.76 y 0.65
-#> 3 c     x 0.09 y 0.16
-#> 4 c     x 0.78 y 0.16
-#> 5 a     x 0.22 y 0.26
-#> 6 b     x 0.94 y 0.66
+#> 1 c     x 0.84 y 0.59
+#> 2 c     x 0.56 y 0.52
+#> 3 c     x 0.08 y 0.16
+#> 4 a     x 0.96 y 0.28
+#> 5 b     x 0.02 y 0.6 
+#> 6 b     x 0.32 y 0.1
 ```
 
 ## Superseded Functions {#superseded-functions}
@@ -1086,34 +1086,34 @@ penguins %>%
 #> # A tibble: 10 × 8
 #>    species   island   bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
 #>    <fct>     <fct>             <dbl>         <dbl>             <int>       <int>
-#>  1 Adelie    Torgers…           39.5          17.4               186        3800
-#>  2 Gentoo    Biscoe             45.4          14.6               211        4800
-#>  3 Adelie    Biscoe             37.7          16                 183        3075
-#>  4 Gentoo    Biscoe             45.2          13.8               215        4750
-#>  5 Adelie    Biscoe             35.5          16.2               195        3350
-#>  6 Adelie    Torgers…           NA            NA                  NA          NA
-#>  7 Gentoo    Biscoe             48.7          15.1               222        5350
-#>  8 Chinstrap Dream              50.8          19                 210        4100
-#>  9 Gentoo    Biscoe             47.2          15.5               215        4975
-#> 10 Adelie    Dream              39.2          21.1               196        4150
+#>  1 Gentoo    Biscoe             43.3          14                 208        4575
+#>  2 Adelie    Dream              42.3          21.2               191        4150
+#>  3 Adelie    Torgers…           35.1          19.4               193        4200
+#>  4 Adelie    Dream              44.1          19.7               196        4400
+#>  5 Adelie    Torgers…           34.4          18.4               184        3325
+#>  6 Adelie    Biscoe             35.3          18.9               187        3800
+#>  7 Adelie    Dream              39.2          21.1               196        4150
+#>  8 Chinstrap Dream              50.8          18.5               201        4450
+#>  9 Gentoo    Biscoe             46.5          13.5               210        4550
+#> 10 Gentoo    Biscoe             46.4          15.6               221        5000
 #> # ℹ 2 more variables: sex <fct>, year <int>
 
 penguins %>%
   slice_sample(prop = 0.1)
 # !collapse(1:15) collapsed
 #> # A tibble: 34 × 8
-#>    species   island   bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-#>    <fct>     <fct>             <dbl>         <dbl>             <int>       <int>
-#>  1 Adelie    Dream              36.3          19.5               190        3800
-#>  2 Gentoo    Biscoe             48.7          15.7               208        5350
-#>  3 Gentoo    Biscoe             50.5          15.9               222        5550
-#>  4 Chinstrap Dream              48.5          17.5               191        3400
-#>  5 Gentoo    Biscoe             46.5          13.5               210        4550
-#>  6 Adelie    Dream              40.3          18.5               196        4350
-#>  7 Adelie    Torgers…           41.4          18.5               202        3875
-#>  8 Adelie    Torgers…           41.1          17.6               182        3200
-#>  9 Gentoo    Biscoe             46.9          14.6               222        4875
-#> 10 Gentoo    Biscoe             48.4          16.3               220        5400
+#>    species   island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+#>    <fct>     <fct>           <dbl>         <dbl>             <int>       <int>
+#>  1 Gentoo    Biscoe           47.3          15.3               222        5250
+#>  2 Gentoo    Biscoe           44.5          14.7               214        4850
+#>  3 Chinstrap Dream            46.6          17.8               193        3800
+#>  4 Gentoo    Biscoe           NA            NA                  NA          NA
+#>  5 Adelie    Biscoe           35.7          16.9               185        3150
+#>  6 Gentoo    Biscoe           49.1          14.8               220        5150
+#>  7 Adelie    Biscoe           40.1          18.9               188        4300
+#>  8 Adelie    Dream            44.1          19.7               196        4400
+#>  9 Chinstrap Dream            51.3          19.9               198        3700
+#> 10 Adelie    Dream            40.3          18.5               196        4350
 #> # ℹ 24 more rows
 #> # ℹ 2 more variables: sex <fct>, year <int>
 ```

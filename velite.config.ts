@@ -100,6 +100,52 @@ const posts = defineCollection({
     }),
 });
 
+const notes = defineCollection({
+  name: "Note",
+  pattern: "./notes/**/*.md",
+  schema: s
+    .object({
+      title: s.string(),
+      date: s.isodate(),
+      slug: s.string().optional(),
+      lastModified: timestamp(),
+      draft: s.boolean().optional().default(false),
+      headings: s
+        .array(
+          s.object({
+            title: s.string(),
+            slug: s.string(),
+            depth: s.number(),
+          })
+        )
+        .default([])
+        .transform((headings) =>
+          headings.map((heading) => ({
+            html: htmlProcessor.processSync(heading.title).toString(),
+            slug: heading.slug,
+            depth: heading.depth,
+          }))
+        ),
+      components: s.array(s.string()).optional(),
+      content: s.markdown({
+        remarkPlugins: [
+          remarkDirective,
+          remarkUseDirective,
+          remarkUnwrapImages,
+        ],
+        rehypePlugins: [rehypeCode, rehypeUnwrapImages],
+      }),
+    })
+    .transform((data) => {
+      const noteSlug = data.slug || slug(data.title);
+      return {
+        ...data,
+        slug: noteSlug,
+        href: routes.note(noteSlug),
+      };
+    }),
+});
+
 const RecipeSchema = s.object({
   title: s.string(),
   slug: s.string(),
@@ -152,6 +198,7 @@ export default defineConfig({
     about,
     posts,
     recipes,
+    notes,
   },
   markdown: {
     remarkPlugins: [remarkHeadingAttrs],
