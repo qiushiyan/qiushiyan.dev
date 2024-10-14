@@ -181,6 +181,22 @@
       clip-path: polygon(171% 50%, 50% 171%, -50% 71%, 50% -71%);
     }
   }
+
+  .fade-up {
+    animation: fade-up 0.4s var(--expo-out);
+  }
+
+  @keyframes fade-up {
+    from {
+      transform: translateY(1rem);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

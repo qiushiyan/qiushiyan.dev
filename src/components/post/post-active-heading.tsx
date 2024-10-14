@@ -2,7 +2,6 @@
 
 import { useActiveHeading } from "@/hooks/use-active-heading";
 import { useCurrentPost } from "@/hooks/use-current-post";
-import { AnimatePresence, motion } from "framer-motion";
 import { TableOfContents } from "lucide-react";
 
 export function PostActiveHeading() {
@@ -14,21 +13,16 @@ export function PostActiveHeading() {
 
   return (
     <div className="flex items-center gap-2 text-muted-foreground">
-      <AnimatePresence mode="wait">
-        {activeHeading ? (
-          <>
-            <TableOfContents className="size-4" />
-            <motion.div
-              key={activeHeading.slug}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              dangerouslySetInnerHTML={{ __html: activeHeading.html }}
-            />
-          </>
-        ) : null}
-      </AnimatePresence>
+      {activeHeading ? (
+        <>
+          <TableOfContents className="size-4" />
+          <div
+            dangerouslySetInnerHTML={{ __html: activeHeading.html }}
+            className="fade-up"
+            key={activeHeading.slug}
+          />
+        </>
+      ) : null}
     </div>
   );
 }
