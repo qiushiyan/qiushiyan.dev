@@ -4,12 +4,9 @@ import { startTransition, useOptimistic } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-import { buttonVariants } from "../ui/button";
 
 export const PostTagsClient = ({
   selectedTags,

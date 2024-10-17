@@ -28,13 +28,13 @@ export default async function PostPage({
   incrementView(post.slug);
 
   return (
-    <main id={MAIN_CONTENT_ID} className="space-y-8 overflow-x-hidden pb-8">
+    <main className="space-y-8 overflow-x-hidden pb-8">
       <ArticleProse className="prose-h2:my-8 prose-h2:underline prose-h2:underline-offset-8 prose-h3:my-4 prose-p:my-4">
         <div className="mt-6 w-full space-y-6">
           <PostBanner post={post} />
           <Separator />
 
-          <article className="post center-grid !m-0">
+          <article className="post center-grid !m-0" id={MAIN_CONTENT_ID}>
             <HtmlRenderer
               content={post.content}
               components={await getComponents(post.components)}

@@ -30,7 +30,6 @@ In contrast to workers, DO can act as a single source of truth across clients an
 
 
 
-
 ## Configure Durable Objects
 
 If you have used other Cloudflare products such as **KV** or **D1**, you will be used to adding bindings using the `wrangler` cli, e.g.:

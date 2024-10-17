@@ -6,6 +6,7 @@ import { PostGrid } from "@/components/post/post-grid";
 import { PostTags } from "@/components/post/post-tags";
 import { FeaturedProjects } from "@/components/projects/featured-projects";
 import SiteSearch from "@/components/site-search";
+import { SkipLink } from "@/components/skip-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BLOGS_HEADING, MAIN_CONTENT_ID, PROJECTS_HEADING } from "@/constants";
 import { getAllTags } from "@/lib/content/posts";
@@ -33,12 +34,13 @@ export default function Home({
 
   return (
     <>
+      <SkipLink />
       <Container>
-        <main
+        <div
           className={"grid grid-cols-1 items-start gap-8 py-8 lg:grid-cols-3"}
           id={MAIN_CONTENT_ID}
         >
-          <section className="col-span-1 flex flex-col gap-8 lg:sticky lg:top-4">
+          <aside className="col-span-1 flex flex-col gap-8 lg:sticky lg:top-4">
             <h1 className="text-3xl font-medium underline underline-offset-8 dark:text-primary">
               Qiushi Yan
             </h1>
@@ -74,7 +76,7 @@ export default function Home({
               />
             </div>
             <SectionIndicator />
-          </section>
+          </aside>
 
           {/* <Heading className="mb-0" id="projects-heading">
             Personal Projects
@@ -85,7 +87,10 @@ export default function Home({
             </Suspense>
           </section> */}
 
-          <section className="col-span-1 space-y-8 md:col-span-2">
+          <main
+            id={MAIN_CONTENT_ID}
+            className="col-span-1 space-y-8 md:col-span-2"
+          >
             <section
               className="flex flex-col gap-2"
               aria-labelledby={BLOGS_HEADING}
@@ -110,8 +115,8 @@ export default function Home({
                 <FeaturedProjects />
               </Suspense>
             </section>
-          </section>
-        </main>
+          </main>
+        </div>
       </Container>
     </>
   );

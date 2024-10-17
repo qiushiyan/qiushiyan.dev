@@ -5,6 +5,7 @@ import Link from "next/link";
 import { NavLinks } from "../config";
 import { Container } from "../container";
 import SiteSearch from "../site-search";
+import { SkipLink } from "../skip-link";
 import { ThemeToggle } from "../theme-toggle";
 import { MobileNav } from "./mobile-nav";
 import { PlusGrid, PlusGridItem, PlusGridRow } from "./plus-grid";
@@ -18,6 +19,7 @@ export function SiteNav({
 }) {
   return (
     <Container className="sticky top-0 z-40 overflow-x-hidden bg-background">
+      <SkipLink />
       <header>
         <PlusGrid>
           <PlusGridRow className="relative flex justify-between">
