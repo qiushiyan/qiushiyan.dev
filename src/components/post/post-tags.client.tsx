@@ -4,7 +4,12 @@ import { startTransition, useOptimistic } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { XIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { buttonVariants } from "../ui/button";
 
 export const PostTagsClient = ({
   selectedTags,
@@ -29,7 +34,7 @@ export const PostTagsClient = ({
   };
 
   return (
-    <form className="mb-8 flex flex-wrap gap-2">
+    <form className="flex flex-wrap gap-2">
       <fieldset>
         <legend className="sr-only">Filter by Tags</legend>
         <div className="mb-4 flex flex-wrap gap-2">
@@ -55,6 +60,12 @@ export const PostTagsClient = ({
           ))}
         </div>
       </fieldset>
+      <footer className="mt-auto flex w-full">
+        <Link href={"/"} className={"flex items-center gap-2 text-sm"}>
+          <XIcon className="size-4" />
+          Clear
+        </Link>
+      </footer>
     </form>
   );
 };
