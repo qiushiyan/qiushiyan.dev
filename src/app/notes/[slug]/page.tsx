@@ -51,6 +51,14 @@ export default async function Page({
             >
               {note.title}
             </h1>
+            {note.lastModified && (
+              <p className="text-sm text-muted-foreground">
+                Last updated at{" "}
+                <time dateTime={note.lastModified}>
+                  {new Date(note.lastModified).toLocaleDateString()}
+                </time>
+              </p>
+            )}
             <HtmlRenderer
               content={note.content}
               components={await getComponents(note.components)}

@@ -19,11 +19,11 @@ export const FeaturedProjectsClient = ({ repos }: { repos: Repos }) => {
   const calculateTranslate = (index: number) => {
     if (hoveredIndex === null) return 0;
     const diff = index - hoveredIndex;
-    return diff * 40; // Increased spread for more noticeable effect
+    return diff * 30; // Increased spread for more noticeable effect
   };
 
   return (
-    <div className="flex items-stretch gap-6 pb-6 pt-3">
+    <div className="grid gap-6">
       {repos.map((repo, index) => (
         <ProjectCard
           key={repo.name}
@@ -36,8 +36,8 @@ export const FeaturedProjectsClient = ({ repos }: { repos: Repos }) => {
             icons: repo.icons,
           }}
           style={{
-            transform: `translateX(${calculateTranslate(index)}px) scale(${
-              hoveredIndex === index ? 1.1 : 1
+            transform: `translateY(${calculateTranslate(index)}px) scale(${
+              hoveredIndex === index ? 1.05 : 1
             })`,
             zIndex: hoveredIndex === index ? 10 : 1,
           }}

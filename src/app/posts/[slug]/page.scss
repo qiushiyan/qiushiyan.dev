@@ -91,13 +91,6 @@
     margin-top: 0;
   }
 
-  p:has(+ ul) {
-    margin-bottom: 1rem;
-  }
-  ul + p {
-    margin-top: 1rem;
-  }
-
   [data-inline-code] {
     span {
       font-style: normal !important;

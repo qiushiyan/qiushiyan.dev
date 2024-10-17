@@ -21,7 +21,7 @@ export default function RecipesPage() {
               Miscellaneous code snippets in various languages and frameworks.
               You are welcome to copy and use them however you like.
             </p>
-            <div className="mt-4 grid grid-cols-1 gap-4 lg:gap-8">
+            <div className="mt-4 grid grid-cols-1 gap-4">
               {Object.entries(recipes).map(([key, recipe]) => (
                 <div key={key} className="space-y-4">
                   <h3 className="text-xl font-medium capitalize lg:text-2xl">
@@ -49,7 +49,7 @@ export default function RecipesPage() {
               contextless and does not make sense to anyone but me, or maybe not
               even to me a month later.
             </p>
-            <ul className="mt-4 flex flex-col gap-4 lg:gap-8">
+            <ul className="mt-4 flex flex-col gap-4">
               {getNotes().map((note) => (
                 <li key={note.href}>
                   <Link

@@ -1,6 +1,6 @@
 ## About me
 
-I am currently a fullstack engineer working on LLM-related products. I migrated from a data science role to the engineering side.
+I am currently a fullstack engineer working on LLM-related products. I used to work on several data science positions. This website is where I share technical notes on various programming topics.
 
 ## Technologies
 

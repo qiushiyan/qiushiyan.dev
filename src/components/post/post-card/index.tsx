@@ -30,11 +30,11 @@ export const PostCard = ({
   return (
     <Link
       href={post.href}
-      className={cn("col-span-1", featured && "lg:col-span-2 lg:row-span-2")}
+      className={"col-span-full border-b-2 last-of-type:border-none"}
     >
       <Card
         className={cn(
-          "group flex h-full flex-col gap-2 overflow-hidden rounded-md bg-white shadow-sm transition-all hover:scale-105 dark:bg-background"
+          "group flex h-full flex-col gap-2 overflow-hidden rounded-md border-none shadow-none transition-all last-of-type:border-b-0 hover:bg-muted hover:text-muted-foreground hover:shadow-md"
         )}
       >
         <CardHeader className="pb-2">
@@ -58,12 +58,12 @@ function FeaturedPostCard({ post }: { post: Post }) {
     <Link
       href={post.href}
       className={
-        "col-span-1 grid grid-cols-subgrid rounded border py-4 lg:col-span-2 lg:h-[360px]"
+        "col-span-full grid rounded border lg:min-h-[360px] lg:grid-cols-subgrid"
       }
     >
       <Card
         className={cn(
-          "group flex flex-col gap-2 overflow-hidden rounded-md border-none bg-white px-0 shadow-sm dark:bg-background"
+          "group order-1 flex flex-col gap-2 overflow-hidden rounded-md border-none px-0 py-4 shadow-none"
         )}
       >
         <CardHeader className="py-2">
@@ -81,7 +81,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
           <PostCardFooter post={post} />
         </CardFooter>
       </Card>
-      <div className="relative">
+      <div className="relative order-2">
         <Image
           src={"/featured.avif"}
           alt={"a nature scene"}
@@ -98,7 +98,7 @@ function PostCardHeader({ post }: { post: Post }) {
   return (
     <div className="flex flex-row items-start justify-between transition-all group-hover:text-primary/80">
       <h3
-        className="text-pretty text-xl font-bold"
+        className="text-pretty text-lg font-medium"
         style={{
           viewTransitionName: postViewTransitionName(post.slug),
         }}

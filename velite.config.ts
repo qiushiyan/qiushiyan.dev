@@ -30,14 +30,14 @@ const descriptionProcessor = unified().use([
   rehypeStringify,
 ]);
 
-const home = defineCollection({
-  name: "home",
-  pattern: "home.md",
-  single: true,
-  schema: s.object({
-    content: s.markdown(),
-  }),
-});
+// const home = defineCollection({
+//   name: "home",
+//   pattern: "home.md",
+//   single: true,
+//   schema: s.object({
+//     content: s.markdown(),
+//   }),
+// });
 
 const about = defineCollection({
   name: "about",
@@ -194,7 +194,6 @@ export const recipes = defineCollection({
 export default defineConfig({
   root: "content",
   collections: {
-    home,
     about,
     posts,
     recipes,

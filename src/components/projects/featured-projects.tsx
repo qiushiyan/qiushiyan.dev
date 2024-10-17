@@ -1,77 +1,68 @@
-import { getProject, getProjects } from "@/actions/projects";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { getProject } from "@/actions/projects";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  SiGo,
-  SiR,
-  SiReact,
-  SiTypescript,
-} from "@icons-pack/react-simple-icons";
-
-import { FeaturedProjectsClient } from "./featured-projects.client";
+import { GitForkIcon, StarIcon } from "lucide-react";
+import Link from "next/link";
 
 const featured = [
   {
     name: "tidymodels/agua",
     href: "https://tidymodels.github.io/agua/",
-    icons: [<SiR className="size-4" key="r" />],
-  },
-  {
-    name: "qiushiyan/qlang",
-    href: "/projects/qlang",
-    icons: [<SiGo className="size-6" key="go" />],
   },
   {
     name: "qiushiyan/js-notebook",
-    href: "https://jbook.qiushiyan.dev",
-    icons: [
-      <SiReact className="size-4" key="react" />,
-      <SiTypescript className="size-4" key="typescript" />,
-    ],
+    href: "https://javascript-notebook.netlify.app/",
   },
   {
     name: "qiushiyan/linux-command-line-cheatsheet",
-    icons: [],
+    href: "https://github.com/qiushiyan/linux-command-line-cheatsheet",
   },
   {
-    name: "tridata-dev/tridata-web",
-    icons: [
-      <SiReact className="size-4" key="react" />,
-      <SiTypescript className="size-4" key="typescript" />,
-    ],
-  },
-
-  {
-    name: "qiushiyan/go-degit",
-    icons: [<SiGo className="size-6" key="go-degit" />],
+    name: "qiushiyan/qlang",
+    href: "https://qlang.qiushiyan.dev/",
   },
 ];
 
 export const FeaturedProjects = async () => {
   const repos = await Promise.all(
-    featured.map(async ({ name, href, icons }) => ({
+    featured.map(async ({ name, href }) => ({
       name,
       href,
-      icons,
       data: await getProject(name),
     }))
   );
 
   return (
-    <ScrollArea className="w-full px-8">
-      <FeaturedProjectsClient repos={repos} />
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    <div className="grid gap-4">
+      {repos.map((repo) => (
+        <Link
+          className="flex flex-col gap-3 rounded-md p-4 px-4 transition-all hover:bg-muted hover:text-muted-foreground"
+          key={repo.name}
+          href={repo.href as string}
+          target="_blank"
+        >
+          <h3 className="font-mono text-sm">{repo.name}</h3>
+          <p className="line-clamp-2 text-sm">{repo.data.data.description}</p>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <StarIcon className="size-4" />
+              <span className="text-sm text-muted-foreground">
+                {repo.data.data.stargazers_count}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <GitForkIcon className="size-4" />
+              <span className="text-sm text-muted-foreground">
+                {repo.data.data.forks_count}
+              </span>
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 };
 
 // eslint-disable-next-line react/display-name
 FeaturedProjects.Skeleton = () => {
-  return (
-    <div className="flex justify-center gap-6">
-      {featured.map(({ name }) => (
-        <Skeleton className="h-48 w-80" key={name} />
-      ))}
-    </div>
-  );
+  return <Skeleton className="h-96 w-full" />;
 };

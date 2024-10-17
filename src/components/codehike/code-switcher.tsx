@@ -32,12 +32,12 @@ export const CodeSwitcher = async ({ data }: { data: string }) => {
 
   return (
     <Tabs defaultValue={entries[0].key}>
-      <TabsList className="mb-2 flex justify-start p-0 font-mono">
+      <TabsList className="mb-2 flex w-fit justify-start rounded-none p-0 font-mono">
         {entries.map((entry) => (
           <TabsTrigger
             key={entry.key}
             value={entry.key}
-            className="inline-flex items-center gap-2 rounded-none px-6 data-[state=active]:border-l-2 xl:text-lg"
+            className="inline-flex items-center gap-2 rounded-none px-6 data-[state=active]:border-l-4 xl:text-lg"
           >
             <FileCodeIcon className="size-4" />
             <span>{entry.key}</span>

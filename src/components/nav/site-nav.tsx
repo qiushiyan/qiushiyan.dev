@@ -26,18 +26,10 @@ export function SiteNav({
                 <div className="flex items-center gap-2">
                   <Link
                     href={routes.home}
-                    className="text-2xl font-extrabold tracking-wide text-primary/80 transition-all hover:text-primary"
+                    className="text-2xl font-extrabold tracking-wide transition-all hover:text-primary"
                     title="Home"
                   >
                     qiushiyan.dev
-                  </Link>
-                  <Link
-                    href={"https://github.com/qiushiyan"}
-                    className="transition-all hover:text-primary/80"
-                    title="GitHub"
-                  >
-                    <SiGithub className="size-6" />
-                    <span className="sr-only">GitHub</span>
                   </Link>
                 </div>
               </PlusGridItem>

@@ -23,7 +23,7 @@ export const ProjectCard = ({ data, className, ...rest }: ProjectCardProps) => {
     <Link href={data.href}>
       <div
         className={cn(
-          "group flex h-full w-80 flex-col justify-between gap-2 rounded-md border-2 p-4 transition-all duration-300 ease-out hover:shadow-lg",
+          "group flex h-full flex-col justify-between gap-2 rounded-md border-none p-4 transition-all duration-300 ease-out hover:shadow-lg",
           className
         )}
         {...rest}
