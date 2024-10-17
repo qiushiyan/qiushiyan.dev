@@ -1,14 +1,11 @@
 import { Suspense } from "react";
 
 import { Container } from "@/components/container";
-import { Heading } from "@/components/heading";
 import { PostGrid } from "@/components/post/post-grid";
 import { PostTags } from "@/components/post/post-tags";
 import { FeaturedProjects } from "@/components/projects/featured-projects";
-import SiteSearch from "@/components/site-search";
-import { SkipLink } from "@/components/skip-link";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { BLOGS_HEADING, MAIN_CONTENT_ID, PROJECTS_HEADING } from "@/constants";
+import { HOME_SECTIONS, MAIN_CONTENT_ID } from "@/constants";
 import { getAllTags } from "@/lib/content/posts";
 import { SiGithub, SiLinkedin, SiX } from "@icons-pack/react-simple-icons";
 import Link from "next/link";
@@ -34,7 +31,6 @@ export default function Home({
 
   return (
     <>
-      <SkipLink />
       <Container>
         <div
           className={"grid grid-cols-1 items-start gap-8 py-8 lg:grid-cols-3"}
@@ -93,11 +89,11 @@ export default function Home({
           >
             <section
               className="flex flex-col gap-2"
-              aria-labelledby={BLOGS_HEADING}
+              aria-labelledby={HOME_SECTIONS.blogs}
             >
               <div className="flex items-center gap-1">
-                <h2 className="text-xl font-medium" id={BLOGS_HEADING}>
-                  Blogs
+                <h2 className="text-xl font-medium" id={HOME_SECTIONS.blogs.id}>
+                  {HOME_SECTIONS.blogs.label}
                 </h2>
                 <PostTags selectedTags={tags} />
               </div>
@@ -106,14 +102,35 @@ export default function Home({
             </section>
             <section
               className="flex flex-col gap-2"
-              aria-labelledby={PROJECTS_HEADING}
+              aria-labelledby={HOME_SECTIONS.projects.id}
             >
-              <h2 className="text-xl font-medium" id={PROJECTS_HEADING}>
-                Projects
+              <h2
+                className="text-xl font-medium"
+                id={HOME_SECTIONS.projects.id}
+              >
+                {HOME_SECTIONS.projects.label}
               </h2>
               <Suspense fallback={<FeaturedProjects.Skeleton />}>
                 <FeaturedProjects />
               </Suspense>
+            </section>
+
+            <section className="flex flex-col gap-2" aria-labelledby="others">
+              <h2 className="sr-only" id={"others"}>
+                Projects
+              </h2>
+              <Link
+                href={"/recipes"}
+                className="font-medium underline underline-offset-4"
+              >
+                Snippets
+              </Link>
+              <Link
+                href={"/notes"}
+                className="font-medium underline underline-offset-4"
+              >
+                Notes
+              </Link>
             </section>
           </main>
         </div>

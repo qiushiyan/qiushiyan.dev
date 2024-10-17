@@ -4,5 +4,13 @@ export const host = isProduction
   : "http://localhost:3000";
 export const MAIN_CONTENT_ID = "main-content";
 
-export const BLOGS_HEADING = "blogs-heading";
-export const PROJECTS_HEADING = "projects-heading";
+export const HOME_SECTIONS = {
+  blogs: {
+    id: "blogs-heading",
+    label: "Blogs",
+  },
+  projects: {
+    id: "projects-heading",
+    label: "Projects",
+  },
+} as const;

@@ -14,7 +14,10 @@ headings:
   depth: 3
 - title: Seeding with Pushing or Pulling
   slug: seeding-with-pushing-or-pulling
-  depth: 3
+  depth: 2
+- title: Prefetching
+  slug: prefetching
+  depth: 2
 - title: Separate client and server state
   slug: separate-client-and-server-state
   depth: 2
@@ -35,6 +38,15 @@ headings:
   depth: 2
 - title: Typed Query Options
   slug: typed-query-options
+  depth: 2
+- title: Using with Fullstack Frameworks
+  slug: using-with-fullstack-frameworks
+  depth: 2
+- title: With Remix
+  slug: with-remix
+  depth: 2
+- title: With Next.js
+  slug: with-nextjs
   depth: 2
 ---
 
@@ -152,13 +164,37 @@ const { data } = useQuery({
 })
 ```
 
-### Seeding with Pushing or Pulling {#seeding-with-pushing-or-pulling}
+## Seeding with Pushing or Pulling {#seeding-with-pushing-or-pulling}
 
 Setting `initialData` is a form of seeding, this is often used when we
 need a query to fetch a list of items as well as queries to fetch
 individual items. Here are two common patterns
 
-- pushing: when the list query is resolved, seed each entry to their
+- **Pulling**: when `initialData` is needed for the single item, search
+  the item in the list, if not found, fetch it from the server
+
+``` tsx
+ useQuery({
+    queryKey: ['todos', 'detail', id],
+    queryFn: () => fetchTodo(id),
+    // !mark(1:1)
+    initialData: () => {
+      return queryClient
+        .getQueryData(['todos', 'list'])
+        ?.find((todo) => todo.id === id)
+    },
+    // !mark(1:1)
+    initialDataUpdatedAt: () =>
+      // ⬇️ get the last fetch time of the list
+      queryClient.getQueryState(['todos', 'list'])?.dataUpdatedAt,
+ })
+```
+
+Pulling is the **recommended** approach because it seeds “just in time”,
+the only downside is that you need an extra `initialDataUpdatedAt` to
+make sure react query respects the stale time.
+
+- **Pushing**: when the list query is resolved, seed each entry to their
   individual queries with `queryClient.setQueryData()`
 
 ``` tsx
@@ -168,12 +204,127 @@ const useTodos = () => {
     queryKey: ['todos', 'list'],
     queryFn: async () => {
       const todos = await fetchTodos()
+      // !mark(1:3)
       todos.forEach((todo) => {
         queryClient.setQueryData(['todos', 'detail', todo.id], todo)
       })
       return todos
     },
   })
+}
+```
+
+With pushing `staleTime` is automatically respected, because the seed
+happens at the same time as the list fetch. But this might create
+unnecessary cache entries and the pushed data might be garbage collected
+too early.
+
+## Prefetching {#prefetching}
+
+[source](https://tanstack.com/query/latest/docs/framework/react/guides/prefetching)
+
+Seeding is useful when you have the exact data that is needed for future
+queries. When working with relational data, e.g. a feed and its
+comments, we don’t get the comments when you fetch the feed, but we can
+prefetch the comments when we fetch the feed in parallel.
+
+``` tsx
+#| caption: Prefetching comments for an article
+function Article({ id }) {
+  const { data: articleData, isPending } = useQuery({
+    queryKey: ['article', id],
+    queryFn: getArticleById,
+  })
+
+  useQuery({
+    queryKey: ['article-comments', id],
+    queryFn: getArticleCommentsById,
+    // !mark(1:2)
+    // Optional optimization to avoid rerenders when this query changes:
+    notifyOnChangeProps: [],
+  })
+
+  if (isPending) {
+    return 'Loading article...'
+  }
+
+  return (
+    <>
+      <ArticleHeader articleData={articleData} />
+      <ArticleBody articleData={articleData} />
+      <Comments id={id} />
+    </>
+  )
+}
+
+function Comments({ id }) {
+  // this query will be prefetched when the article query is fetched
+  const { data, isPending } = useQuery({
+    queryKey: ['article-comments', id],
+    queryFn: getArticleCommentsById,
+  })
+}
+```
+
+Another way is to prefetch inside of the query function. This makes
+sense if you know that every time an article is fetched it’s very likely
+comments will also be needed. For this, we’ll use
+`queryClient.prefetchQuery`:
+
+``` tsx
+const queryClient = useQueryClient()
+const { data: articleData, isPending } = useQuery({
+  queryKey: ['article', id],
+  queryFn: (...args) => {
+
+// !mark(1:4)
+    queryClient.prefetchQuery({
+      queryKey: ['article-comments', id],
+      queryFn: getArticleCommentsById,
+    })
+
+    return getArticleById(...args)
+  },
+})
+```
+
+If the primary query is a suspense query, you should not put the
+prefetch query inside the same component, because that component is
+unmounted before the suspense query resolves, and the prefetch query
+will only kick off until the suspsense query resolves. You can prefetch
+“one level up” in the parent component.
+
+``` tsx
+#| caption: Prefech outside the suspense query
+function App() {
+  // !mark(1:5)
+  usePrefetchQuery({
+    queryKey: ['article-comments', id],
+    queryFn: getArticleCommentsById,
+    notifyOnChangeProps: [],
+  })
+
+  return (
+    <Suspense fallback="Loading articles...">
+      <Articles />
+    </Suspense>
+  )
+}
+
+function Articles() {
+  const { data: articles } = useSuspenseQuery({
+    queryKey: ['articles'],
+    queryFn: (...args) => {
+      return getArticles(...args)
+    },
+  })
+
+  return articles.map((article) => (
+    <div key={articleData.id}>
+      <ArticleHeader article={article} />
+      <ArticleBody article={article} />
+    </div>
+  ))
 }
 ```
 
@@ -456,3 +607,9 @@ useQuery(groupOptions())
 const data = queryClient.getQueryData(groupOptions().queryKey)
 //     ^? const data: Group[] | undefined
 ```
+
+## Using with Fullstack Frameworks {#using-with-fullstack-frameworks}
+
+## With Remix {#with-remix}
+
+## With Next.js {#with-nextjs}

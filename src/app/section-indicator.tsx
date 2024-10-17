@@ -2,21 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-import { BLOGS_HEADING, PROJECTS_HEADING } from "@/constants";
+import { HOME_SECTIONS } from "@/constants";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
-
-const sections = [
-  {
-    id: BLOGS_HEADING,
-    label: "Blogs",
-  },
-  {
-    id: PROJECTS_HEADING,
-    label: "Projects",
-  },
-];
 
 export function SectionIndicator() {
   const [activeHeading, setActiveHeading] = useState<string | undefined>(
@@ -47,13 +36,15 @@ export function SectionIndicator() {
       { rootMargin: "0px 0px -40% 0px" }
     );
 
-    blogObserver.observe(document.getElementById(BLOGS_HEADING) as Element);
+    blogObserver.observe(
+      document.getElementById(HOME_SECTIONS.blogs.id) as Element
+    );
     projectObserver.observe(
-      document.getElementById(PROJECTS_HEADING) as Element
+      document.getElementById(HOME_SECTIONS.projects.id) as Element
     );
 
-    observers.set(BLOGS_HEADING, blogObserver);
-    observers.set(PROJECTS_HEADING, projectObserver);
+    observers.set(HOME_SECTIONS.blogs.label, blogObserver);
+    observers.set(HOME_SECTIONS.projects.label, projectObserver);
 
     return () => {
       observers.forEach((observer) => observer.disconnect());
@@ -62,7 +53,7 @@ export function SectionIndicator() {
 
   return (
     <div className="hidden flex-col gap-2 lg:flex">
-      {sections.map(({ id, label }) => (
+      {Object.entries(HOME_SECTIONS).map(([, { id, label }]) => (
         <Link href={`#${id}`} className="flex items-center gap-2" key={id}>
           <ArrowRightIcon
             className={cn(
