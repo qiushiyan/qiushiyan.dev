@@ -29,9 +29,7 @@ export function SectionIndicator() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (!activeHeading) {
-              setActiveHeading(entry.target.id);
-            }
+            setActiveHeading(entry.target.id);
           }
         });
       },
@@ -43,8 +41,6 @@ export function SectionIndicator() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setActiveHeading(entry.target.id);
-          } else {
-            setActiveHeading(BLOGS_HEADING);
           }
         });
       },
@@ -67,7 +63,7 @@ export function SectionIndicator() {
   return (
     <div className="hidden flex-col gap-2 lg:flex">
       {sections.map(({ id, label }) => (
-        <Link href={`#${id}`} className="flex items-center gap-2">
+        <Link href={`#${id}`} className="flex items-center gap-2" key={id}>
           <ArrowRightIcon
             className={cn(
               "size-3 shrink-0 transition-transform duration-300",
