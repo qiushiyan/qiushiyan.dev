@@ -18,7 +18,7 @@ const featured = [
   },
   {
     name: "qiushiyan/qlang",
-    href: "https://qlang.qiushiyan.dev/",
+    href: "/projects/qlang/",
   },
 ];
 
@@ -38,7 +38,7 @@ export const FeaturedProjects = async () => {
           className="flex flex-col gap-3 rounded-md p-4 px-4 transition-all hover:bg-muted hover:text-muted-foreground"
           key={repo.name}
           href={repo.href as string}
-          target="_blank"
+          target={repo.href.startsWith("http") ? "_blank" : undefined}
         >
           <h3 className="font-mono text-sm">{repo.name}</h3>
           <p className="line-clamp-2 text-sm">{repo.data.data.description}</p>

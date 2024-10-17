@@ -5,7 +5,7 @@ date: '2024-09-15'
 description: |
   An example of how to use Cloudflare Durable Objects to implement a real-time chat application.
 tags:
-- Web
+- Cloudflare
 components:
 - code-switcher
 - iframe

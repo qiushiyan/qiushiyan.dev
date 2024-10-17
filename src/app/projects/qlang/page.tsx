@@ -36,12 +36,16 @@ export default function Page() {
             <Link href={routes.home}>Home</Link>
             <Link
               href={"#demo"}
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "!no-underline"
-              )}
+              className={cn(buttonVariants({ variant: "outline" }))}
             >
-              Jump to demo
+              Demo
+            </Link>
+            <Link
+              href={"https://qlang.qiushiyan.dev"}
+              target="_blank"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Playground
             </Link>
           </div>
         </div>

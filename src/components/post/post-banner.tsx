@@ -27,7 +27,7 @@ export const PostBanner = ({ post }: { post: Post }) => {
         className="flex-grow text-sm lg:text-base"
         description={post.descriptionHtml}
       />
-      <div className="flex flex-wrap items-center space-x-6 text-sm text-muted-foreground">
+      <div className="flex flex-col flex-wrap gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-6">
         <div className="flex items-center">
           <CalendarIcon className="mr-2 h-4 w-4" />
           <time dateTime={post.date}>

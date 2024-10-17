@@ -5,7 +5,7 @@ date: "2024-09-06"
 description: |
   A powerful infrastructure for building stateful, realtime and collaborative applications.
 tags:
-  - Web
+  - Cloudflare
 components:
   - code-switcher
   - do-counter-example

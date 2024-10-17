@@ -42,12 +42,12 @@ export default function Home({
             <h1 className="text-3xl font-medium underline underline-offset-8 dark:text-primary">
               Qiushi Yan
             </h1>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <p className="text-foreground/90">Software Engineer</p>
                 <ThemeToggle />
               </div>
-              <p className="leading-loose text-muted-foreground">
+              <p className="text-balance leading-loose text-muted-foreground">
                 I create full-stack applications that are{" "}
                 <span className="font-medium text-primary/80">simple</span>,{" "}
                 <span className="font-medium text-primary/80">accessible</span>{" "}
@@ -74,8 +74,6 @@ export default function Home({
               />
             </div>
             <SectionIndicator />
-
-            <PostTags selectedTags={tags} />
           </section>
 
           {/* <Heading className="mb-0" id="projects-heading">
@@ -92,9 +90,13 @@ export default function Home({
               className="flex flex-col gap-2"
               aria-labelledby={BLOGS_HEADING}
             >
-              <h2 className="text-xl font-medium" id={BLOGS_HEADING}>
-                Blogs
-              </h2>
+              <div className="flex items-center gap-1">
+                <h2 className="text-xl font-medium" id={BLOGS_HEADING}>
+                  Blogs
+                </h2>
+                <PostTags selectedTags={tags} />
+              </div>
+
               <PostGrid selectedTags={tags} />
             </section>
             <section
