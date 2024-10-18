@@ -174,6 +174,10 @@ function Article({ id }) {
     // !mark(1:2)
     // Optional optimization to avoid rerenders when this query changes:
     notifyOnChangeProps: [],
+
+    // !mark(1:3)
+    // Only prefetch is the data is older than 5 years old, to disable prefetch when there is data, set staleTime: Infinity
+    staleTime: 5000
   })
 
   if (isPending) {
@@ -413,6 +417,60 @@ const queryClient = new QueryClient({
 })
 ```
 
+## Mutations
+
+
+
+- `useMutation` is imperative, while `useQuery` is declarative. You need to call the returned `mutate` function yourself to trigger the mutation.
+
+- `mutationKey` is not required for `useMutation` and has nothing to do with query keys. Set it to the same as a query key does not revalidate that query, use `queryClient.invalidateQueries` instead.
+
+- When you need to share states of a mutation across components, set `mutationKey` and use `useMutationState` to access the state.
+
+```tsx
+function App() {
+  const mutation = useMutation({
+    mutationKey: ["todos"],
+    mutationFn: (newTodo) => {
+      return axios.post('/todos', newTodo)
+    },
+  })
+
+  return (
+    <div>
+      {mutation.isPending ? (
+        'Adding todo...'
+      ) : (
+        <>
+          {mutation.isError ? (
+            <div>An error occurred: {mutation.error.message}</div>
+          ) : null}
+
+          {mutation.isSuccess ? <div>Todo added!</div> : null}
+
+          <button
+            onClick={() => {
+              // !mark(1:1)
+              mutation.mutate({ id: new Date(), title: 'Do Laundry' })
+            }}
+          >
+            Create Todo
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
+
+const data = useMutationState(
+  filters: { mutationKey: ['todos'] },
+  select: (mutation) => mutation.state.data,
+)
+// !mark(1:2)
+// get the latest data from the mutation (data is an array of all data from past mutations)
+const latest = data[data.length - 1]
+```
+
 ## Mutation Callbacks
 
 [source](https://tkdodo.eu/blog/mastering-mutations-in-react-query#some-callbacks-might-not-fire)
@@ -449,6 +507,22 @@ updateTodo.mutate(
 ```
 
 ## Invalidation After Mutation
+
+The simplest form of invalidation is to invalidate a single query after a mutation.
+
+```ts
+useMutation({
+  mutationFn: updateTodo,
+  // !mark(1:1)
+  onSuccess: () => {
+    queryClient.invalidateQueries({
+      queryKey: ['todos', 'list']
+    })
+  },
+})
+```
+
+To make things more declarative, we can set a global `onSuccess` callback on `MutationCache` to search for a `meta` property in the finished mutation, if a query matches the meta property, invalidate it.
 
 ```tsx
 import { matchQuery } from '@tanstack/react-query'
@@ -489,6 +563,7 @@ declare module '@tanstack/react-query' {
 ```
 
 
+
 ## Optimistic Updates
 
 [source](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates)
@@ -503,6 +578,7 @@ const addTodoMutation = useMutation({
   // make sure to _return_ the Promise from the query invalidation
   // so that the mutation stays in `pending` state until the refetch is finished
   onSettled: async () => {
+    // !mark(1:1)
     return await queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 })
@@ -517,7 +593,14 @@ return <ul>
 </ul>
 ```
 
-- use the `onMutate` callback to manipulate the cache, the gist is that we `setQueryData` with the new data, and if the mutation fails, we revert the cache to the previous state. The value returned by `onMutate` can be accessed via the `context` argument in `onError` and `onSettled`.
+Because we are awaiting `invalidateQueries`, `isPending` will only be false when the invalidation is finished. So when the opacity item is removed, we will see the most up-to-date data.
+
+This approach can be problematic we if you click on multiple checkboxes in a row, there is a going to be a gap between the several `invalidateQueries`. For example, if the second todo we clicked on is originally checked, it is now unchecked, if the first invalidation finishes now, it will try to update the second todo to be checked again, because that's what the server state is now. It will fix itself after the last mutation has succeeded and the queries have been invalidated, but it's not a great experience for the user.
+
+
+The root of this problem is that we are only not changing the cache until the mutation is finished. We can fix this by updating the cache immediately after the mutation is called, and then revert the cache if the mutation fails.
+
+- Second method: use the `onMutate` callback to manipulate the cache, the gist is that we `setQueryData` with the new data, and if the mutation fails, we revert the cache to the previous state. The value returned by `onMutate` can be accessed via the `context` argument in `onError` and `onSettled`.
 
 ```tsx
 const queryClient = useQueryClient()
@@ -554,6 +637,24 @@ useMutation({
 })
 ```
 
+You can also return a function from `onMutate` to serve as a rollback
+
+```tsx
+useMutation({
+  onMutate: () => {
+    // ... do the optimistic update
+    const snapshot = queryClient.getQueryData(["todos"])
+    // !mark(1:3)
+    return () => {
+      queryClient.setQueryData(["todos"], snapshot)
+    }
+  },
+  onError: (error, variables, rollback) => {
+    // !mark(1:1)
+    rollback?.()
+  },
+})
+```
 
 
 
@@ -581,11 +682,378 @@ const data = queryClient.getQueryData(groupOptions().queryKey)
 //     ^? const data: Group[] | undefined
 ```
 
-## Using with Fullstack Frameworks
+## Parallel Queries
 
-## With Remix
+Multiple `useQuery` observers are already running in parallel by default.
+
+```tsx
+#| caption: two queries running in parallel
+useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+})
+
+useQuery({
+  queryKey: ['users'],
+  queryFn: fetchUsers,
+})
+```
+
+But there are cases where the queries are dynamic and can't be laid out statically. In such cases, we can use `useQueries` to dynamically generate multiple query options object:
+
+```tsx
+function App({ users }) {
+  const userQueries = useQueries({
+    queries: users.map((user) => {
+      return {
+        queryKey: ['user', user.id],
+        queryFn: () => fetchUserById(user.id),
+      }
+    }),
+  })
+}
+```
+
+The return value of `useQueries` is an array of individual `useQuery` results, and you can process the array however you want.
+
+```tsx
+const areAnyPending = userQueries.some(
+  query => query.status === 'pending'
+)
+```
+
+If `queries` in `useQueries` is an empty array, it won't do anything. This is useful to implement dependent queries similar to the `enabled` option.
+
+In the following example, we fetch a list of repos and then fetch the issues for each repo. We use `useQueries` to dynamically generate the issue queries.
+
+```tsx
+function useRepos() {
+  return useQuery({
+    queryKey: ['repos'],
+    queryFn: fetchRepos
+  })
+}
+
+function useIssues(repos) {
+  return useQueries({
+    queries: repos?.map((repo) => ({
+      queryKey: ['repos', repo.name, 'issues'],
+      queryFn: async () => {
+        const issues = await fetchIssues(repo.name)
+        // !mark(1:1) return the repo name along with the issues
+        return { repo: repo.name, issues }
+      }
+    })) ?? []
+  })
+}
+
+// component.tsx
+function App() {
+   const repos = useRepos()
+   const issues = useIssues(repos.data)
+
+   return {
+    repos.isSuccess ?
+      <ul>
+        {repos.data.map((repo) => {
+          // !mark(1:3) find the issue query for the repo
+          const repoIssues = issues.find(
+            query => query.data?.repo === repo.name
+          )
+
+          const length = repoIssues?.data.issues.length
+
+          return (
+            <li key={repo.id}>
+              {repo.name}
+              {repoIssues
+                ? ` (${length === 30 ? "30+" : length} issues)`
+                : null
+              }
+            </li>
+          )
+        })}
+      </ul>
+    : null}
+}
+```
+
+An alternative to dynamic `useQueries` is creating a separate component for each item and use `useQuery` inside it. A downside of this approach is that it's hard to derive values based on all the queries, e.g. to get the total number of issues. If we are using `useQueries`, we can just loop through the queries array.
 
 
+```ts
+const repos = useRepos()
+const issues = useIssues(repos.data)
+
+const totalIssues = issues
+  .map(({ data }) => data?.issues.length ?? 0)
+  .reduce((a, b) => a + b, 0)
+```
+
+`useQueries` provides a `combine` argument for this use case, what is returned from `combine` will be the result of the `useQueries` hook.
+
+```tsx
+function useIssues(repos) {
+  return useQueries({
+    queries: repos?.map((repo) => ({
+      queryKey: ['repos', repo.name, 'issues'],
+      queryFn: async () => {
+        const issues = await fetchIssues(repo.name)
+        return { repo: repo.name, issues }
+      },
+    })) ?? [],
+    // !mark(1:4)
+    combine: (issues) => {
+      const totalIssues = issues
+        .map(({ data }) => data?.issues.length ?? 0)
+        .reduce((a, b) => a + b, 0)
+
+      return { issues, totalIssues }
+    }
+  })
+}
+
+// !mark(1:1)
+const { issues, totalIssues } = useIssues(repos.data)
+```
+
+`combine` is useful even when you don't need to derive an aggregation. You can simply use it to reshape the return values so it fits your component's needs.
+
+```tsx
+function useRepoAndIssues({name}) {
+  return useQueries({
+    queries: [
+      {
+        queryKey: ['repos', name],
+        queryFn: async () => fetchRepo(name),
+      },
+      {
+        queryKey: ['repos', name, 'issues'],
+        queryFn: async () => fetchIssues(name),
+      }
+    ],
+    combine: (results) => {
+      const isPending = results.some((query) => query.status === 'pending')
+      const isError = results.some((query) => query.status === 'error')
+
+      return {
+        repo: results[0].data,
+        issues: results[1].data,
+        isPending,
+        isError
+       }
+    }
+  })
+}
+// !mark(1:1)
+const { repo, issues, isPending, isError } = useRepoAndIssues({ name })
+```
+
+## Pagination
+
+- use `placeholderData: keepPreviousData` to prevent loading spinners when the page changes
+
+- use `isPlaceholderData` to provide loading feedback and disable pagination buttons
+
+- set up an `useEffect` to prefetch the data for the next page whenever page changes
+
+```tsx
+function useRepos(sort, page) {
+  const queryClient = useQueryClient()
+
+  React.useEffect(() => {
+    // !mark(1:1)
+    queryClient.prefetchQuery(getReposQueryOptions(sort, page + 1))
+  }, [sort, page, queryClient])
+
+  return useQuery({
+    ...getReposQueryOptions(sort, page),
+    // !mark(1:1)
+    placeholderData: (previousData) => previousData
+  })
+}
+
+function RepoList({ sort, page, setPage }) {
+  const { data, status, isPlaceholderData } = useRepos(sort, page)
+
+  if (status === 'pending') {
+    return <div>...</div>
+  }
+
+  if (status === 'error') {
+    return <div>There was an error fetching the repos.</div>
+  }
+
+  return (
+    <div>
+      // !mark(1:1)
+      <ul style={{ opacity: isPlaceholderData ? 0.5 : 1 }}>
+        {data.map((repo) =>
+          <li key={repo.id}>{repo.full_name}</li>
+        )}
+      </ul>
+      <div>
+        <button
+          onClick={() => setPage((p) => p - 1)}
+          // !mark(1:1)
+          disabled={isPlaceholderData || page === 1}
+        >
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button
+        // !mark(1:1)
+          disabled={isPlaceholderData || data?.length < PAGE_SIZE}
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  )
+}
+```
+
+## Infinite Queries
+
+ `getProjects` is a mock api that returns an object
+
+```ts
+// nextId and previousId are cursors to fetch the next and previous page
+{data, nextId, previousId}
+```
+
+Example:
+
+```tsx
+import { useProjects } from "lib/features/project/queries";
+import { useEffect } from "react";
+
+const fetchProjects = async (cursor: number) => {
+  await delay(1000);
+  return await getProjects(cursor);
+};
+
+export default function Infinite() {
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } = useInfiniteQuery({
+    queryKey: projectKeys.list(),
+    queryFn: ({ pageParam }) => fetchProjects(pageParam),
+    // !mark(1:2)
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextId,
+    getPreviousPageParam: (firstPage) => firstPage.previousId,
+  });
+
+  const shouldFetch = !isFetchingNextPage && hasNextPage;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      // !mark(1:2)
+      if (entries.some((entry) => entry.isIntersecting) && shouldFetch) {
+        fetchNextPage();
+      }
+    });
+
+    const trigger = document.getElementById("fetch-trigger");
+    if (trigger) {
+      observer.observe(trigger);
+    }
+
+    return () => {
+      if (trigger) {
+        observer.unobserve(trigger);
+      }
+    };
+  }, [fetchNextPage, isFetchingNextPage, shouldFetch]);
+
+  return (
+    <div>
+      {isLoading ? <div>Loading initial data</div> : null}
+      {data?.pages
+      // !mark(1:1)
+        .flatMap((p) => p.data)
+        .map((project) => (
+          <div
+            key={project.id}
+            className="flex items-center border justify-center h-[50vh]"
+          >
+            <h2>{project.name}</h2>
+          </div>
+        ))}
+        // !mark(1:1)
+      <div id="fetch-trigger" />
+      {isFetchingNextPage ? <div>Loading next page...</div> : null}
+      {data && !hasNextPage ? <div>No more projects to load</div> : null}
+    </div>
+  );
+}
+
+```
+
+- Infinite queries are about changing a cursor and provide it to the fetch function. `useInfiniteQuery` returns `data` as an 2D array of all pages
+
+```ts
+[
+  [1, 2, 3], // data for page 1
+  [4, 5, 6], // data for page 2
+  [7, 8, 9], // data for page 3
+]
+```
+
+- set `initialPageParam` to give the fetcher a starting point, and use `getNextPageParam` to provide the next cursor. How you get the next cursor depends, but you get access to the all the current data in the `getNextPageParam` function.
+
+- `fetchNextPage` triggers the fetcher with the next cursor, when you call `fetchNextPage` is up to you, e.g., using a interaction observer
+
+- if `getNextPageParam` returns undefined or null. `hasNextPage` will be set to false and you can conditionally hide the trigger
+
+- infinite queries can be bidrectional (e.g. chat messages), `getPreviousPageParam` can be used to fetch the previous page. If the API does return a cursor, e.g., it's built for pagination, we can create cursor ourselves
+
+```tsx
+return useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
+  initialPageParam: 0,
+  getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    if (lastPage.length === 0) {
+      return undefined
+    }
+    return lastPageParam + 1
+  },
+  // !mark(1:2)
+  // firstPage is the current topmost page data
+  getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+  if (firstPageParam <= 1) {
+      return undefined
+    }
+    return firstPageParam - 1
+  },
+})
+```
+
+- we use a single query key for all pages, this means that all pages are treated as a single cache entry and will be revalidated altogether. This can become a problem
+
+  - the cache entry can become very large
+
+  - when the query becomes stale and needs to be refetched, each group is fetched **sequentially**, starting from the first one. This is the only way to ensure we have the most up-to-date data for all pages.
+
+Set `maxPages` to limit the amount of pages that are kept in the cache.
+
+```ts
+useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
+  initialPageParam: 0,
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+  getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
+  // !mark(1:2)
+  // only allow 5 pages to be kept in the cache
+  maxPages: 5,
+})
+```
 
 
-## With Next.js
+## Using with SSR
+
+### With Next.js
+
+### With Remix
