@@ -89,7 +89,7 @@ export default function Home({
           >
             <section
               className="flex flex-col gap-2"
-              aria-labelledby={HOME_SECTIONS.blogs}
+              aria-labelledby={HOME_SECTIONS.blogs.id}
             >
               <div className="flex items-center gap-1">
                 <h2 className="text-xl font-medium" id={HOME_SECTIONS.blogs.id}>
@@ -154,6 +154,7 @@ function SiteLink({
       className="transition-all hover:text-primary/80"
       title={title}
       target="_blank"
+      rel="noopener noreferrer"
     >
       {icon}
       <span className="sr-only">{title}</span>

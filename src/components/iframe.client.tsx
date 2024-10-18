@@ -29,6 +29,7 @@ export const IFrameClient = ({
               "!text-inherit"
             )}
             target="_blank"
+            rel="noreferrer noopener"
             href={src}
           >
             <LinkIcon className="size-4" />

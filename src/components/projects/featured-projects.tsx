@@ -6,11 +6,11 @@ import Link from "next/link";
 const featured = [
   {
     name: "tidymodels/agua",
-    href: "https://tidymodels.github.io/agua/",
+    href: "https://tidymodels.github.io/agua",
   },
   {
     name: "qiushiyan/js-notebook",
-    href: "https://javascript-notebook.netlify.app/",
+    href: "https://javascript-notebook.netlify.app",
   },
   {
     name: "qiushiyan/linux-command-line-cheatsheet",
@@ -18,7 +18,7 @@ const featured = [
   },
   {
     name: "qiushiyan/qlang",
-    href: "/projects/qlang/",
+    href: "/projects/qlang",
   },
 ];
 
@@ -39,6 +39,7 @@ export const FeaturedProjects = async () => {
           key={repo.name}
           href={repo.href as string}
           target={repo.href.startsWith("http") ? "_blank" : undefined}
+          rel={repo.href.startsWith("http") ? "noreferrer noopener" : undefined}
         >
           <h3 className="font-mono text-sm">{repo.name}</h3>
           <p className="line-clamp-2 text-sm">{repo.data.data.description}</p>

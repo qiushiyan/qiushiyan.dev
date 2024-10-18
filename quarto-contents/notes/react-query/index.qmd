@@ -255,7 +255,7 @@ function Articles() {
 ```
 
 
-## Separate client and server state
+## Separate Client and Server State
 
 [source](https://tkdodo.eu/blog/practical-react-query#keep-server-and-client-state-separate)
 
@@ -330,7 +330,7 @@ export const useTodo = (id) =>
   useTodosQuery((data) => data.find((todo) => todo.id === id))
 ```
 
-A component using the `useTodoCount` custom hook will only re-render if the length of the `todos` changes. It will not re-render if e.g. the name of a todo changed.
+A component using the `useTodoCount` custom hook will only re-render if the length of the `todos` changes. It will not re-render if e.g. the name of a todo has changed.
 
 In contrast to transforming the data directory after `useTodo`, which runs during every re-render or when the query data changes, the `select` option is a more efficient way to transform data.
 
@@ -367,7 +367,7 @@ if (isError) {
 }
 ```
 
-- the `onError` callback (on the query itself or the global QueryCache / MutationCache)
+- the `onError` callback (on the query itself or the global `QueryCache` / `MutationCache`)
 
 ```tsx
 const useTodos = () =>
@@ -413,13 +413,7 @@ const queryClient = new QueryClient({
 })
 ```
 
-## Optimistic Updates
-
-
-
 ## Mutation Callbacks
-
-
 
 [source](https://tkdodo.eu/blog/mastering-mutations-in-react-query#some-callbacks-might-not-fire)
 
@@ -453,7 +447,6 @@ updateTodo.mutate(
   { onSuccess: () => history.push('/todos') }
 )
 ```
-
 
 ## Invalidation After Mutation
 
@@ -494,6 +487,76 @@ declare module '@tanstack/react-query' {
   }
 }
 ```
+
+
+## Optimistic Updates
+
+[source](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates)
+
+Optimistic updates can be implemented in 2 ways
+
+- after `mutationFn` is called, display `variables` (the input supplied to `mutationFn`) from `useMutation` or `useMutationState`, this is directly manipulating the UI
+
+```tsx
+const addTodoMutation = useMutation({
+  mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+  // make sure to _return_ the Promise from the query invalidation
+  // so that the mutation stays in `pending` state until the refetch is finished
+  onSettled: async () => {
+    return await queryClient.invalidateQueries({ queryKey: ['todos'] })
+  },
+})
+
+const { isPending, submittedAt, variables } = addTodoMutation
+
+return <ul>
+  {todoQuery.items.map((todo) => (
+    <li key={todo.id}>{todo.text}</li>
+  ))}
+  {isPending && <li style={{ opacity: 0.5 }} key={submittedAt}>{variables}</li>}
+</ul>
+```
+
+- use the `onMutate` callback to manipulate the cache, the gist is that we `setQueryData` with the new data, and if the mutation fails, we revert the cache to the previous state. The value returned by `onMutate` can be accessed via the `context` argument in `onError` and `onSettled`.
+
+```tsx
+const queryClient = useQueryClient()
+
+useMutation({
+  mutationFn: updateTodo,
+  // When mutate is called:
+  onMutate: async (newTodo) => {
+    // Cancel any outgoing refetches
+    // (so they don't overwrite our optimistic update)
+    await queryClient.cancelQueries({ queryKey: ['todos'] })
+
+    // Snapshot the previous value
+    const previousTodos = queryClient.getQueryData(['todos'])
+
+    // Optimistically update to the new value
+    queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
+
+    // Return a context object with the snapshotted value
+
+    // !mark(1:1)
+    return { previousTodos }
+  },
+  // If the mutation fails,
+  // use the context returned from onMutate to roll back
+  onError: (err, newTodo, context) => {
+    // !mark(1:1)
+    queryClient.setQueryData(['todos'], context.previousTodos)
+  },
+  // Always refetch after error or success:
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
+  },
+})
+```
+
+
+
+
 
 ## Typed Query Options
 

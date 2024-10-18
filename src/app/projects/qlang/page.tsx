@@ -43,6 +43,7 @@ export default function Page() {
             <Link
               href={"https://qlang.qiushiyan.dev"}
               target="_blank"
+              rel="noreferrer noopener"
               className={buttonVariants({ variant: "outline" })}
             >
               Playground
