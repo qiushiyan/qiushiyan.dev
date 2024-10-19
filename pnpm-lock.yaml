@@ -163,9 +163,6 @@ importers:
       remark-directive:
         specifier: ^3.0.0
         version: 3.0.0
-      remark-heading-attrs:
-        specifier: ^0.0.2
-        version: 0.0.2
       remark-parse:
         specifier: ^11.0.0
         version: 11.0.0
@@ -293,6 +290,9 @@ importers:
       rehype-stringify:
         specifier: ^10.0.0
         version: 10.0.0
+      remark-heading-attrs:
+        specifier: ^0.0.3
+        version: 0.0.3
       retext-spell:
         specifier: ^6.1.0
         version: 6.1.0
@@ -4934,8 +4934,8 @@ packages:
   remark-directive@3.0.0:
     resolution: {integrity: sha512-l1UyWJ6Eg1VPU7Hm/9tt0zKtReJQNOA4+iDMAxTyZNWnJnFlbS/7zhiel/rogTLQ2vMYwDzSJa4BiVNqGlqIMA==}
 
-  remark-heading-attrs@0.0.2:
-    resolution: {integrity: sha512-wAZN0+g3oDPg0OZVi5Wy4H+C/DrJ+LX2XoVt8U4rceXi8M1UGiiXDXc7/X4VB8Rl7z013OWOQTM2N2/hHbdfag==}
+  remark-heading-attrs@0.0.3:
+    resolution: {integrity: sha512-/y6KM2g/FVyECYDZti5hsnEa6pKtmzZ/6rxa4v7XqzpBW6puwvrT7SnPHR/guFekPUXUinX/26BYBqoUVhlSSQ==}
 
   remark-mdx@3.0.1:
     resolution: {integrity: sha512-3Pz3yPQ5Rht2pM5R+0J2MrGoBSrzf+tJG94N+t/ilfdh8YLyyKYtidAYwTveB20BoHAcwIopOUqhcmh2F7hGYA==}
@@ -10667,7 +10667,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  remark-heading-attrs@0.0.2:
+  remark-heading-attrs@0.0.3:
     dependencies:
       unist-util-visit: 5.0.0
 

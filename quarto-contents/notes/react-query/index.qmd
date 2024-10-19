@@ -225,7 +225,7 @@ const { data: articleData, isPending } = useQuery({
 If the primary query is a suspense query, you should not put the prefetch query inside the same component, because that component is unmounted before the suspense query resolves, and the prefetch query will only kick off until the suspsense query resolves. You can prefetch "one level up" in the parent component.
 
 ```tsx
-#| caption: Prefech outside the suspense query
+#| caption: Prefetch outside the suspense query
 function App() {
   // !mark(1:5)
   usePrefetchQuery({
@@ -403,7 +403,7 @@ throwOnError: (error) => error.response?.status >= 500,
 **Pattern**: handle refetch errors globally with toast messages and handle other errors with in-component messages or error boundaries.
 
 ```tsx
-#| caption: Handle refectch errors globally with toast messages (check data is undefined)
+#| caption: Handle refetch errors globally with toast messages (check data is undefined)
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {

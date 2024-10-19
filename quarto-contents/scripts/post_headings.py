@@ -42,7 +42,7 @@ def extract_headings(markdown_text):
     for match in heading_pattern.finditer(processed_text):
         depth = len(match.group(1))
         title = match.group(2).strip()
-        custom_id = match.group(3)
+        custom_id = match.group(3).split((" "))[0]
 
         if custom_id:
             slug = custom_id

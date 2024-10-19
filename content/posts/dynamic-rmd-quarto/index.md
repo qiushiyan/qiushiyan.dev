@@ -13,7 +13,7 @@ headings:
   slug: using-the-knitr-engine
   depth: 2
 - title: A Note on `knitr::knit_expand`
-  slug: a-note-on-knitrknitexpand
+  slug: a-note-on-knitrknit_expand
   depth: 3
 - title: Without `knitr`
   slug: without-knitr
@@ -214,7 +214,7 @@ below:
 
 </div>
 
-### A Note on `knitr::knit_expand` {#a-note-on-knitrknitexpand}
+### A Note on `knitr::knit_expand` {#a-note-on-knitrknit_expand}
 
 [R Markdown
 Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/knit-expand.html)

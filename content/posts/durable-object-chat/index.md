@@ -14,7 +14,7 @@ headings:
   slug: websockets-basics
   depth: 2
 - title: WebSockets Server on Durable Objects
-  slug: websockets-server-on-durable-objects
+  slug: websockets-durable-objects
   depth: 2
 - title: WebSockets Hibernation
   slug: websockets-hibernation
@@ -173,7 +173,7 @@ The key here is that we keep track of all connections in an array. When
 a message arrives, we loop through the array and send the message to
 each connected client.
 
-## WebSockets Server on Durable Objects {#websockets-server-on-durable-objects}
+## WebSockets Server on Durable Objects {#websockets-durable-objects}
 
 While the Edge Platform on which Durable Objects run offers a subset of
 Node.js APIs, the process is quite similar. We use DO instances to model
