@@ -9,7 +9,7 @@ export function WiderContent({
   return (
     <div
       className={cn(
-        "!col-span-full grid grid-cols-3 gap-4 p-4 lg:gap-8 lg:p-12",
+        "~gap-4/8 ~p-4/12 !col-span-full grid grid-cols-3",
         className
       )}
       {...props}

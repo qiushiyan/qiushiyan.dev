@@ -1,5 +1,5 @@
 .two-column {
-  @apply grid grid-cols-1 lg:grid-cols-2 lg:gap-8;
+  @apply ~gap-2/8 grid grid-cols-1 lg:grid-cols-2;
 }
 
 h1,

@@ -1,12 +1,17 @@
+import fluid, { extract, fontSize, screens } from "fluid-tailwind";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
-  content: ["./src/**/*.{ts,tsx}", "./content/**/*.{md,mdx}"],
-  prefix: "",
+  content: {
+    files: ["./src/**/*.{ts,tsx}", "./content/**/*.{md,mdx}"],
+    extract,
+  },
   theme: {
+    screens,
+    fontSize,
     container: {
       center: true,
       padding: "2rem",
@@ -95,7 +100,11 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    fluid,
+  ],
 } satisfies Config;
 
 export default config;

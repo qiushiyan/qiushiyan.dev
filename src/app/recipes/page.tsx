@@ -13,34 +13,32 @@ export default function RecipesPage() {
     <>
       <SiteNav />
       <Container>
-        <div className="grid gap-12 lg:gap-24">
-          <section aria-labelledby="recipes-heading">
-            <Heading id="recipes-heading">Recipes</Heading>
-            <p className="text-muted-foreground">
-              Miscellaneous code snippets in various languages and frameworks.
-              You are welcome to copy and use them however you like.
-            </p>
-            <div className="mt-4 grid grid-cols-1 gap-4">
-              {Object.entries(recipes).map(([key, recipe]) => (
-                <div key={key} className="space-y-4">
-                  <h3 className="text-xl font-medium capitalize lg:text-2xl">
-                    {key}
-                  </h3>
-                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                    {recipe.map((item) => (
-                      <RecipeCard
-                        key={item.title}
-                        title={item.title}
-                        slug={item.slug}
-                        lang={key}
-                      />
-                    ))}
-                  </div>
+        <section aria-labelledby="recipes-heading">
+          <Heading id="recipes-heading">Recipes</Heading>
+          <p className="text-muted-foreground">
+            Miscellaneous code snippets in various languages and frameworks. You
+            are welcome to copy and use them however you like.
+          </p>
+          <div className="mt-4 grid grid-cols-1 gap-4">
+            {Object.entries(recipes).map(([key, recipe]) => (
+              <div key={key} className="space-y-4">
+                <h3 className="text-xl font-medium capitalize lg:text-2xl">
+                  {key}
+                </h3>
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                  {recipe.map((item) => (
+                    <RecipeCard
+                      key={item.title}
+                      title={item.title}
+                      slug={item.slug}
+                      lang={key}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
-        </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </Container>
     </>
   );
