@@ -5,15 +5,16 @@ import { Separator } from "@/components/ui/separator";
 
 import "./page.scss";
 
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+
 import { incrementView } from "@/actions/views";
 import { HtmlRenderer } from "@/components/html-renderer";
 import { PostBanner } from "@/components/post/post-banner";
 import { MAIN_CONTENT_ID } from "@/constants";
 import { findPost, getPosts } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 
 export default async function PostPage({
   params,

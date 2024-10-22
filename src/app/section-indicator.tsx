@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
 
 import { HOME_SECTIONS } from "@/constants";
 import { cn } from "@/lib/utils";
-import { ArrowRightIcon } from "lucide-react";
-import Link from "next/link";
 
 export function SectionIndicator() {
   const [activeHeading, setActiveHeading] = useState<string | undefined>(

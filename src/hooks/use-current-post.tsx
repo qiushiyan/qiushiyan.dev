@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { Post } from "#content";
 
 import { findPost } from "@/lib/content/posts";
-import { Post } from "#content";
-import { usePathname } from "next/navigation";
 
 export const useCurrentPost = () => {
   const [post, setPost] = useState<Post | undefined>(undefined);

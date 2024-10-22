@@ -1,3 +1,6 @@
+import { recipes } from "#content";
+import { ChevronRight, FolderIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -6,9 +9,6 @@ import {
 } from "@/components/ui/collapsible";
 import { Sidebar, SidebarContent, SidebarItem } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { recipes } from "#content";
-import { ChevronRight, FolderIcon } from "lucide-react";
-
 import { RecipesSidebarLink } from "./recipes-sidebar-link";
 
 export const RecipesSidebar = () => {

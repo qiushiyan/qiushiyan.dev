@@ -1,9 +1,5 @@
 import { readFile } from "fs/promises";
 import path from "path";
-
-import { htmlProcessor } from "@/lib/content/processor";
-import { timestamp } from "@/lib/content/schema";
-import { routes } from "@/lib/navigation";
 import { slug } from "github-slugger";
 import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
@@ -15,6 +11,9 @@ import remarkUnwrapImages from "remark-unwrap-images";
 import { unified } from "unified";
 import { defineCollection, defineConfig, s } from "velite";
 
+import { htmlProcessor } from "@/lib/content/processor";
+import { timestamp } from "@/lib/content/schema";
+import { routes } from "@/lib/navigation";
 import {
   rehypeCode,
   rehypeCodeInline,

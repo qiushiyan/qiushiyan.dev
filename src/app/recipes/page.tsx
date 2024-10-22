@@ -1,11 +1,11 @@
+import { recipes } from "#content";
+import { Link } from "next-view-transitions";
+
 import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { SiteNav } from "@/components/nav/site-nav";
 import { routes } from "@/lib/navigation";
 import { recipeViewTransitionName } from "@/lib/utils";
-import { recipes } from "#content";
-import { Link } from "next-view-transitions";
-
 import { bgPattern } from "./patterns";
 
 export default function RecipesPage() {

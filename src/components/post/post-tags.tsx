@@ -1,6 +1,6 @@
-import { getAllTags } from "@/lib/content/posts";
 import { TagsIcon } from "lucide-react";
 
+import { getAllTags } from "@/lib/content/posts";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { PostTagsClient } from "./post-tags.client";

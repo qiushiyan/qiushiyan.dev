@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useCallback, useContext } from "react";
-
 import {
   usePython as _usePython,
   PythonProvider as ReactPythonProvider,

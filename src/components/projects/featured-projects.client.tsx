@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import { getProject } from "@/actions/projects";
-
 import { ProjectCard } from "./project-card";
 
 type Repos = {

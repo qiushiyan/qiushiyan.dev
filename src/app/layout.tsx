@@ -1,18 +1,18 @@
 import React from "react";
-
+import { JetBrains_Mono } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { ViewTransitions } from "next-view-transitions";
-import { JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
 import "@/styles/globals.css";
 import "@/styles/highlight.css";
 
+import Script from "next/script";
+
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { RootProvider } from "@/components/providers/root-provider";
 import { host } from "@/constants";
 import { cn } from "@/lib/utils";
-import Script from "next/script";
 
 const fontMono = JetBrains_Mono({
   subsets: ["latin"],

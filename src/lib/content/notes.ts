@@ -1,5 +1,4 @@
 import { cache } from "react";
-
 import { notes } from "#content";
 
 export const getNotes = cache(() => {

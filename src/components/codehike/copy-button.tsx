@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Check, Copy } from "lucide-react";
 
 export function CopyButton({
   text,

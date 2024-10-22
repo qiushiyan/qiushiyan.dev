@@ -1,9 +1,10 @@
+import { notFound } from "next/navigation";
+import { recipes } from "#content";
+
 import { RecipesHeader } from "@/components/recipes/recipes-header";
 import { RecipesSidebar } from "@/components/recipes/recipes-sidebar";
 import { SidebarLayout } from "@/components/ui/sidebar";
 import { findRecipe } from "@/lib/content/recipes";
-import { recipes } from "#content";
-import { notFound } from "next/navigation";
 
 export const generateStaticParams = () => {
   const allRecipes = Object.entries(recipes).flatMap(([group, recipes]) =>

@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { EditorProvider } from "@/components/recipes/editor-provider";
 import { PythonControl } from "@/components/recipes/python/python-control";
 import { PythonEditor } from "@/components/recipes/python/python-editor";
@@ -10,7 +12,6 @@ import {
 } from "@/components/recipes/recipes-layout";
 import { ResizableHandle } from "@/components/ui/resizable";
 import { findRecipe } from "@/lib/content/recipes";
-import { notFound } from "next/navigation";
 
 type Params = {
   slug: string;

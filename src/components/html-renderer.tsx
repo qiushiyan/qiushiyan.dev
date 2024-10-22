@@ -1,5 +1,4 @@
 import React, { ComponentType } from "react";
-
 import htmr from "htmr";
 
 import { sharedComponents } from "./components-registry";

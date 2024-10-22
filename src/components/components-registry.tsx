@@ -1,7 +1,6 @@
 import { ComponentType, Suspense } from "react";
 
 import { Steps } from "@/components/ui/steps";
-
 import { Callout } from "./callout";
 import { CodeBlock } from "./codehike/code-block";
 import { Image } from "./codehike/image";

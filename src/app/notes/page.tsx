@@ -1,9 +1,10 @@
+import { Link } from "next-view-transitions";
+
 import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { SiteNav } from "@/components/nav/site-nav";
 import { getNotes } from "@/lib/content/notes";
 import { noteViewTransitionName } from "@/lib/utils";
-import { Link } from "next-view-transitions";
 
 export default function RecipesPage() {
   return (

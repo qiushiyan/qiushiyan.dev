@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-
 import Giscus from "@giscus/react";
 import { useTheme } from "next-themes";
 

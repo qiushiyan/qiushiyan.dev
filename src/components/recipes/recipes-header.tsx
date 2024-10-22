@@ -1,10 +1,11 @@
+import { SiHtml5, SiPython } from "@icons-pack/react-simple-icons";
+import { BoxIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { Link } from "next-view-transitions";
+
 import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { routes } from "@/lib/navigation";
 import { cn, recipeViewTransitionName } from "@/lib/utils";
-import { SiHtml5, SiPython } from "@icons-pack/react-simple-icons";
-import { BoxIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { Link } from "next-view-transitions";
 
 type Props = {
   title: string;

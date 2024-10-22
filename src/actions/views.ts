@@ -1,7 +1,6 @@
 "use server";
 
 import { cache } from "react";
-
 import { getRequestContext } from "@cloudflare/next-on-pages";
 
 export const incrementView = cache(async (slug: string) => {

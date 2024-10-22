@@ -1,10 +1,11 @@
+import { AnnotationHandler, BlockAnnotation, InnerLine } from "codehike/code";
+import { ChevronDownIcon } from "lucide-react";
+
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { AnnotationHandler, BlockAnnotation, InnerLine } from "codehike/code";
-import { ChevronDownIcon } from "lucide-react";
 
 export const collapse: AnnotationHandler = {
   name: "collapse",

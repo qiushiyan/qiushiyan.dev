@@ -1,8 +1,9 @@
 "use client";
 
+import { TableOfContents } from "lucide-react";
+
 import { useActiveHeading } from "@/hooks/use-active-heading";
 import { useCurrentPost } from "@/hooks/use-current-post";
-import { TableOfContents } from "lucide-react";
 
 export function PostActiveHeading() {
   const post = useCurrentPost();

@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
+import { GitForkIcon, StarIcon } from "lucide-react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { GitForkIcon, StarIcon } from "lucide-react";
-import Link from "next/link";
 
 type Data = {
   name: string;

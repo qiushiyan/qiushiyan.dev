@@ -1,8 +1,9 @@
 "use server";
 
-import { isProduction } from "@/constants";
 import { memoize } from "nextjs-better-unstable-cache";
 import { Octokit } from "octokit";
+
+import { isProduction } from "@/constants";
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 

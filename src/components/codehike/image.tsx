@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils";
 import NextImage from "next/image";
+
+import { cn } from "@/lib/utils";
 
 type Props = {
   src: string;

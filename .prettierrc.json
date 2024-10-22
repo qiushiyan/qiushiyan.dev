@@ -11,10 +11,18 @@
   ],
   "importOrder": [
     "^(react/(.*)$)|^(react$)",
-    "",
+    "^(react-dom/(.*)$)|^(react-dom$)",
+    "^(next/(.*)$)|^(next$)",
     "<THIRD_PARTY_MODULES>",
     "",
-    "^[./]"
+    "^@/.*",
+    "^[./]",
+    "<TYPES>^(node:)",
+    "<TYPES>",
+    "<TYPES>^[.]",
+    "",
+    "^(?!.*[.]css$)[./].*$",
+    ".css$"
   ],
   "tailwindFunctions": ["clsx", "cn"],
   "importOrderSeparation": true,

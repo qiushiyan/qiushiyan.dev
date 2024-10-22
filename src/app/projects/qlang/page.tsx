@@ -1,14 +1,14 @@
+import { Metadata } from "next";
+import Link from "next/link";
+import { Block, CodeBlock, parseRoot } from "codehike/blocks";
+import { highlight, Pre, RawCode } from "codehike/code";
+import { z } from "zod";
+
 import { tokenTransitions } from "@/components/codehike/token-transitions";
 import { ArticleProse } from "@/components/prose-wrapper";
 import { buttonVariants } from "@/components/ui/button";
 import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import { Block, CodeBlock, parseRoot } from "codehike/blocks";
-import { highlight, Pre, RawCode } from "codehike/code";
-import { Metadata } from "next";
-import Link from "next/link";
-import { z } from "zod";
-
 // @ts-ignore
 import Content from "./content.md";
 import { Selectable, Selection, SelectionProvider } from "./utils";

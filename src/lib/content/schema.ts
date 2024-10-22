@@ -1,6 +1,5 @@
 import { exec } from "child_process";
 import { promisify } from "util";
-
 import { defineSchema, s } from "velite";
 
 const execAsync = promisify(exec);

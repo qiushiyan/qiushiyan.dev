@@ -1,10 +1,11 @@
 "use client";
 
-import { useActiveHeading } from "@/hooks/use-active-heading";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { Post } from "#content";
 import { ArrowRightIcon } from "lucide-react";
-import Link from "next/link";
+
+import { useActiveHeading } from "@/hooks/use-active-heading";
+import { cn } from "@/lib/utils";
 
 export const PostToc = ({ headings }: { headings: Post["headings"] }) => {
   const activeHeading = useActiveHeading({ headings });

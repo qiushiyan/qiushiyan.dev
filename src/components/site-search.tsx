@@ -10,6 +10,10 @@ import React, {
   useState,
   useTransition,
 } from "react";
+import Link from "next/link";
+import Fuse, { FuseResultMatch } from "fuse.js";
+import { Search } from "lucide-react";
+import { useDebounceValue } from "usehooks-ts";
 
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
@@ -20,11 +24,6 @@ import {
 } from "@/components/ui/popover";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { searchData, SearchData } from "@/lib/content/posts";
-import Fuse, { FuseResultMatch } from "fuse.js";
-import { Search } from "lucide-react";
-import Link from "next/link";
-import { useDebounceValue } from "usehooks-ts";
-
 import { Spinner } from "./ui/spinner";
 
 type SearchResult = {

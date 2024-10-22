@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { highlight, Pre } from "codehike/code";
 import { FileCodeIcon } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
 import { FootnoteNumber } from "./footnotes";
 import { CodeHikeHandlers } from "./handlers";

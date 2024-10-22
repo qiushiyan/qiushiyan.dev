@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  ArrowRightIcon,
+  AtomIcon,
+  ChevronRight,
+  TableOfContents,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,13 +20,6 @@ import { useCurrentPost } from "@/hooks/use-current-post";
 import { getPostsByTags } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import {
-  ArrowRightIcon,
-  AtomIcon,
-  ChevronRight,
-  TableOfContents,
-} from "lucide-react";
-import Link from "next/link";
 
 export function PostSidebar() {
   return (

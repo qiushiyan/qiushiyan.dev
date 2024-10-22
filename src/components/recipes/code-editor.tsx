@@ -1,10 +1,9 @@
 "use client";
 
 import { ComponentProps } from "react";
-
-import { Badge } from "@/components/ui/badge";
 import { useTheme } from "next-themes";
 
+import { Badge } from "@/components/ui/badge";
 import { CodeMirror } from "./codemirror";
 import { baseExtensions } from "./codemirror-config";
 

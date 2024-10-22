@@ -1,7 +1,7 @@
-import { cn, postViewTransitionName } from "@/lib/utils";
 import { Post } from "#content";
 import { CalendarIcon, ClockIcon, EyeIcon } from "lucide-react";
 
+import { cn, postViewTransitionName } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { PostDescription } from "./post-description";
 import { PostViews } from "./post-views";

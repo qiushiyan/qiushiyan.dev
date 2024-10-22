@@ -1,12 +1,12 @@
 "use client";
 
 import { startTransition, useOptimistic } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { XIcon } from "lucide-react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { XIcon } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export const PostTagsClient = ({
   selectedTags,

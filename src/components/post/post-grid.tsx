@@ -1,5 +1,4 @@
 import { getPostsByTags } from "@/lib/content/posts";
-
 import { PostCard } from "./post-card";
 
 export const PostGrid = ({ selectedTags }: { selectedTags: string[] }) => {

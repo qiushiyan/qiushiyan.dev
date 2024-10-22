@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils";
 import { AnnotationHandler, InlineAnnotation } from "codehike/code";
+
+import { cn } from "@/lib/utils";
 
 export const callout: AnnotationHandler = {
   name: "callout",

@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils";
 import { CircleAlertIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 interface CalloutProps extends React.ComponentProps<"div"> {
   title?: string;

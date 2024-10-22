@@ -1,11 +1,10 @@
 "use client";
 
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
 import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
 
+import { cn } from "@/lib/utils";
 import { NavLinks } from "../config";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";

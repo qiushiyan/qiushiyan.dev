@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-
 import { CustomPreProps, getPreRef, InnerPre } from "codehike/code";
 import {
   calculateTransitions,

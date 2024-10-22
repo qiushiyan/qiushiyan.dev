@@ -1,4 +1,8 @@
 import { Suspense } from "react";
+import Image from "next/image";
+import { Post } from "#content";
+import { CalendarIcon, EyeIcon, TagIcon } from "lucide-react";
+import { Link } from "next-view-transitions";
 
 import {
   Card,
@@ -7,11 +11,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { cn, postViewTransitionName } from "@/lib/utils";
-import { Post } from "#content";
-import { CalendarIcon, EyeIcon, TagIcon } from "lucide-react";
-import { Link } from "next-view-transitions";
-import Image from "next/image";
-
 import { Badge } from "../../ui/badge";
 import { PostDescription } from "../post-description";
 import { PostViews } from "../post-views";

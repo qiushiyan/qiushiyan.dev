@@ -1,5 +1,6 @@
-import { MAIN_CONTENT_ID } from "@/constants";
 import Link from "next/link";
+
+import { MAIN_CONTENT_ID } from "@/constants";
 
 export const SkipLink = () => {
   return (

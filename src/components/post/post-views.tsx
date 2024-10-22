@@ -2,7 +2,6 @@ import React from "react";
 
 import { getViews } from "@/actions/views";
 import { cn } from "@/lib/utils";
-
 import { Skeleton } from "../ui/skeleton";
 
 export const PostViews = async ({

@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { PanelLeft } from "lucide-react";
 
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { PanelLeft } from "lucide-react";
 
 /**
  * cookie name for sidebar state

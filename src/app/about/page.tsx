@@ -1,6 +1,7 @@
+import { about } from "#content";
+
 import { HtmlRenderer } from "@/components/html-renderer";
 import { ArticleProse } from "@/components/prose-wrapper";
-import { about } from "#content";
 
 export default function AboutPage() {
   return (

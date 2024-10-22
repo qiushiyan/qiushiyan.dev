@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import Link from "next/link";
+import { SiGithub, SiLinkedin, SiX } from "@icons-pack/react-simple-icons";
 
 import { Container } from "@/components/container";
 import { PostGrid } from "@/components/post/post-grid";
@@ -7,9 +9,6 @@ import { FeaturedProjects } from "@/components/projects/featured-projects";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { HOME_SECTIONS, MAIN_CONTENT_ID } from "@/constants";
 import { getAllTags } from "@/lib/content/posts";
-import { SiGithub, SiLinkedin, SiX } from "@icons-pack/react-simple-icons";
-import Link from "next/link";
-
 import { SectionIndicator } from "./section-indicator";
 
 export const runtime = "edge";

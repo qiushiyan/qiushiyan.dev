@@ -3,7 +3,6 @@ import { PostActiveHeading } from "@/components/post/post-active-heading";
 import { SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { host } from "@/constants";
 import { getPosts } from "@/lib/content/posts";
-
 import { PostSidebar } from "./post-sidebar";
 
 export const runtime = "edge";

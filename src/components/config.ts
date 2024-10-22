@@ -1,5 +1,6 @@
-import { routes } from "@/lib/navigation";
 import { HomeIcon, InfoIcon, NotebookPenIcon } from "lucide-react";
+
+import { routes } from "@/lib/navigation";
 
 export const NavLinks = {
   Main: [

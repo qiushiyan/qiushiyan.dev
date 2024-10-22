@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { Post } from "#content";
 
 export const useActiveHeading = ({

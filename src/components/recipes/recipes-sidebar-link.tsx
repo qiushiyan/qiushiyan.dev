@@ -1,10 +1,11 @@
 "use client";
 
-import { routes } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
-import { FileCodeIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FileCodeIcon } from "lucide-react";
+
+import { routes } from "@/lib/navigation";
+import { cn } from "@/lib/utils";
 
 export function RecipesSidebarLink({
   title,

@@ -1,7 +1,8 @@
+import Link from "next/link";
+import { GitForkIcon, StarIcon } from "lucide-react";
+
 import { getProject } from "@/actions/projects";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GitForkIcon, StarIcon } from "lucide-react";
-import Link from "next/link";
 
 const featured = [
   {

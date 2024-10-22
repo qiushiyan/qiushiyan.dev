@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useLayoutEffect, useRef } from "react";
-
 import { CustomPreProps, getPreRef, InnerPre } from "codehike/code";
 
 export function useScrollToFocus(ref: React.RefObject<HTMLPreElement>) {

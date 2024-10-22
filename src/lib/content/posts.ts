@@ -1,7 +1,7 @@
 import { cache } from "react";
+import { posts } from "#content";
 
 import { isProduction } from "@/constants";
-import { posts } from "#content";
 
 export const getPosts = cache(() => {
   const allPosts = isProduction ? posts.filter((post) => !post.draft) : posts;

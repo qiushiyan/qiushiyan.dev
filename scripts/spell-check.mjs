@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-
 import dictionary from "dictionary-en"; // Add this import
 import glob from "fast-glob";
 import retextEnglish from "retext-english";

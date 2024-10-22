@@ -1,7 +1,7 @@
-import { routes } from "@/lib/navigation";
-import { SiGithub } from "@icons-pack/react-simple-icons";
 import Link from "next/link";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 
+import { routes } from "@/lib/navigation";
 import { NavLinks } from "../config";
 import { Container } from "../container";
 import SiteSearch from "../site-search";

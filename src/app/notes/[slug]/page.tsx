@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
 import { getComponents } from "@/components/components-registry";
 import { Container } from "@/components/container";
 import { HtmlRenderer } from "@/components/html-renderer";
@@ -5,8 +8,6 @@ import { BasicProse } from "@/components/prose-wrapper";
 import { MAIN_CONTENT_ID } from "@/constants";
 import { findNote } from "@/lib/content/notes";
 import { cn, noteViewTransitionName } from "@/lib/utils";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 
 import "./page.scss";
 
