@@ -46,7 +46,7 @@ export default function Home({
               </div>
               <p className="text-balance leading-loose text-muted-foreground">
                 I create full-stack applications that are{" "}
-                <span className="font-medium text-primary/80">simple</span>,{" "}
+                <span className="font-medium text-primary/80">intuitive</span>,{" "}
                 <span className="font-medium text-primary/80">accessible</span>{" "}
                 and <span className="font-medium text-primary/80">fast</span>. I
                 am an open source enthusiast and here I share my technical notes
