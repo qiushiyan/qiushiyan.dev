@@ -36,7 +36,7 @@ export const FeaturedProjects = async () => {
     <div className="grid gap-4">
       {repos.map((repo) => (
         <Link
-          className="flex flex-col gap-3 rounded-md p-4 px-4 transition-all hover:bg-muted hover:text-muted-foreground"
+          className="flex flex-col gap-3 rounded-md p-4 transition-all hover:bg-muted hover:text-muted-foreground"
           key={repo.name}
           href={repo.href as string}
           target={repo.href.startsWith("http") ? "_blank" : undefined}
@@ -64,7 +64,13 @@ export const FeaturedProjects = async () => {
   );
 };
 
-// eslint-disable-next-line react/display-name
 FeaturedProjects.Skeleton = () => {
-  return <Skeleton className="h-96 w-full" />;
+  return (
+    <div className="grid gap-4 p-4">
+      <Skeleton className="h-32 w-full" />
+      <Skeleton className="h-32 w-full" />
+      <Skeleton className="h-32 w-full" />
+      <Skeleton className="h-32 w-full" />
+    </div>
+  );
 };

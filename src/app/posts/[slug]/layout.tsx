@@ -1,8 +1,10 @@
+import { posts } from "#content";
+
 import { SiteNav } from "@/components/nav/site-nav";
 import { PostActiveHeading } from "@/components/post/post-active-heading";
 import { SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
 import { host } from "@/constants";
-import { getPosts } from "@/lib/content/posts";
+import { findPost, getPosts } from "@/lib/content/posts";
 import { PostSidebar } from "./post-sidebar";
 
 export const runtime = "edge";
@@ -41,8 +43,10 @@ export const generateMetadata = ({ params }: { params: { slug: string } }) => {
 
 export default async function Layout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { slug: string };
 }) {
   const { cookies } = await import("next/headers");
 
@@ -54,7 +58,11 @@ export default async function Layout({
       >
         <SiteNav
           additionalControls={<SidebarTrigger />}
-          banner={<PostActiveHeading />}
+          banner={
+            <PostActiveHeading
+              headings={findPost(params.slug)?.headings || []}
+            />
+          }
         />
         <PostSidebar />
         {children}

@@ -6,6 +6,7 @@ import { ArrowRightIcon } from "lucide-react";
 
 import { useActiveHeading } from "@/hooks/use-active-heading";
 import { cn } from "@/lib/utils";
+import { TocItem } from "./post-toc-item";
 
 export const PostToc = ({ headings }: { headings: Post["headings"] }) => {
   const activeHeading = useActiveHeading({ headings });
@@ -35,29 +36,5 @@ export const PostToc = ({ headings }: { headings: Post["headings"] }) => {
         </li>
       ))}
     </ul>
-  );
-};
-
-interface TocItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
-  slug: string;
-  children: React.ReactNode;
-}
-export const TocItem = ({
-  slug,
-  children,
-  className,
-  ...props
-}: TocItemProps) => {
-  return (
-    <Link
-      href={`#${slug}`}
-      className={cn(
-        "flex items-center gap-2 overflow-hidden rounded-md px-2 py-1 text-base font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </Link>
   );
 };

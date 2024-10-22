@@ -3,12 +3,12 @@ import { posts } from "#content";
 
 import { isProduction } from "@/constants";
 
-export const getPosts = cache(() => {
+export const getPosts = () => {
   const allPosts = isProduction ? posts.filter((post) => !post.draft) : posts;
   return [...allPosts].sort((postA, postB) =>
     postB.date.localeCompare(postA.date)
   );
-});
+};
 
 export const getPostsByTags = cache((tags: string[]) => {
   return getPosts().filter((post) =>

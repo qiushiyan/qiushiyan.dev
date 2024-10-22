@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Post } from "#content";
+import { posts } from "#content";
 
-import { findPost } from "@/lib/content/posts";
+import type { Post } from "#content";
 
 export const useCurrentPost = () => {
   const [post, setPost] = useState<Post | undefined>(undefined);
@@ -12,7 +12,7 @@ export const useCurrentPost = () => {
   useEffect(() => {
     if (pathname.startsWith("/posts")) {
       const slug = pathname.split("/posts/")[1];
-      const post = findPost(slug);
+      const post = posts.find((p) => p.slug === slug);
       setPost(post);
     } else {
       setPost(undefined);

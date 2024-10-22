@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Post } from "#content";
+import { useEffect, useRef, useState } from "react";
+import { type Post } from "#content";
 
 export const useActiveHeading = ({
   headings,
 }: {
   headings: Post["headings"];
 }) => {
-  const [activeHeading, setActiveHeading] = useState<string | null>(null);
+  const [activeHeading, setActiveHeading] = useState<string | null>(
+    headings[0]?.slug
+  );
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -19,7 +21,7 @@ export const useActiveHeading = ({
           }
         });
       },
-      { rootMargin: "-40px 0px -80% 0px" }
+      { rootMargin: "40px 0px -80% 0px" }
     );
 
     headings.forEach((heading) => {
