@@ -87,6 +87,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
           layout="fill"
           objectFit="cover"
           className="rounded-md px-2"
+          priority
         />
       </div>
     </Link>

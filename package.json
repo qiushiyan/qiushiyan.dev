@@ -28,6 +28,7 @@
   "dependencies": {
     "@codemirror/lang-python": "^6.1.6",
     "@codemirror/view": "^6.33.0",
+    "@fluid-tailwind/tailwind-merge": "^0.0.3",
     "@giscus/react": "^3.0.0",
     "@icons-pack/react-simple-icons": "^10.0.0",
     "@mdx-js/loader": "^3.0.1",
