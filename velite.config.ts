@@ -106,6 +106,7 @@ const notes = defineCollection({
     .object({
       title: s.string(),
       date: s.isodate(),
+      category: s.string(),
       slug: s.string().optional(),
       lastModified: timestamp(),
       draft: s.boolean().optional().default(false),

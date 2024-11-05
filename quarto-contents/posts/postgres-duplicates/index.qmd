@@ -1,0 +1,114 @@
+---
+title: Working with Data Duplication in Postgres
+slug: postgres-duplicates
+date: "2024-11-02"
+description: How to check, analyze and remove data duplication in Postgres
+tags:
+  - Database
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#"
+draft: true
+components:
+  - quiz-table-example
+---
+
+## Define Duplication
+
+In the context of relational databases, data duplication usually means the existence of multiple records that have the same values in all columns. It is implied that they are considered an anomaly and we want to special case how we handle the duplicated records, such as adding a flag, giving them less weights, or keeping only one row group.
+
+However, the definition of duplication can vary depending on the domain. If you are running an online survey, while a participant (identified by IP addresses) can fill out the form multiple times, we might only want to take into account their last submission. Then, all the previous submissions should be considered as duplicates regardless of if the answers are different.
+
+In this post, we will consider a table for storing the quiz submissions of students in a university class. Each row represents a submission record for a student in a quiz, alongside with the score and the submission date. A student may submit the same quiz multiple times.
+
+
+## Check Duplication
+
+
+
+
+```{r}
+#| include: false
+
+db <- DBI::dbConnect(RPostgres::Postgres(), dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
+
+max_rows <- 10
+knitr::knit_engines$set(sql = function(options) {
+  # Get the SQL code from options
+  sql <- paste(options$code, collapse = "\n")
+  res <- DBI::dbSendQuery(db, sql)
+  data <- DBI::dbFetch(res, n = max_rows)
+  DBI::dbClearResult(res)
+
+  # Wrap in code block
+  output <- c("```sql", sql, "", paste("-- Output: ", nrow(data), "rows"), knitr::kable(data),  "```")
+
+  # Return the formatted output
+  paste(output, collapse = "\n")
+})
+
+knitr::opts_chunk$set(connection = "db")
+```
+
+<quiz-table-example></quiz-table-example>
+
+```{sql, include=FALSE}
+DROP TABLE IF EXISTS quiz_submissions;
+```
+
+```{sql}
+CREATE TABLE quiz_submissions (
+   id INTEGER PRIMARY KEY,
+   student_id INTEGER NOT NULL,
+   quiz_id INTEGER NOT NULL,
+   score INTEGER NOT NULL,
+   date DATE NOT NULL
+);
+```
+
+```{sql, include=FALSE}
+-- Insert the data
+INSERT INTO quiz_submissions (id, student_id, quiz_id, score, date)
+VALUES
+   (1, 1, 1, 90, '2024-10-30'),
+   (2, 1, 1, 80, '2024-10-30'),
+   (3, 2, 1, 70, '2024-10-30'),
+   (4, 3, 2, 100, '2024-10-30'),
+   (5, 4, 1, 80, '2024-11-01'),
+   (6, 2, 2, 90, '2024-11-02');
+```
+
+
+## Deduplication
+
+### The Limitations of `SELECT DISTINCT`
+
+`SELECT DISTINCT` is a query modifier that exists in most relational databases which allows reducing rows if all columns are identical to the columns of another row. Say we are running a university class and have a table for storing the quiz submissions for each student.
+
+
+
+If we want to know the unique student list that has submitted a quiz, we write the following query:
+
+```{sql}
+SELECT DISTINCT student_id
+from quiz_submissions;
+```
+
+How about the unique combinations of students and their scores? Just add the `score` column to the column set:
+
+```{sql}
+SELECT DISTINCT student_id, score
+FROM quiz_submissions;
+```
+
+Things get more complicated when we are de-duplicating rows within a subset, instead of the entire table. For example, we want to get the latest score of each student in each quiz. You will find it impossible to fit this requirement into a single `SELECT DISTINCT` based statement. Once you all 3 columns in `SELECT DISTINCT`, you will get all the rows back.
+
+This leads to a major downside of `SELECT DISTINCT` is that you must use the same set of columns for both duplication checks and column selection. So you can't Get unique rows based on specific columns while getting the associated data from other columns. For example,
+
+
+Another problem of `SELECT DISTINCT` is that you are limited to using the same column set to do both duplication checks and column selection. For example, if we are asking the question ""
+
+Postgres offers an additional `Distinct ON` clause that gives you more flexibility.
+
+### `DISTINCT ON` Clause

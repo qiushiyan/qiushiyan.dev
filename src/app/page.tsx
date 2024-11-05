@@ -114,21 +114,18 @@ export default function Home({
               </Suspense>
             </section>
 
-            <section className="flex flex-col gap-2" aria-labelledby="others">
-              <h2 className="sr-only" id={"others"}>
-                Projects
-              </h2>
-              <Link
-                href={"/recipes"}
-                className="font-medium underline underline-offset-4"
-              >
-                Snippets
-              </Link>
+            <section className="flex flex-col gap-2" aria-label="Others">
               <Link
                 href={"/notes"}
                 className="font-medium underline underline-offset-4"
               >
                 Notes
+              </Link>
+              <Link
+                href={"/recipes"}
+                className="font-medium underline underline-offset-4"
+              >
+                Snippets
               </Link>
             </section>
           </main>

@@ -5,14 +5,14 @@ import { routes } from "@/lib/navigation";
 export const NavLinks = {
   Main: [
     {
-      href: routes.recipes,
-      label: "Recipes",
-      viewTransitionName: undefined,
-    },
-    {
       href: routes.about,
       label: "About",
       viewTransitionName: "about",
+    },
+    {
+      href: routes.notes,
+      label: "Notes",
+      viewTransitionName: undefined,
     },
   ],
 

@@ -2,6 +2,7 @@
 title: Lessons Learned from "Advanced React"
 slug: advanced-react-notes
 date: "2024-10-11"
+category: Web Development
 ---
 
 You can purchased the book at [Advanced React](https://www.advanced-react.com/#author) and I highly recommend it to anyone who is interested in react performance. The book goes deep into the underlying workings of React yet remains very approachable.

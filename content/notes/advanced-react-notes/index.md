@@ -2,6 +2,7 @@
 title: Lessons Learned from "Advanced React"
 slug: advanced-react-notes
 date: '2024-10-11'
+category: Web Development
 headings:
 - title: Diffing, Reconciliation and Children as Props
   slug: diffing-reconciliation-and-children-as-props

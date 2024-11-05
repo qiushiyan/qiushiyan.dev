@@ -25,11 +25,11 @@ export default async function Page({
     <main id={MAIN_CONTENT_ID}>
       <Container innerClassName="grid grid-cols-1 lg:grid-cols-[minmax(auto,240px),65ch] ~gap-6/12">
         <aside className="col-span-1">
-          <ol className="sticky top-[calc(2rem+var(--nav-height))] mt-8 flex list-none flex-col gap-3">
+          <ol className="sticky top-[calc(2rem+var(--nav-height))] mt-8 flex list-none flex-col gap-3 border-l-2 pl-2">
             {note.headings.map((heading) => (
               <li
                 key={heading.slug}
-                className={cn("~text-sm/base", {
+                className={cn("~text-xs/base", {
                   "pl-3": heading.depth === 3,
                 })}
               >

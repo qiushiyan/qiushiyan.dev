@@ -2,6 +2,7 @@
 title: React Query Patterns
 slug: react-query-patterns
 date: '2024-10-13'
+category: Web Development
 headings:
 - title: Pre-filling with `initialData`
   slug: pre-filling-with-initialdata

@@ -1,3 +1,4 @@
+import { Note } from "#content";
 import { Link } from "next-view-transitions";
 
 import { Container } from "@/components/container";
@@ -7,6 +8,20 @@ import { getNotes } from "@/lib/content/notes";
 import { noteViewTransitionName } from "@/lib/utils";
 
 export default function NotesPage() {
+  const notesGrouped = getNotes().reduce(
+    (acc, note) => {
+      const category = note.category || "Others";
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(note);
+      return acc;
+    },
+    {} as Record<string, Note[]>
+  );
+
+  const notes = Object.entries(notesGrouped);
+
   return (
     <>
       <SiteNav />
@@ -18,22 +33,31 @@ export default function NotesPage() {
             contextless and does not make sense to anyone but me, or maybe not
             even to me a month later.
           </p>
-          <ul className="~gap-4/8 mt-4 flex flex-col">
-            {getNotes().map((note) => (
-              <li key={note.href}>
-                <Link href={note.href} className="underline underline-offset-4">
-                  <h3
-                    className="text-lg font-medium tracking-tight lg:text-xl"
-                    style={{
-                      viewTransitionName: noteViewTransitionName(note.slug),
-                    }}
-                  >
-                    {note.title}
-                  </h3>
-                </Link>
-              </li>
+          <div className="mt-8 space-y-6">
+            {notes.map(([category, notes]) => (
+              <div key={category}>
+                <h2 className="text-xl font-bold capitalize">{category}</h2>
+                <ul className="mt-4 flex list-inside list-decimal flex-col gap-2">
+                  {notes.map((note) => (
+                    <li key={note.href}>
+                      <Link href={note.href}>
+                        <h3
+                          className="inline-flex font-medium tracking-tight ~text-base/lg"
+                          style={{
+                            viewTransitionName: noteViewTransitionName(
+                              note.slug
+                            ),
+                          }}
+                        >
+                          {note.title}
+                        </h3>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
       </Container>
     </>

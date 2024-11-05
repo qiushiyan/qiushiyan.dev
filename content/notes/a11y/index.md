@@ -2,6 +2,7 @@
 title: Accessibility
 slug: a11y-notes
 date: '2024-10-20'
+category: Web Development
 headings:
 - title: Button
   slug: button

@@ -44,11 +44,13 @@ export const sharedComponents = {
 const registry: Record<string, any> = {
   "code-switcher": () =>
     import("./codehike/code-switcher").then((mod) => mod.CodeSwitcher),
-  "do-counter-example": () =>
-    import("./post-example/do-counter-example").then(
-      (mod) => mod.DoCounterExample
-    ),
   iframe: () => import("./iframe").then((mod) => mod.MyIframe),
+  "do-counter-example": () =>
+    import("./post-example/do-counter").then((mod) => mod.DoCounterExample),
+  "quiz-table-example": () =>
+    import("./post-example/postgres-distinct-on/quiz-table").then(
+      (mod) => mod.QuizTable
+    ),
 };
 
 export const getComponents = async (components?: string[]) => {
