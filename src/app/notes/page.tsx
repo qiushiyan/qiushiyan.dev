@@ -29,9 +29,7 @@ export default function NotesPage() {
         <section aria-labelledby="notes-heading">
           <Heading id="notes-heading">Notes</Heading>
           <p className="text-muted-foreground">
-            My personal notes on books, courses, etc. Warning: they can be
-            contextless and does not make sense to anyone but me, or maybe not
-            even to me a month later.
+            My notes on books, courses, etc.
           </p>
           <div className="mt-8 space-y-6">
             {notes.map(([category, notes]) => (

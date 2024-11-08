@@ -11,6 +11,8 @@ import { cn, noteViewTransitionName } from "@/lib/utils";
 
 import "./page.scss";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 export default async function Page({
   params: { slug },
 }: {
@@ -25,22 +27,26 @@ export default async function Page({
     <main id={MAIN_CONTENT_ID}>
       <Container innerClassName="grid grid-cols-1 lg:grid-cols-[minmax(auto,240px),65ch] ~gap-6/12">
         <aside className="col-span-1">
-          <ol className="sticky top-[calc(2rem+var(--nav-height))] mt-8 flex list-none flex-col gap-3 border-l-2 pl-2">
-            {note.headings.map((heading) => (
-              <li
-                key={heading.slug}
-                className={cn("~text-xs/base", {
-                  "pl-3": heading.depth === 3,
-                })}
-              >
-                <Link
-                  href={`#${heading.slug}`}
-                  className="text-muted-foreground"
-                  dangerouslySetInnerHTML={{ __html: heading.html }}
-                />
-              </li>
-            ))}
-          </ol>
+          <div className="sticky top-[calc(2rem+var(--nav-height))] h-[80vh]">
+            <ScrollArea className="h-full">
+              <ol className="flex h-full list-none flex-col gap-3 border-l-2 pl-2">
+                {note.headings.map((heading) => (
+                  <li
+                    key={heading.slug}
+                    className={cn("~text-xs/base", {
+                      "pl-3": heading.depth === 3,
+                    })}
+                  >
+                    <Link
+                      href={`#${heading.slug}`}
+                      className="text-muted-foreground"
+                      dangerouslySetInnerHTML={{ __html: heading.html }}
+                    />
+                  </li>
+                ))}
+              </ol>
+            </ScrollArea>
+          </div>
         </aside>
         <article className="col-span-1">
           <ArticleProse>

@@ -6,10 +6,14 @@ const GTAG_ID = "G-49H8YKV7QV";
 export function GoogleAnalytics() {
   return (
     <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`} />
+      <Script
+        defer
+        src={`https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`}
+      />
 
       <Script
         id="ga"
+        defer
         dangerouslySetInnerHTML={{
           __html: `
           window.dataLayer = window.dataLayer || [];

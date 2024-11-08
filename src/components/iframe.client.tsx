@@ -51,7 +51,8 @@ export const IFrameClient = ({
         ref={iframeRef}
         src={src}
         className="h-full w-full border-none"
-        title="Content"
+        title="Embedded content"
+        loading="lazy"
         {...props}
       />
     </>
