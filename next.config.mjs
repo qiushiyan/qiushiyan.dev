@@ -43,6 +43,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "web.dev",
       },
+      {
+        protocol: "https",
+        hostname: "developer.mozilla.org",
+      },
     ],
   },
   experimental: {

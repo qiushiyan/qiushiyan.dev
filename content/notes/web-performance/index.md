@@ -16,8 +16,8 @@ headings:
 - title: The Preload Scanner
   slug: the-preload-scanner
   depth: 3
-- title: Preconnect, Prefetch, and Preload
-  slug: preconnect-prefetch-and-preload
+- title: 'Resource Hints: Preconnect, Prefetch, and Preload'
+  slug: resource-hints-preconnect-prefetch-and-preload
   depth: 2
 - title: '`fetchpriority` attribute'
   slug: fetchpriority-attribute
@@ -31,8 +31,17 @@ headings:
 - title: Lazy Loading
   slug: lazy-loading
   depth: 3
-- title: Lazy Loading iframes
-  slug: lazy-loading-iframes
+- title: Image Formats
+  slug: image-formats
+  depth: 3
+- title: Responsive Images
+  slug: responsive-images
+  depth: 3
+- title: The `picture` Element
+  slug: the-picture-element
+  depth: 3
+- title: decoding
+  slug: decoding
   depth: 3
 - title: Optimizing Fonts
   slug: optimizing-fonts
@@ -55,18 +64,24 @@ headings:
 - title: CLS (Cumulative Layout Shift)
   slug: cls-cumulative-layout-shift
   depth: 2
+- title: Improve CLS
+  slug: improve-cls
+  depth: 3
 - title: INP (Interaction to Next Paint)
   slug: inp-interaction-to-next-paint
   depth: 2
 - title: FID (First Input Delay)
   slug: fid-first-input-delay
   depth: 3
-- title: '`PeformanceObserver`'
-  slug: peformanceobserver
+- title: Optimize INP
+  slug: optimize-inp
   depth: 2
 - title: Other Topics
   slug: other-topics
   depth: 2
+- title: '`PeformanceObserver`'
+  slug: peformanceobserver
+  depth: 3
 - title: Browser Support
   slug: browser-support
   depth: 3
@@ -131,15 +146,11 @@ wait for**:
   browser can still parse the rest of the HTML and look for other work
   to do in the meantime.
 
-<div class="column-margin">
-
-Render-blocking does not necessarily relate the initial render. A
-`<link rel="stylesheet" />` is render-blocking regardless of if it is
-placed in `<head>` or not, it will block the **final** paint of the
-browser. But stylesheets outside of `<head>`is moved out of the CRP and
-does not affect FCP.
-
-</div>
+**Render-blocking resources does not necessarily affect initial
+render**. A `<link rel="stylesheet" />` is render-blocking regardless of
+if it is placed in `<head>` or not, it will block the **final** paint of
+the browser. But stylesheets outside of `<head>`is moved out of the CRP
+and does not affect FCP.
 
 - **Parser-blocking resources**: prevent the browser from looking for
   other work to do by continuing to parse the HTML. JavaScript by
@@ -147,13 +158,13 @@ does not affect FCP.
   `async`), as JavaScript can change the DOM or the CSSOM upon its
   execution.
 
-  **Parser-blocking resources are effectively render-blocking as well**.
-  Since the parser can’t continue past a parsing-blocking resource until
-  it has been fully processed, it can’t access and render the content
-  after it. The browser can render any HTML received so far while it
-  waits, but where the critical rendering path is concerned, any
-  parser-blocking resources in the `<head>` effectively mean that all
-  page content is blocked from being rendered.
+**Parser-blocking resources are effectively render-blocking as well**.
+Since the parser can’t continue past a parsing-blocking resource until
+it has been fully processed, it can’t access and render the content
+after it. The browser can render any HTML received so far while it
+waits, but where the critical rendering path is concerned, any
+parser-blocking resources in the `<head>` effectively mean that all page
+content is blocked from being rendered.
 
 ### `defer` and `async` scripts {#defer-and-async-scripts}
 
@@ -205,14 +216,21 @@ loading patterns are not discoverable by the preload scanner:
 If avoiding such patterns isn’t possible, however, you may be able to
 use a preload hint to avoid resource discovery delays.
 
-## Preconnect, Prefetch, and Preload {#preconnect-prefetch-and-preload}
+## Resource Hints: Preconnect, Prefetch, and Preload {#resource-hints-preconnect-prefetch-and-preload}
 
-1.  Preconnect: “I’ll need this CONNECTION soon”. This is for
+Resource hints can help developers further optimize page load time by
+informing the browser how to load and prioritize resources. An initial
+set of resource hints such as `preconnect` and `dns-prefetch` were the
+first to be introduced. Over time, however, `preload`, and the Fetch
+Priority API have followed to provide additional capabilities.
+
+1.  **Preconnect**: “I’ll need this CONNECTION soon”. This is for
     third-party APIs, fonts, etc.
 
 <!-- -->
 
     <link rel="preconnect" href="https://api.example.com">
+
     - Medium priority
     - Only sets up connection (DNS, TCP, TLS)
     - For third-party domains
@@ -231,7 +249,7 @@ connections to many cross-origin servers at once. If you’re concerned
 that you may be overusing preconnect, use `dns-prefetch` instead, which
 does not make a connect but only does a DNS lookup.
 
-2.  Prefetch: “I might need this resource LATER”. The `prefetch`
+2.  **Prefetch**: “I might need this resource LATER”. The `prefetch`
     directive is used to initiate a low priority request for a resource
     likely to be used for future navigations: This is what Next.js
     `router.prefetch(href)` does. It gets a list of scripts for `href`
@@ -240,19 +258,21 @@ does not make a connect but only does a DNS lookup.
 <!-- -->
 
     <link rel="prefetch" href="/next-page.js">
+
     - Low priority
     - Downloads during idle time
     - For future/next page resources
     - Optional 'as' attribute
     - Example: next page JS/CSS
 
-3.  Preload: “I need this resource NOW”. Usually for fonts and LCP
+3.  **Preload**: “I need this resource NOW”. Usually for fonts and LCP
     images. The preload directive is used to initiate an early request
     for a resource required for rendering the page.
 
 <!-- -->
 
     <link rel="preload" href="/style.css" as="style">
+
     - High priority
     - Downloads immediately
     - For critical current page resources
@@ -295,9 +315,9 @@ elements.
 
 `rel="preload"` tells the browser to download the image as soon as
 possible, before it’s actually discovered in the HTML. Best for images
-that appear “later” in your HTML but are actually critical for LCP
+that appear “later” in your HTML but are actually critical for LCP.
 
-`fetchpriority` does not start the download earilier, but directly
+`fetchpriority` does not start the download earlier, but directly
 signals to the browser’s resource prioritization system that this image
 is high priority, and ensures the image gets more network resources when
 competing with other resources. Best for images that are already
@@ -384,7 +404,10 @@ Techniques include
 
 ### Lazy Loading {#lazy-loading}
 
-The loading attribute determines WHEN the browser should start loading
+Lazy loading can be used to remove assets on the critical path, and
+defer loading of non-critical assets.
+
+The `loading` attribute determines WHEN the browser should start loading
 the image:
 
 - `loading="eager"` (default) - loads immediately
@@ -392,10 +415,8 @@ the image:
 - `loading="lazy"` - defers loading until near viewport, **don’t** do
   this for images that are in the initial viewport.
 
-- `loading="auto"` - lets browser decide
-
-Note that `fetchpriority` determines HOW URGENTLY the browser should
-download the resource once it starts loading.
+Compared to `loading`, `fetchpriority` determines HOW URGENTLY the
+browser should download the resource once it starts loading.
 
 ``` html
 <!-- The high priority only takes effect AFTER the lazy loading threshold is met -->
@@ -416,16 +437,127 @@ For below-the-fold images:
 <img src="below-fold.jpg" loading="lazy">
 ```
 
-### Lazy Loading iframes {#lazy-loading-iframes}
+<my-callout title="Lazy Loading iframes">
 
 The `loading` attribute also applies to `<iframe>` elements.
 
 - “eager” is the default value. It informs the browser to load the
-  `<iframe>` element’s HTML and its subresources immediately.
+  `<iframe>` element’s HTML and its sub-resources immediately.
 
 - “lazy” defers loading the `<iframe>` element’s HTML and its
-  subresources until it is within a predefined distance from the
+  sub-resources until it is within a predefined distance from the
   viewport.
+
+</my-callout>
+
+### Image Formats {#image-formats}
+
+Modern image formats like WebP and AVIF may provide better compression
+than PNG or JPEG,
+
+If you can’t use a newer format, use a compression tool.
+
+PNG compressing tool https://tinypng.com/
+
+### Responsive Images {#responsive-images}
+
+Understanding the `srcset` and `sizes` attributes
+
+- `srcset` specifies a list of possible image sources the browser may
+  use. Each image source specified must include the image URL, and a
+  width or pixel density descriptor.
+
+  ``` html
+  <img
+    alt="An image"
+    width="500"
+    height="500"
+    src="/image-500.jpg"
+    srcset="/image-500.jpg 1x, /image-1000.jpg 2x, /image-1500.jpg 3x"
+  >
+  ```
+
+  The preceding HTML snippet uses the pixel density descriptor to hint
+  the browser to use `image-500.png` on devices with a DPR of 1,
+  `image-1000.jpg` on devices with a DPR of 2, and `image-1500.jpg` on
+  devices with a DPR of 3.
+
+- `sizes` make the container size responsive by specifying the “hole”
+  for the image dependent upon a media condition
+
+  ``` html
+  <img
+    alt="An image"
+    width="500"
+    height="500"
+    src="/image-500.jpg"
+    srcset="/image-500.jpg 500w, /image-1000.jpg 1000w, /image-1500.jpg 1500w"
+    sizes="(min-width: 768px) 500px, 100vw"
+  >
+  ```
+
+  The `sizes` attribute tells the browser that:
+
+  When viewport width ≥ 768px, the image will be 500px wide Otherwise,
+  the image will be 100% of viewport width
+
+  Using this information, the browser might choose:
+
+  - /image-500.jpg for 1x displays when viewport ≥ 768px
+
+  - /image-1000.jpg for 2x displays when viewport ≥ 768px
+
+  The most appropriate version based on viewport width when viewport \<
+  768px. The browser aims to select the smallest image that will still
+  look good at the final rendered size on the user’s device.
+
+![`srcset` combined with sizes](srcset-sizes.png)
+
+### The `picture` Element {#the-picture-element}
+
+``` html
+<picture>
+  <source
+    media="(min-width: 560px)"
+    srcset="/image-500.jpg, /image-1000.jpg 2x, /image-1500.jpg 3x"
+  >
+  <source
+    media="(max-width: 560px)"
+    srcset="/image-500.jpg 1x, /image-1000.jpg 2x"
+  >
+  <img
+    alt="An image"
+    width="500"
+    height="500"
+    src="/image-500.jpg"
+  >
+</picture>
+```
+
+![Comparing the picture element with srcset and
+sizes](picture-element.png)
+
+### decoding {#decoding}
+
+``` html
+<img src="image.jpg" decoding="async">
+```
+
+The `decoding` attribute tells the browser how it should decode the
+image.
+
+- A value of `"async"` tells the browser that the image can be decoded
+  asynchronously, possibly improving the time to render other content.
+  Next.js uses this by default.
+
+- A value of `"sync"` tells the browser that the image should be
+  presented at the same time as other content.
+
+- The browser default value of `"auto"` allows the browser to decide
+  what is best for the user.
+
+The effect of the decoding attribute may only be noticeable on very
+large, high-resolution images which take a much longer time to decode.
 
 ## Optimizing Fonts {#optimizing-fonts}
 
@@ -627,9 +759,14 @@ or less.
 
 Ways to improve TTFB:
 
-- **compress** your assets: use gzip or brotli
+- **compress** your assets: use gzip or brotli, Vercel uses brotli by
+  default
 
-- 
+- use efficient **protocols** like HTTP/2 or HTTP/3 (requires http),
+  hard to debug locally. Vercel uses H2 and Cloudflare Pages uses H3.
+  Set this up yourself if you are self-hosting a Node.js server.
+
+- **edge** deployment for proximity
 
 ### Improve FCP and LCP {#improve-fcp-and-lcp}
 
@@ -681,6 +818,14 @@ calculations.
 To provide a good user experience, sites should strive to have a CLS of
 **0.1** or less for at least 75% of page visits.
 
+### Improve CLS {#improve-cls}
+
+- provide **layout hints**: set sizes for images and dynamically added
+  elements
+
+- **styling** solutions: `aspect-ratio` for images, fixed or absolute
+  position dynamic elements
+
 ## INP (Interaction to Next Paint) {#inp-interaction-to-next-paint}
 
 INP is a metric that assesses a page’s overall responsiveness to user
@@ -707,7 +852,81 @@ A retired measure in favor of INP
 
 FID measures the first INP.
 
-## `PeformanceObserver` {#peformanceobserver}
+## Optimize INP {#optimize-inp}
+
+The delay can be divided into 3 stages
+
+- The **input delay**, which starts when the user initiates an
+  interaction with the page, and ends when the event callbacks for the
+  interaction begin to run.
+
+  Long input delay is usually caused by activity occurring on the main
+  thread (perhaps due to scripts loading, parsing and compiling), fetch
+  handling, timer functions, or even from other interactions that occur
+  in quick succession and overlap with one another.
+
+  Ways to optimize input delay include:
+
+  - avoid recurring timers and long running tasks that blocks the main
+    thread, more on this in how to optimize the processing duration
+    later
+
+  - reduce interaction overlay by introducing a debouncing mechanism and
+    use `AbortController` to cancel congesting fetch requests
+
+- The **processing duration**, which consists of the time it takes for
+  event callbacks to run to completion.
+
+  The best general advice in optimizing event callbacks is to do as
+  little work as possible in them. But if we can’t avoid it, we can
+  split the work into smaller tasks by **yielding** the main thread.
+  Details of yielding in https://web.dev/articles/optimize-long-tasks.
+
+  A classic example is perform the critical DOM update first, then
+  schedule the rest of the work using `setTimeout` in the
+  `requestAnimationFrame` callback. This way, the next paint happens
+  quickly after the critical update, and the expensive work is finished
+  in a later, separate task.
+
+  ``` js
+  textBox.addEventListener('input', (inputEvent) => {
+    // Update the UI immediately, so the changes the user made
+    // are visible as soon as the next frame is presented.
+    updateTextBox(inputEvent);
+
+    // Use `setTimeout` to defer all other work until at least the next
+    // frame by queuing a task in a `requestAnimationFrame()` callback.
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const text = textBox.textContent;
+        updateWordCount(text);
+        checkSpelling(text);
+        saveChanges(text);
+      }, 0);
+    });
+  });
+  ```
+
+  Conceptually, this is similar to `startTransition` in React to
+  schedule low-priority state updates.
+
+  ![setTimeout breaks long
+  tasks](https://web.dev/static/articles/optimize-inp/image/interaction-latency_1920.png)
+
+- The **presentation delay**, which is the time it takes for the browser
+  to present the next frame which contains the visual result of the
+  interaction.
+
+  Presentation delay could be a problem if the DOM tree is large, DOM
+  can cause rendering updates to be very expensive, and therefore
+  increase the time it takes for the browser to present the next frame.
+
+  Use `content-visibility` to lazily render off-screen elements. Details
+  in https://web.dev/articles/content-visibility
+
+## Other Topics {#other-topics}
+
+### `PeformanceObserver` {#peformanceobserver}
 
 ``` ts
 const observer = new PerformanceObserver((list) => {
@@ -732,8 +951,6 @@ onCLS(console.log);
 onINP(console.log);
 onLCP(console.log);
 ```
-
-## Other Topics {#other-topics}
 
 ### Browser Support {#browser-support}
 
