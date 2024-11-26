@@ -24,7 +24,7 @@ export default async function Page({
   }
 
   return (
-    <main id={MAIN_CONTENT_ID}>
+    <main id={MAIN_CONTENT_ID} className="mb-24">
       <Container innerClassName="grid grid-cols-1 lg:grid-cols-[minmax(auto,240px),65ch] ~gap-6/12">
         <aside className="col-span-1">
           <div className="sticky top-[calc(2rem+var(--nav-height))] h-[80vh]">

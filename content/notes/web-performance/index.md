@@ -79,8 +79,8 @@ headings:
 - title: Other Topics
   slug: other-topics
   depth: 2
-- title: '`PeformanceObserver`'
-  slug: peformanceobserver
+- title: '`PerformanceObserver`'
+  slug: performanceobserver
   depth: 3
 - title: Browser Support
   slug: browser-support
@@ -339,12 +339,9 @@ There are render-blocking CSS and non-render blocking CSS.
 
 - **Render-blocking**: stylesheets in the `<head>` element
 
-- **Non-render-blocking**: CSS outside of the
-
-  <head>
-
-  element, or CSS with a `media` attribute value that does not apply to
-  the current viewport.
+- **Non-render-blocking**: CSS outside of the `<head>` element, or CSS
+  with a `media` attribute value that does not apply to the current
+  viewport.
 
 We want to divide the CSS into two parts: critical CSS and non-critical
 CSS.
@@ -393,10 +390,10 @@ Techniques include
   <link rel="stylesheet" href="layout.css">
   ```
 
-- avoid `@import` specifier in CSS. Compared to `link`, the difference
-  between these two approaches is that the HTML `<link>` element is part
-  of the HTML response, and therefore discovered much sooner than a CSS
-  file downloaded by an `@import` declaration, can `@import` stylesheets
+- avoid `@import` specifier in CSS. The difference between `<link>` and
+  `@import` is that the HTML `<link>` element is part of the HTML
+  response, and therefore discovered much sooner than a CSS file
+  downloaded by an `@import` declaration, can `@import` stylesheets
   cannot be discovered by the preload scanner. If you can’t remove
   `@import`, use a `preload` hint.
 
@@ -416,7 +413,9 @@ the image:
   this for images that are in the initial viewport.
 
 Compared to `loading`, `fetchpriority` determines HOW URGENTLY the
-browser should download the resource once it starts loading.
+browser should download the resource **after** it starts loading. So in
+summary, `loading` is about WHEN to start loading, and `fetchpriority`
+is about HOW URGENTLY to download the resource.
 
 ``` html
 <!-- The high priority only takes effect AFTER the lazy loading threshold is met -->
@@ -926,7 +925,7 @@ The delay can be divided into 3 stages
 
 ## Other Topics {#other-topics}
 
-### `PeformanceObserver` {#peformanceobserver}
+### `PerformanceObserver` {#performanceobserver}
 
 ``` ts
 const observer = new PerformanceObserver((list) => {

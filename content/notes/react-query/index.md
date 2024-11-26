@@ -4,6 +4,12 @@ slug: react-query-patterns
 date: '2024-10-13'
 category: Web Development
 headings:
+- title: Customizing the Defaults
+  slug: customizing-the-defaults
+  depth: 2
+- title: Validating Query Response
+  slug: validating-query-response
+  depth: 2
 - title: Pre-filling with `initialData`
   slug: pre-filling-with-initialdata
   depth: 2
@@ -28,6 +34,12 @@ headings:
 - title: Error Handling
   slug: error-handling
   depth: 2
+- title: Reset Error Boundaries
+  slug: reset-error-boundaries
+  depth: 3
+- title: Suspense Queries
+  slug: suspense-queries
+  depth: 2
 - title: Mutations
   slug: mutations
   depth: 2
@@ -39,6 +51,9 @@ headings:
   depth: 2
 - title: Optimistic Updates
   slug: optimistic-updates
+  depth: 2
+- title: Query and Mutation Cancellation
+  slug: query-and-mutation-cancellation
   depth: 2
 - title: Typed Query Options
   slug: typed-query-options
@@ -52,6 +67,15 @@ headings:
 - title: Infinite Queries
   slug: infinite-queries
   depth: 2
+- title: Offline Support with `networkMode`
+  slug: offline-support-with-networkmode
+  depth: 2
+- title: Offline Mutations
+  slug: offline-mutations
+  depth: 3
+- title: Persistence
+  slug: persistence
+  depth: 2
 - title: Using with SSR
   slug: using-with-ssr
   depth: 2
@@ -62,6 +86,83 @@ headings:
   slug: with-remix
   depth: 3
 ---
+
+## Customizing the Defaults {#customizing-the-defaults}
+
+- Global configuration in `new QueryClient()`
+
+``` tsx
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5000
+    }
+  }
+})
+```
+
+- Control a subset of queries with `setQueryDefaults`
+
+``` tsx
+// set options for a subset of queries via fuzzy matching on the query keys
+queryClient.setQueryDefaults(
+  ["todos", "detail"],
+  { staleTime: 1000 }
+)
+// suppose we have the following keys
+["todos", "detail1", 1] // match
+["todos", "detail2", 2] // match
+["todos", "list"] // not affected
+```
+
+- For a specific query set the options directly in `useQuery`
+
+Additionally, all options in `useQuery` (except for `queryKey`) can have
+a default value, even the query function.
+
+``` tsx
+queryClient.setQueryDefaults(
+  ["todos"],
+  {
+    staleTime: 5000,
+    queryFn: ({queryKey}) => fetchTodos(queryKey),
+  }
+)
+
+// can omit the query function in the following queries
+function useTodos() {
+  return useQuery({
+    queryKey: ["todos"],
+  })
+}
+
+function useCompletedTodos() {
+  return useQuery({
+    queryKey: ["todos", "completed"],
+    staleTime: 1000,
+  })
+}
+```
+
+## Validating Query Response {#validating-query-response}
+
+``` tsx
+useQuery({
+  queryKey: ['todos'],
+  queryFn: () => {
+    const response = await fetch('/todos')
+    const data = await response.json()
+    // !mark(1:1)
+    return TodoSchema.parse(data)
+  }
+})
+```
+
+The benefit of using `zod`
+
+- Saves memory in the cache by stripping un-specified fields
+
+- Throws errors when data doesn’t match
 
 ## Pre-filling with `initialData` {#pre-filling-with-initialdata}
 
@@ -433,7 +534,7 @@ runs during every re-render or when the query data changes, the `select`
 option is a more efficient way to transform data.
 
 ``` tsx
-#| caption: An alternative to the `select` option
+#| caption: An alternative to the `select` option, that only re-renders if the accessed property is changed
 export const useTodosQuery = () => {
   const queryInfo = useQuery({
     queryKey: ['todos'],
@@ -452,7 +553,7 @@ export const useTodosQuery = () => {
 
 ## Error Handling {#error-handling}
 
-- the `error` property returned from `useQuery`
+- Use the `error` property returned from `useQuery`
 
 ``` tsx
 const { isError } = useQuery({
@@ -465,8 +566,8 @@ if (isError) {
 }
 ```
 
-- the `onError` callback (on the query itself or the global `QueryCache`
-  / `MutationCache`)
+- Use the `onError` callback (on the query itself or the global
+  `QueryCache` / `MutationCache`)
 
 ``` tsx
 const useTodos = () =>
@@ -478,7 +579,7 @@ const useTodos = () =>
   })
 ```
 
-- using Error Boundaries
+- Use Error Boundaries
 
 Set `throwOnError` to `true` to throw an error when the query fails,
 which can be caught by an error boundary.
@@ -496,22 +597,146 @@ const todos = useQuery({
 throwOnError: (error) => error.response?.status >= 500,
 ```
 
-**Pattern**: handle refetch errors globally with toast messages and
-handle other errors with in-component messages or error boundaries.
+It’s possible to have more granular control over error handling by
+passing a function to `throwOnError` such that only when the function
+return `true`, the error will be thrown
 
 ``` tsx
-#| caption: Handle refetch errors globally with toast messages (check data is undefined)
+useQuery({
+  queryKey: ['todos'],
+  throwOnError: (error, query) => {
+    // only throw if no cache exists
+    // fail silently if we have data in the cache
+    return query.state.data === undefined
+  }
+})
+
+// global configuration
 const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      throwOnError: (error, query) => {
+        return query.state.data === undefined
+      }
+    }
+  }
+})
+```
+
+------------------------------------------------------------------------
+
+**Pattern**: handle refetch errors globally with toast messages and
+handle initial load errors with error boundaries
+
+``` tsx
+#| caption: Throw error if error happens in the initial load, otherwise show a toast message
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // !mark(1:1)
+      throwOnError: (error, query) => {
+        return typeof query.state.data === "undefined"
+      }
+    }
+  }
+  // !mark(1:1)
   queryCache: new QueryCache({
     onError: (error, query) => {
       // 🎉 only show error toasts if we already have data in the cache
       // which indicates a failed background update
-      if (query.state.data !== undefined) {
+      if (typeof query.state.data !== undefined) {
         toast.error(`Something went wrong: ${error.message}`)
       }
     },
   }),
 })
+```
+
+### Reset Error Boundaries {#reset-error-boundaries}
+
+Query errors can be reset with the `QueryErrorResetBoundary` component
+or with the `useQueryErrorResetBoundary` hook.
+
+When using the component it will reset any query errors within the
+boundaries of the component:
+
+``` tsx
+import { QueryErrorResetBoundary } from '@tanstack/react-query'
+import { ErrorBoundary } from 'react-error-boundary'
+
+
+const App = () => (
+  <QueryErrorResetBoundary>
+    {({ reset }) => (
+      <ErrorBoundary
+        onReset={reset}
+        fallbackRender={({ resetErrorBoundary }) => (
+          <div>
+            There was an error!
+            <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
+    )}
+  </QueryErrorResetBoundary>
+)
+```
+
+## Suspense Queries {#suspense-queries}
+
+- there is no `enabled` option for `useSuspenseQuery`, because multiple
+  suspense queries run sequentially so the dependency is expressed by
+  the order of the queries
+
+- there is no `placeholderData` for suspense queries, but you can
+  simulate the same pagination example with the `startTransition` hook.
+
+``` tsx
+function App() {
+  <Suspense fallback={<div>loading...</div>}>
+    <Todos />
+  </Suspense>
+}
+
+function Todos() {
+  const todos = useSuspenseQuery({
+    queryKey: ['todos', page],
+    queryFn: () => fetchTodos(page),
+  })
+  const [isPreviousData, startTransition] = useTransition()
+
+  return (
+    <div>
+      <ul style={{ opacity: isPreviousData ? 0.5 : 1 }}>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+      <div>
+        <button
+          onClick={() => {
+            startTransition(() => {
+              setPage((prev) => prev - 1)
+            })
+          }}
+        >
+          previous
+        </button>
+        <button
+          onClick={() => {
+            startTransition(() => {
+              setPage((prev) => prev + 1)
+            })
+          }}
+        >
+          next
+        </button>
+      </div>
+    </div>
+  )
+}
 ```
 
 ## Mutations {#mutations}
@@ -642,6 +867,7 @@ const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onSuccess: (_data, _variables, _context, mutation) => {
       queryClient.invalidateQueries({
+        queryKey,
         predicate: (query) =>
           // invalidate all matching tags at once
           // or everything if no meta is provided
@@ -655,7 +881,7 @@ const queryClient = new QueryClient({
 
 // usage:
 useMutation({
-  mutationFn: updateLabel,
+  mutationFn: mutateFn,
   meta: {
     invalidates: [['issues'], ['labels']],
   },
@@ -704,7 +930,7 @@ return <ul>
 ```
 
 Because we are awaiting `invalidateQueries`, `isPending` will only be
-false when the invalidation is finished. So when the opacity item is
+`false` when the invalidation is finished. So when the opacity item is
 removed, we will see the most up-to-date data.
 
 This approach can be problematic we if you click on multiple checkboxes
@@ -780,6 +1006,31 @@ useMutation({
   },
 })
 ```
+
+## Query and Mutation Cancellation {#query-and-mutation-cancellation}
+
+Queries can be canceled manually with
+`queryClient.cancelQueries({queryKey})`.
+
+As an alternative, if your `queryFn` understands the signal from
+`AbortController`, `queryFn` are given a `signal` parameter, which comes
+from an `AbortController` object react query creates under the hood.
+Imagine you are making queries based on a search input, it is helpful to
+cancel previous queries except for the latest one.
+
+``` ts
+useQuery({
+  queryKey: ['todos', search],
+  queryFn: async ({ signal }) => {
+    // !callout[/signal/] using the signal from queryContext to cancel ongoing requests
+    const response = await fetch(`/todos?search=${search}`, { signal })
+    return response.json()
+  },
+})
+```
+
+Cancellation **does not** work when working with Suspense hooks:
+`useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
 
 ## Typed Query Options {#typed-query-options}
 
@@ -1208,7 +1459,254 @@ useInfiniteQuery({
 })
 ```
 
+## Offline Support with `networkMode` {#offline-support-with-networkmode}
+
+Both `useQuery` and `useMutation` have a `networkMode` option that has 3
+values
+
+- `networkMode = 'online'`: the **default** mode. This means that the
+  query and mutation rely on the network to do stuff. If we go offline,
+  the query and mutation goes into paused state automatically. A related
+  note of this is that you should not use the `isLoading` (and should
+  use `isPending`) to show a loading spinner, because `isLoading=false`
+  when the query is paused.
+
+``` tsx
+const { status, fetchStatus } = useProjects()
+// isLoading is derived from status and fetchStatus
+const isLoading = status === 'pending' || fetchStatus === 'fetching'
+
+// isLoading will be false when fetchStatus is 'paused'
+if (isLoading) {
+  return <div>Loading...</div>
+}
+```
+
+- `networkMode = 'always'`: this mode means that your queries and
+  mutations does not need network and access.
+
+  ``` ts
+  useQuery({
+    queryKey: ['todos'],
+    queryFn: () => Promise.resolve([{ id: 1, text: 'Do Laundry' }]),
+    networkMode: 'always',
+  })
+  ```
+
+  - Queries will never be paused because you have no network connection.
+
+  - Retries will also not pause - your Query will go to error state if
+    it fails.
+
+  - `refetchOnReconnect` defaults to `false` in this mode, because
+    reconnecting to the network is not a good indicator anymore that
+    stale queries should be refetched. You can still turn it on if you
+    want.
+
+- `networkMode = 'offlineFirst'`: the first request will always be made
+  (possibly without network connection), and if that fails, retries will
+  be paused. This mode is useful if you’re using an additional caching
+  layer like the browser cache on top of React Query. For example, the
+  Github API sets the browser cache as
+
+<!-- -->
+
+    cache-control: public, max-age=60, s-maxage=60
+
+which means that for the next 60 seconds, if you request that resource
+again, the response will come from the browser cache.
+
+In this case, we would want to activate react query even if we are
+offline, because chances are that the browser cache has the data we
+need. And if you have a cache miss, you’ll likely get a network error,
+after which React Query will pause the retries, which will put your
+query into the paused state. It’s the best of both worlds.
+
+### Offline Mutations {#offline-mutations}
+
+All things mentioned around `networkMode` apply to mutation equally. One
+additional thing to note is that we often invalidate the cache in the
+`onSettled` callback of a mutation.
+
+``` tsx
+useMutation({
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: ['todos']} )
+  },
+})
+```
+
+When we go offline in the middle of a mutation, the mutation is paused,
+and `onSettled` will be invoked after we go back online again and the
+mutation is finished. In contrast, `onMutate` fires before the mutation
+function so that our optimistic updates in there can be seen regardless
+of the network status.
+
+One problem is, if we have multiple ongoing mutations that are brought
+back after we go online. We will be running multiple invalidations,
+which might cause the UI to update multiple times. To avoid this, we can
+check of the number of ongoing mutations and only invalidate the cache
+if it’s the last one.
+
+``` tsx
+{
+  onSettled; () => {
+    if (queryClient.isMutating({ mutationKey: ["todos"] }) === 1) {
+      return queryClient.invalidateQueries({ queryKey: ['todos'] })
+    }
+  }
+}
+```
+
+## Persistence {#persistence}
+
+``` tsx
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { defaultShouldDehydrateQuery, defaultShouldDehydrateMutation, QueryClient } from "@tanstack/react-query";
+import { removeOldestQuery } from "@tanstack/react-query-persist-client";
+import { useIsRestoring } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+
+
+const persister = createSyncStoragePersister({
+  storage: window.localStorage,
+  // !mark(1:1)
+  retry: removeOldestQuery,
+})
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // !mark(1:1)
+      gcTime: 1000 * 60 * 60,
+    }
+  }
+});
+
+// !mark(1:1)
+queryClient.setMutationDefaults(["posts", "add"], {
+  mutationFn: addPost
+})
+
+function App() {
+  const isRestoring = useIsRestoring()
+  if (isRestoring) {
+    return <div>Restoring...</div>
+  }
+
+  return <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister,
+        // !mark(1:1)
+        maxAge: 1000 * 60 * 60,
+        dehydrateOptions: {
+          // !callout[/defaultShouldDehydrateQuery/] selectively dehydrate queries
+          shouldDehydrateQuery: (query) =>
+            defaultShouldDehydrateQuery(query) && query.meta?.persist === true,
+          shouldDehydrateMutation: (mutation) => defaultShouldDehydrateMutation(mutation) && mutation.meta?.persist === true,
+        },
+        // !callout[/onSuccess/] resume mutations
+        onSuccess: () => {
+          return queryClient.resumePausedMutations()
+        },
+      }}
+    ></PersistQueryClientProvider>
+}
+
+// later in components
+useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+  // !mark(1:1)
+  meta: { persist: true },
+})
+```
+
+Notes for the code above:
+
+- `defaultShouldDehydrateQuery` is a helper function that only persists
+  successful queries and respects other react query’s default persist
+  logic, the same as `defaultShouldDehydrateMutation`
+
+- set `gcTime` as equal or greater than `maxAge` to avoid queries being
+  garbage collected and removed from the storage too early
+
+- mutations and their input can be saved to storage as well, we also set
+  the default mutation function for the mutation key so that when
+  restoring mutations by key, react query doesn’t need a look up for the
+  mutation function
+
+As an experimental feature, we can now set `persist` per query
+
+``` tsx
+import { experimental_createPersister } from "@tanstack/react-query-persist-client";
+
+useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+  // !mark(1:3)
+  persister: experimental_createPersister({
+    storage: localStorage,
+    // ..other options
+  }),
+})
+```
+
+The default options for the persister are
+
+``` ts
+{
+  prefix = 'tanstack-query',
+  maxAge = 1000 * 60 * 60 * 24,
+  serialize = JSON.stringify,
+  deserialize = JSON.parse,
+}
+```
+
 ## Using with SSR {#using-with-ssr}
+
+https://tanstack.com/query/latest/docs/framework/react/guides/ssr
+
+An example of RSC streaming and prefetching data on the server (don’t
+await the prefetch)
+
+``` tsx
+export default async function Home() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      dehydrate: {
+        shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) && query.state.status === "pending",
+      }
+    }
+  })
+
+  queryClient.prefetchQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+    staleTime: 1000 * 10
+
+  })
+
+  return <main>
+    <header />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={<div>loading...</div>}>
+        <Todos />
+      </Suspense>
+    </HydrationBoundary>
+  </main>
+}
+
+function Todos() {
+  const todos = useSuspenseQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+    staleTime: 1000 * 10
+  })
+
+  return ...
+}
+```
 
 ### With Next.js {#with-next.js}
 
