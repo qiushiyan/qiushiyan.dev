@@ -298,12 +298,12 @@ with a lower priority.
 ``` html
 <div class="gallery">
   <div class="poster">
-    <img src="img/poster-1.jpg" fetchpriority="high">
+    <img src="img/poster-1.jpg" fetchpriority="high" />
   </div>
   <div class="thumbnails">
-    <img src="img/thumbnail-2.jpg" fetchpriority="low">
-    <img src="img/thumbnail-3.jpg" fetchpriority="low">
-    <img src="img/thumbnail-4.jpg" fetchpriority="low">
+    <img src="img/thumbnail-2.jpg" fetchpriority="low" />
+    <img src="img/thumbnail-3.jpg" fetchpriority="low" />
+    <img src="img/thumbnail-4.jpg" fetchpriority="low" />
   </div>
 </div>
 ```
@@ -361,7 +361,12 @@ Techniques include
 - download non-critical css as `print` styles
 
   ``` html
-  <link rel="stylesheet" href="print.css" media="print" onload='this.media="all"'>
+  <link
+    rel="stylesheet"
+    href="print.css"
+    media="print"
+    onload='this.media="all"'
+  />
   ```
 
   For `media="print"`:
@@ -385,9 +390,9 @@ Techniques include
 
   ``` html
   <!-- Bad -->
-  <link rel="stylesheet" href="globals.css">
-  <link rel="stylesheet" href="typography.css">
-  <link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="globals.css" />
+  <link rel="stylesheet" href="typography.css" />
+  <link rel="stylesheet" href="layout.css" />
   ```
 
 - avoid `@import` specifier in CSS. The difference between `<link>` and
@@ -419,21 +424,21 @@ is about HOW URGENTLY to download the resource.
 
 ``` html
 <!-- The high priority only takes effect AFTER the lazy loading threshold is met -->
-<img src="image.jpg" loading="lazy" fetchpriority="high">
+<img src="image.jpg" loading="lazy" fetchpriority="high" />
 ```
 
 For LCP images, you typically want:
 
 ``` html
 <!-- using the loading="eager" default -->
-<img src="hero.jpg"  fetchpriority="high">
+<img src="hero.jpg" fetchpriority="high" />
 ```
 
 For below-the-fold images:
 
 ``` html
 <!-- using the fetchpriority="auto" default -->
-<img src="below-fold.jpg" loading="lazy">
+<img src="below-fold.jpg" loading="lazy" />
 ```
 
 <my-callout title="Lazy Loading iframes">
@@ -473,7 +478,7 @@ Understanding the `srcset` and `sizes` attributes
     height="500"
     src="/image-500.jpg"
     srcset="/image-500.jpg 1x, /image-1000.jpg 2x, /image-1500.jpg 3x"
-  >
+  />
   ```
 
   The preceding HTML snippet uses the pixel density descriptor to hint
@@ -492,7 +497,7 @@ Understanding the `srcset` and `sizes` attributes
     src="/image-500.jpg"
     srcset="/image-500.jpg 500w, /image-1000.jpg 1000w, /image-1500.jpg 1500w"
     sizes="(min-width: 768px) 500px, 100vw"
-  >
+  />
   ```
 
   The `sizes` attribute tells the browser that:
@@ -519,17 +524,12 @@ Understanding the `srcset` and `sizes` attributes
   <source
     media="(min-width: 560px)"
     srcset="/image-500.jpg, /image-1000.jpg 2x, /image-1500.jpg 3x"
-  >
+  />
   <source
     media="(max-width: 560px)"
     srcset="/image-500.jpg 1x, /image-1000.jpg 2x"
-  >
-  <img
-    alt="An image"
-    width="500"
-    height="500"
-    src="/image-500.jpg"
-  >
+  />
+  <img alt="An image" width="500" height="500" src="/image-500.jpg" />
 </picture>
 ```
 
@@ -539,7 +539,7 @@ sizes](picture-element.png)
 ### decoding {#decoding}
 
 ``` html
-<img src="image.jpg" decoding="async">
+<img src="image.jpg" decoding="async" />
 ```
 
 The `decoding` attribute tells the browser how it should decode the
@@ -565,8 +565,8 @@ By default, the browser only starts to download a font when a
 
 ``` css
 @font-face {
-  font-family: "Open Sans";
   src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2");
+  font-family: "Open Sans";
 }
 
 h1 {
@@ -582,7 +582,12 @@ There are ways to let the browser start downloading the font earlier
 - use a `preload` hint
 
   ``` html
-  <link rel="preload" as="font" href="/fonts/OpenSans-Regular-webfont.woff2" crossorigin>
+  <link
+    rel="preload"
+    as="font"
+    href="/fonts/OpenSans-Regular-webfont.woff2"
+    crossorigin
+  />
   ```
 
   If the font is hosted by a third party provider (e.g. Google Fonts),
@@ -590,22 +595,22 @@ There are ways to let the browser start downloading the font earlier
   font provider’s server.
 
   ``` html
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   ```
 
 - Inline font-related CSS
 
   ``` html
   <style>
-  @font-face {
-    font-family: "Dancing Script";
-    src: url("/fonts/DancingScript-Regular.woff2?v=1676325285146");
-  }
+    @font-face {
+      src: url("/fonts/DancingScript-Regular.woff2?v=1676325285146");
+      font-family: "Dancing Script";
+    }
 
-  .fancy {
-    font-family: "Dancing Script";
-  }
+    .fancy {
+      font-family: "Dancing Script";
+    }
   </style>
   ```
 
@@ -656,9 +661,9 @@ following example HTML
 <html>
   <body>
     <script>
-      window.addEventListener('load', () => {
-        var el = document.createElement('div');
-        el.textContent = 'Hello, world!';
+      window.addEventListener("load", () => {
+        var el = document.createElement("div");
+        el.textContent = "Hello, world!";
         document.body.appendChild(el);
       });
     </script>
@@ -888,7 +893,7 @@ The delay can be divided into 3 stages
   in a later, separate task.
 
   ``` js
-  textBox.addEventListener('input', (inputEvent) => {
+  textBox.addEventListener("input", (inputEvent) => {
     // Update the UI immediately, so the changes the user made
     // are visible as soon as the next frame is presented.
     updateTextBox(inputEvent);
@@ -929,22 +934,22 @@ The delay can be divided into 3 stages
 
 ``` ts
 const observer = new PerformanceObserver((list) => {
-    for (const entry of list.getEntries()) {
-        console.log("Layout shift by", entry.value);
-    }
+  for (const entry of list.getEntries()) {
+    console.log("Layout shift by", entry.value);
+  }
 });
 
 observer.observe({
-    type: "layout-shift",
-    // queue the events that happened before the observer was created
-    buffered: true
+  type: "layout-shift",
+  // queue the events that happened before the observer was created
+  buffered: true,
 });
 ```
 
 Use the `web-vitals` library to get the metrics
 
 ``` ts
-import { onLCP, onINP, onCLS } from 'web-vitals';
+import { onCLS, onINP, onLCP } from "web-vitals";
 
 onCLS(console.log);
 onINP(console.log);
@@ -979,28 +984,28 @@ actual async initialization of what the SPA script does.
 
 ``` html
 <body>
-    <div id="root"></div>
+  <div id="root"></div>
 
-    <!-- This script tag blocks DOMContentLoaded -->
-    <script src="bundle.js">
-        // Inside bundle.js:
-        console.log("Bundle loading");
+  <!-- This script tag blocks DOMContentLoaded -->
+  <script src="bundle.js">
+    // Inside bundle.js:
+    console.log("Bundle loading");
 
-        // This synchronous code blocks
-        initializeFramework();
+    // This synchronous code blocks
+    initializeFramework();
 
-        // But async operations don't
-        createApp().then(() => {
-            console.log("App ready - happens after DOMContentLoaded!");
-        });
-    </script>
+    // But async operations don't
+    createApp().then(() => {
+        console.log("App ready - happens after DOMContentLoaded!");
+    });
+  </script>
 
-    <script>
-        // This will fire after bundle.js fully loads and executes
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOMContentLoaded");
-        });
-    </script>
+  <script>
+    // This will fire after bundle.js fully loads and executes
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOMContentLoaded");
+    });
+  </script>
 </body>
 ```
 

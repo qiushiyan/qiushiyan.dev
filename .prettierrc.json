@@ -26,5 +26,15 @@
   ],
   "tailwindFunctions": ["clsx", "cn"],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "importOrderSortSpecifiers": true,
+  "proseWrap": "always",
+  "printWidth": 80,
+  "overrides": [
+    {
+      "files": ["quarto-contents/**/*.qmd"],
+      "options": {
+        "parser": "markdown"
+      }
+    }
+  ]
 }

@@ -22,7 +22,7 @@ Tools I have experience with but haven't used professionally.
 
 ## I want to learn
 
-- [ ] **React Native**: (in progress) I want to develop some LLM-related cross-platform apps and experiment with the monorepo experience. How sharable can the codebase be among Electron, React Native, and a web framework (I will probably be using Remix)?
+- [ ] **React Native**: (in progress) I want to develop some LLM-related cross-platform apps and experiment with the monorepo experience. How shareable can the codebase be among Electron, React Native, and a web framework (I will probably be using Remix)?
 
 - [ ] **More Rust** : (in progress) I used to create a couple of CLIs in Rust for automating some workflows. I also want to create rust-based toolings for JavaScript, Python and R.
 

@@ -95,25 +95,24 @@ headings:
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5000
-    }
-  }
-})
+      staleTime: 5000,
+    },
+  },
+});
 ```
 
 - Control a subset of queries with `setQueryDefaults`
 
 ``` tsx
 // set options for a subset of queries via fuzzy matching on the query keys
-queryClient.setQueryDefaults(
-  ["todos", "detail"],
-  { staleTime: 1000 }
-)
-// suppose we have the following keys
-["todos", "detail1", 1] // match
-["todos", "detail2", 2] // match
-["todos", "list"] // not affected
+queryClient.setQueryDefaults(["todos", "detail"], { staleTime: 1000 });
 ```
+
+Suppose we have the following keys
+
+    ["todos", "detail1", 1] // match
+    ["todos", "detail2", 2] // match
+    ["todos", "list"] // not affected
 
 - For a specific query set the options directly in `useQuery`
 
@@ -121,26 +120,23 @@ Additionally, all options in `useQuery` (except for `queryKey`) can have
 a default value, even the query function.
 
 ``` tsx
-queryClient.setQueryDefaults(
-  ["todos"],
-  {
-    staleTime: 5000,
-    queryFn: ({queryKey}) => fetchTodos(queryKey),
-  }
-)
+queryClient.setQueryDefaults(["todos"], {
+  staleTime: 5000,
+  queryFn: ({ queryKey }) => fetchTodos(queryKey),
+});
 
 // can omit the query function in the following queries
 function useTodos() {
   return useQuery({
     queryKey: ["todos"],
-  })
+  });
 }
 
 function useCompletedTodos() {
   return useQuery({
     queryKey: ["todos", "completed"],
     staleTime: 1000,
-  })
+  });
 }
 ```
 
@@ -193,32 +189,29 @@ function ClientComponent({ data }) {
 ``` ts
 export const useTodosQuery = (state: State) =>
   useQuery({
-    queryKey: ['todos', state],
+    queryKey: ["todos", state],
     queryFn: () => fetchTodos(state),
     initialData: () => {
-      const allTodos = queryClient.getQueryData<Todos>([
-        'todos',
-        'all',
-      ])
+      const allTodos = queryClient.getQueryData<Todos>(["todos", "all"]);
       const filteredData =
-        allTodos?.filter((todo) => todo.state === state) ?? []
+        allTodos?.filter((todo) => todo.state === state) ?? [];
 
-      return filteredData.length > 0 ? filteredData : undefined
+      return filteredData.length > 0 ? filteredData : undefined;
     },
-  })
+  });
 ```
 
 Another example of pre-filling an id-based query
 
 ``` ts
 const result = useQuery({
-  queryKey: ['todo', todoId],
-  queryFn: () => fetch('/todos'),
+  queryKey: ["todo", todoId],
+  queryFn: () => fetch("/todos"),
   initialData: () => {
     // Use a todo from the 'todos' query as the initial data for this todo query
-    return queryClient.getQueryData(['todos'])?.find((d) => d.id === todoId)
+    return queryClient.getQueryData(["todos"])?.find((d) => d.id === todoId);
   },
-})
+});
 ```
 
 ### Difference Between `initialData` and `placeholderData` {#difference-between-initialdata-and-placeholderdata}
@@ -248,34 +241,34 @@ Only set initial data if the data available is updated recently.
 
 ``` tsx
 const result = useQuery({
-  queryKey: ['todo', todoId],
+  queryKey: ["todo", todoId],
   queryFn: () => fetch(`/todos/${todoId}`),
   initialData: () => {
     // Get the query state
-    const state = queryClient.getQueryState(['todos'])
+    const state = queryClient.getQueryState(["todos"]);
 
     // If the query exists and has data that is no older than 10 seconds...
     if (state && Date.now() - state.dataUpdatedAt <= 10 * 1000) {
       // return the individual todo
-      return state.data.find((d) => d.id === todoId)
+      return state.data.find((d) => d.id === todoId);
     }
 
     // Otherwise, return undefined and let it fetch from a hard loading state!
   },
-})
+});
 ```
 
 Only set initial data if it’s the first page
 
 ``` tsx
-const [page, setPage] = React.useState(0)
+const [page, setPage] = React.useState(0);
 
 const { data } = useQuery({
-  queryKey: ['todos', page],
+  queryKey: ["todos", page],
   queryFn: () => fetchTodos(page),
   initialData: page === 0 ? initialDataForPageZero : undefined,
   staleTime: 5 * 1000,
-})
+});
 ```
 
 ## Seeding with Pushing or Pulling {#seeding-with-pushing-or-pulling}
@@ -288,20 +281,20 @@ individual items. Here are two common patterns
   the item in the list, if not found, fetch it from the server
 
 ``` tsx
- useQuery({
-    queryKey: ['todos', 'detail', id],
-    queryFn: () => fetchTodo(id),
-    // !mark(1:1)
-    initialData: () => {
-      return queryClient
-        .getQueryData(['todos', 'list'])
-        ?.find((todo) => todo.id === id)
-    },
-    // !mark(1:1)
-    initialDataUpdatedAt: () =>
-      // ⬇️ get the last fetch time of the list
-      queryClient.getQueryState(['todos', 'list'])?.dataUpdatedAt,
- })
+useQuery({
+  queryKey: ["todos", "detail", id],
+  queryFn: () => fetchTodo(id),
+  // !mark(1:1)
+  initialData: () => {
+    return queryClient
+      .getQueryData(["todos", "list"])
+      ?.find((todo) => todo.id === id);
+  },
+  // !mark(1:1)
+  initialDataUpdatedAt: () =>
+    // ⬇️ get the last fetch time of the list
+    queryClient.getQueryState(["todos", "list"])?.dataUpdatedAt,
+});
 ```
 
 Pulling is the **recommended** approach because it seeds “just in time”,
@@ -313,19 +306,19 @@ make sure react query respects the stale time.
 
 ``` tsx
 const useTodos = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useQuery({
-    queryKey: ['todos', 'list'],
+    queryKey: ["todos", "list"],
     queryFn: async () => {
-      const todos = await fetchTodos()
+      const todos = await fetchTodos();
       // !mark(1:3)
       todos.forEach((todo) => {
-        queryClient.setQueryData(['todos', 'detail', todo.id], todo)
-      })
-      return todos
+        queryClient.setQueryData(["todos", "detail", todo.id], todo);
+      });
+      return todos;
     },
-  })
-}
+  });
+};
 ```
 
 With pushing `staleTime` is automatically respected, because the seed
@@ -390,20 +383,19 @@ comments will also be needed. For this, we’ll use
 `queryClient.prefetchQuery`:
 
 ``` tsx
-const queryClient = useQueryClient()
+const queryClient = useQueryClient();
 const { data: articleData, isPending } = useQuery({
-  queryKey: ['article', id],
+  queryKey: ["article", id],
   queryFn: (...args) => {
-
-// !mark(1:4)
+    // !mark(1:4)
     queryClient.prefetchQuery({
-      queryKey: ['article-comments', id],
+      queryKey: ["article-comments", id],
       queryFn: getArticleCommentsById,
-    })
+    });
 
-    return getArticleById(...args)
+    return getArticleById(...args);
   },
-})
+});
 ```
 
 If the primary query is a suspense query, you should not put the
@@ -468,14 +460,14 @@ const useRandomValue = () => {
       return Promise.resolve(String(Math.random()));
     },
     {
-      enabled: typeof draft === "undefined"
+      enabled: typeof draft === "undefined",
     }
   );
 
   return {
     value: draft ?? data,
     setDraft,
-    queryInfo
+    queryInfo,
   };
 };
 
@@ -483,7 +475,7 @@ function Modal({ close }) {
   const {
     value,
     setDraft,
-    queryInfo: { isLoading, error }
+    queryInfo: { isLoading, error },
   } = useRandomValue();
 
   return (
@@ -514,15 +506,14 @@ transformations or to avoid unnecessary re-renders.
 ``` tsx
 export const useTodosQuery = (select) =>
   useQuery({
-    queryKey: ['todos'],
+    queryKey: ["todos"],
     queryFn: fetchTodos,
     select,
-  })
+  });
 
-export const useTodosCount = () =>
-  useTodosQuery((data) => data.length)
+export const useTodosCount = () => useTodosQuery((data) => data.length);
 export const useTodo = (id) =>
-  useTodosQuery((data) => data.find((todo) => todo.id === id))
+  useTodosQuery((data) => data.find((todo) => todo.id === id));
 ```
 
 A component using the `useTodoCount` custom hook will only re-render if
@@ -572,11 +563,10 @@ if (isError) {
 ``` tsx
 const useTodos = () =>
   useQuery({
-    queryKey: ['todos'],
+    queryKey: ["todos"],
     queryFn: fetchTodos,
-    onError: (error) =>
-      toast.error(`Something went wrong: ${error.message}`),
-  })
+    onError: (error) => toast.error(`Something went wrong: ${error.message}`),
+  });
 ```
 
 - Use Error Boundaries
@@ -603,24 +593,24 @@ return `true`, the error will be thrown
 
 ``` tsx
 useQuery({
-  queryKey: ['todos'],
+  queryKey: ["todos"],
   throwOnError: (error, query) => {
     // only throw if no cache exists
     // fail silently if we have data in the cache
-    return query.state.data === undefined
-  }
-})
+    return query.state.data === undefined;
+  },
+});
 
 // global configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       throwOnError: (error, query) => {
-        return query.state.data === undefined
-      }
-    }
-  }
-})
+        return query.state.data === undefined;
+      },
+    },
+  },
+});
 ```
 
 ------------------------------------------------------------------------
@@ -661,9 +651,8 @@ When using the component it will reset any query errors within the
 boundaries of the component:
 
 ``` tsx
-import { QueryErrorResetBoundary } from '@tanstack/react-query'
-import { ErrorBoundary } from 'react-error-boundary'
-
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
 
 const App = () => (
   <QueryErrorResetBoundary>
@@ -681,7 +670,7 @@ const App = () => (
       </ErrorBoundary>
     )}
   </QueryErrorResetBoundary>
-)
+);
 ```
 
 ## Suspense Queries {#suspense-queries}
@@ -697,15 +686,15 @@ const App = () => (
 function App() {
   <Suspense fallback={<div>loading...</div>}>
     <Todos />
-  </Suspense>
+  </Suspense>;
 }
 
 function Todos() {
   const todos = useSuspenseQuery({
-    queryKey: ['todos', page],
+    queryKey: ["todos", page],
     queryFn: () => fetchTodos(page),
-  })
-  const [isPreviousData, startTransition] = useTransition()
+  });
+  const [isPreviousData, startTransition] = useTransition();
 
   return (
     <div>
@@ -718,8 +707,8 @@ function Todos() {
         <button
           onClick={() => {
             startTransition(() => {
-              setPage((prev) => prev - 1)
-            })
+              setPage((prev) => prev - 1);
+            });
           }}
         >
           previous
@@ -727,15 +716,15 @@ function Todos() {
         <button
           onClick={() => {
             startTransition(() => {
-              setPage((prev) => prev + 1)
-            })
+              setPage((prev) => prev + 1);
+            });
           }}
         >
           next
         </button>
       </div>
     </div>
-  )
+  );
 }
 ```
 
@@ -823,20 +812,20 @@ const useUpdateTodo = () =>
     // ✅ always invalidate the todo list
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['todos', 'list']
-      })
+        queryKey: ["todos", "list"],
+      });
     },
-  })
+  });
 
 // in the component
 
-const updateTodo = useUpdateTodo()
+const updateTodo = useUpdateTodo();
 updateTodo.mutate(
-  { title: 'newTitle' },
+  { title: "newTitle" },
   // ✅ only redirect if we're still on the detail page
   // when the mutation finishes
-  { onSuccess: () => history.push('/todos') }
-)
+  { onSuccess: () => history.push("/todos") }
+);
 ```
 
 ## Invalidation After Mutation {#invalidation-after-mutation}
@@ -850,10 +839,10 @@ useMutation({
   // !mark(1:1)
   onSuccess: () => {
     queryClient.invalidateQueries({
-      queryKey: ['todos', 'list']
-    })
+      queryKey: ["todos", "list"],
+    });
   },
-})
+});
 ```
 
 To make things more declarative, we can set a global `onSuccess`
@@ -861,7 +850,7 @@ callback on `MutationCache` to search for a `meta` property in the
 finished mutation, if a query matches the meta property, invalidate it.
 
 ``` tsx
-import { matchQuery } from '@tanstack/react-query'
+import { matchQuery } from "@tanstack/react-query";
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
@@ -874,26 +863,26 @@ const queryClient = new QueryClient({
           mutation.meta?.invalidates?.some((queryKey) =>
             matchQuery({ queryKey }, query)
           ) ?? true,
-      })
+      });
     },
   }),
-})
+});
 
 // usage:
 useMutation({
   mutationFn: mutateFn,
   meta: {
-    invalidates: [['issues'], ['labels']],
+    invalidates: [["issues"], ["labels"]],
   },
-})
+});
 ```
 
 ``` tsx
-declare module '@tanstack/react-query' {
+declare module "@tanstack/react-query" {
   interface Register {
     mutationMeta: {
-      invalidates?: Array<QueryKey>
-    }
+      invalidates?: Array<QueryKey>;
+    };
   }
 }
 ```
@@ -954,7 +943,7 @@ the mutation fails.
   `onError` and `onSettled`.
 
 ``` tsx
-const queryClient = useQueryClient()
+const queryClient = useQueryClient();
 
 useMutation({
   mutationFn: updateTodo,
@@ -962,30 +951,30 @@ useMutation({
   onMutate: async (newTodo) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries({ queryKey: ['todos'] })
+    await queryClient.cancelQueries({ queryKey: ["todos"] });
 
     // Snapshot the previous value
-    const previousTodos = queryClient.getQueryData(['todos'])
+    const previousTodos = queryClient.getQueryData(["todos"]);
 
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
+    queryClient.setQueryData(["todos"], (old) => [...old, newTodo]);
 
     // Return a context object with the snapshotted value
 
     // !mark(1:1)
-    return { previousTodos }
+    return { previousTodos };
   },
   // If the mutation fails,
   // use the context returned from onMutate to roll back
   onError: (err, newTodo, context) => {
     // !mark(1:1)
-    queryClient.setQueryData(['todos'], context.previousTodos)
+    queryClient.setQueryData(["todos"], context.previousTodos);
   },
   // Always refetch after error or success:
   onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
+    queryClient.invalidateQueries({ queryKey: ["todos"] });
   },
-})
+});
 ```
 
 You can also return a function from `onMutate` to serve as a rollback
@@ -994,17 +983,17 @@ You can also return a function from `onMutate` to serve as a rollback
 useMutation({
   onMutate: () => {
     // ... do the optimistic update
-    const snapshot = queryClient.getQueryData(["todos"])
+    const snapshot = queryClient.getQueryData(["todos"]);
     // !mark(1:3)
     return () => {
-      queryClient.setQueryData(["todos"], snapshot)
-    }
+      queryClient.setQueryData(["todos"], snapshot);
+    };
   },
   onError: (error, variables, rollback) => {
     // !mark(1:1)
-    rollback?.()
+    rollback?.();
   },
-})
+});
 ```
 
 ## Query and Mutation Cancellation {#query-and-mutation-cancellation}
@@ -1020,13 +1009,13 @@ cancel previous queries except for the latest one.
 
 ``` ts
 useQuery({
-  queryKey: ['todos', search],
+  queryKey: ["todos", search],
   queryFn: async ({ signal }) => {
     // !callout[/signal/] using the signal from queryContext to cancel ongoing requests
-    const response = await fetch(`/todos?search=${search}`, { signal })
-    return response.json()
+    const response = await fetch(`/todos?search=${search}`, { signal });
+    return response.json();
   },
-})
+});
 ```
 
 Cancellation **does not** work when working with Suspense hooks:
@@ -1041,21 +1030,20 @@ access to the query function type. To solve this, we can co-locate the
 both `useQuery` and `getQueryData`.
 
 ``` tsx
-import { queryOptions } from '@tanstack/react-query'
+import { queryOptions } from "@tanstack/react-query";
 
 const fetchGroups = (): Promise<Group[]> =>
-  axios.get('/groups').then((response) => response.data)
-
+  axios.get("/groups").then((response) => response.data);
 
 function groupOptions() {
   return queryOptions({
-    queryKey: ['groups'],
+    queryKey: ["groups"],
     queryFn: fetchGroups,
     staleTime: 5 * 1000,
-  })
+  });
 }
-useQuery(groupOptions())
-const data = queryClient.getQueryData(groupOptions().queryKey)
+useQuery(groupOptions());
+const data = queryClient.getQueryData(groupOptions().queryKey);
 //     ^? const data: Group[] | undefined
 ```
 
@@ -1086,11 +1074,11 @@ function App({ users }) {
   const userQueries = useQueries({
     queries: users.map((user) => {
       return {
-        queryKey: ['user', user.id],
+        queryKey: ["user", user.id],
         queryFn: () => fetchUserById(user.id),
-      }
+      };
     }),
-  })
+  });
 }
 ```
 
@@ -1098,9 +1086,7 @@ The return value of `useQueries` is an array of individual `useQuery`
 results, and you can process the array however you want.
 
 ``` tsx
-const areAnyPending = userQueries.some(
-  query => query.status === 'pending'
-)
+const areAnyPending = userQueries.some((query) => query.status === "pending");
 ```
 
 If `queries` in `useQueries` is an empty array, it won’t do anything.
@@ -1170,12 +1156,12 @@ the total number of issues. If we are using `useQueries`, we can just
 loop through the queries array.
 
 ``` ts
-const repos = useRepos()
-const issues = useIssues(repos.data)
+const repos = useRepos();
+const issues = useIssues(repos.data);
 
 const totalIssues = issues
   .map(({ data }) => data?.issues.length ?? 0)
-  .reduce((a, b) => a + b, 0)
+  .reduce((a, b) => a + b, 0);
 ```
 
 `useQueries` provides a `combine` argument for this use case, what is
@@ -1184,26 +1170,27 @@ returned from `combine` will be the result of the `useQueries` hook.
 ``` tsx
 function useIssues(repos) {
   return useQueries({
-    queries: repos?.map((repo) => ({
-      queryKey: ['repos', repo.name, 'issues'],
-      queryFn: async () => {
-        const issues = await fetchIssues(repo.name)
-        return { repo: repo.name, issues }
-      },
-    })) ?? [],
+    queries:
+      repos?.map((repo) => ({
+        queryKey: ["repos", repo.name, "issues"],
+        queryFn: async () => {
+          const issues = await fetchIssues(repo.name);
+          return { repo: repo.name, issues };
+        },
+      })) ?? [],
     // !mark(1:4)
     combine: (issues) => {
       const totalIssues = issues
         .map(({ data }) => data?.issues.length ?? 0)
-        .reduce((a, b) => a + b, 0)
+        .reduce((a, b) => a + b, 0);
 
-      return { issues, totalIssues }
-    }
-  })
+      return { issues, totalIssues };
+    },
+  });
 }
 
 // !mark(1:1)
-const { issues, totalIssues } = useIssues(repos.data)
+const { issues, totalIssues } = useIssues(repos.data);
 ```
 
 `combine` is useful even when you don’t need to derive an aggregation.
@@ -1211,33 +1198,33 @@ You can simply use it to reshape the return values so it fits your
 component’s needs.
 
 ``` tsx
-function useRepoAndIssues({name}) {
+function useRepoAndIssues({ name }) {
   return useQueries({
     queries: [
       {
-        queryKey: ['repos', name],
+        queryKey: ["repos", name],
         queryFn: async () => fetchRepo(name),
       },
       {
-        queryKey: ['repos', name, 'issues'],
+        queryKey: ["repos", name, "issues"],
         queryFn: async () => fetchIssues(name),
-      }
+      },
     ],
     combine: (results) => {
-      const isPending = results.some((query) => query.status === 'pending')
-      const isError = results.some((query) => query.status === 'error')
+      const isPending = results.some((query) => query.status === "pending");
+      const isError = results.some((query) => query.status === "error");
 
       return {
         repo: results[0].data,
         issues: results[1].data,
         isPending,
-        isError
-       }
-    }
-  })
+        isError,
+      };
+    },
+  });
 }
 // !mark(1:1)
-const { repo, issues, isPending, isError } = useRepoAndIssues({ name })
+const { repo, issues, isPending, isError } = useRepoAndIssues({ name });
 ```
 
 ## Pagination {#pagination}
@@ -1253,38 +1240,38 @@ const { repo, issues, isPending, isError } = useRepoAndIssues({ name })
 
 ``` tsx
 function useRepos(sort, page) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   React.useEffect(() => {
     // !mark(1:1)
-    queryClient.prefetchQuery(getReposQueryOptions(sort, page + 1))
-  }, [sort, page, queryClient])
+    queryClient.prefetchQuery(getReposQueryOptions(sort, page + 1));
+  }, [sort, page, queryClient]);
 
   return useQuery({
     ...getReposQueryOptions(sort, page),
     // !mark(1:1)
-    placeholderData: (previousData) => previousData
-  })
+    placeholderData: (previousData) => previousData,
+  });
 }
 
 function RepoList({ sort, page, setPage }) {
-  const { data, status, isPlaceholderData } = useRepos(sort, page)
+  const { data, status, isPlaceholderData } = useRepos(sort, page);
 
-  if (status === 'pending') {
-    return <div>...</div>
+  if (status === "pending") {
+    return <div>...</div>;
   }
 
-  if (status === 'error') {
-    return <div>There was an error fetching the repos.</div>
+  if (status === "error") {
+    return <div>There was an error fetching the repos.</div>;
   }
 
   return (
     <div>
       // !mark(1:1)
       <ul style={{ opacity: isPlaceholderData ? 0.5 : 1 }}>
-        {data.map((repo) =>
+        {data.map((repo) => (
           <li key={repo.id}>{repo.full_name}</li>
-        )}
+        ))}
       </ul>
       <div>
         <button
@@ -1296,7 +1283,7 @@ function RepoList({ sort, page, setPage }) {
         </button>
         <span>Page {page}</span>
         <button
-        // !mark(1:1)
+          // !mark(1:1)
           disabled={isPlaceholderData || data?.length < PAGE_SIZE}
           onClick={() => setPage((p) => p + 1)}
         >
@@ -1304,7 +1291,7 @@ function RepoList({ sort, page, setPage }) {
         </button>
       </div>
     </div>
-  )
+  );
 }
 ```
 
@@ -1314,14 +1301,16 @@ function RepoList({ sort, page, setPage }) {
 
 ``` ts
 // nextId and previousId are cursors to fetch the next and previous page
-{data, nextId, previousId}
+{
+  data, nextId, previousId;
+}
 ```
 
 Example:
 
 ``` tsx
-import { useProjects } from "lib/features/project/queries";
 import { useEffect } from "react";
+import { useProjects } from "lib/features/project/queries";
 
 const fetchProjects = async (cursor: number) => {
   await delay(1000);
@@ -1329,14 +1318,15 @@ const fetchProjects = async (cursor: number) => {
 };
 
 export default function Infinite() {
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-    queryKey: projectKeys.list(),
-    queryFn: ({ pageParam }) => fetchProjects(pageParam),
-    // !mark(1:2)
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextId,
-    getPreviousPageParam: (firstPage) => firstPage.previousId,
-  });
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: projectKeys.list(),
+      queryFn: ({ pageParam }) => fetchProjects(pageParam),
+      // !mark(1:2)
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextId,
+      getPreviousPageParam: (firstPage) => firstPage.previousId,
+    });
 
   const shouldFetch = !isFetchingNextPage && hasNextPage;
 
@@ -1364,17 +1354,17 @@ export default function Infinite() {
     <div>
       {isLoading ? <div>Loading initial data</div> : null}
       {data?.pages
-      // !mark(1:1)
+        // !mark(1:1)
         .flatMap((p) => p.data)
         .map((project) => (
           <div
             key={project.id}
-            className="flex items-center border justify-center h-[50vh]"
+            className="flex h-[50vh] items-center justify-center border"
           >
             <h2>{project.name}</h2>
           </div>
         ))}
-        // !mark(1:1)
+      // !mark(1:1)
       <div id="fetch-trigger" />
       {isFetchingNextPage ? <div>Loading next page...</div> : null}
       {data && !hasNextPage ? <div>No more projects to load</div> : null}
@@ -1392,7 +1382,7 @@ export default function Infinite() {
   [1, 2, 3], // data for page 1
   [4, 5, 6], // data for page 2
   [7, 8, 9], // data for page 3
-]
+];
 ```
 
 - set `initialPageParam` to give the fetcher a starting point, and use
@@ -1448,7 +1438,7 @@ Set `maxPages` to limit the amount of pages that are kept in the cache.
 
 ``` ts
 useInfiniteQuery({
-  queryKey: ['projects'],
+  queryKey: ["projects"],
   queryFn: fetchProjects,
   initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
@@ -1456,7 +1446,7 @@ useInfiniteQuery({
   // !mark(1:2)
   // only allow 5 pages to be kept in the cache
   maxPages: 5,
-})
+});
 ```
 
 ## Offline Support with `networkMode` {#offline-support-with-networkmode}
@@ -1487,10 +1477,10 @@ if (isLoading) {
 
   ``` ts
   useQuery({
-    queryKey: ['todos'],
-    queryFn: () => Promise.resolve([{ id: 1, text: 'Do Laundry' }]),
-    networkMode: 'always',
-  })
+    queryKey: ["todos"],
+    queryFn: () => Promise.resolve([{ id: 1, text: "Do Laundry" }]),
+    networkMode: "always",
+  });
   ```
 
   - Queries will never be paused because you have no network connection.
@@ -1531,9 +1521,9 @@ additional thing to note is that we often invalidate the cache in the
 ``` tsx
 useMutation({
   onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: ['todos']} )
+    queryClient.invalidateQueries({ queryKey: ["todos"] });
   },
-})
+});
 ```
 
 When we go offline in the middle of a mutation, the mutation is paused,
@@ -1550,11 +1540,12 @@ if it’s the last one.
 
 ``` tsx
 {
-  onSettled; () => {
+  onSettled;
+  () => {
     if (queryClient.isMutating({ mutationKey: ["todos"] }) === 1) {
-      return queryClient.invalidateQueries({ queryKey: ['todos'] })
+      return queryClient.invalidateQueries({ queryKey: ["todos"] });
     }
-  }
+  };
 }
 ```
 
@@ -1562,38 +1553,44 @@ if it’s the last one.
 
 ``` tsx
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import { defaultShouldDehydrateQuery, defaultShouldDehydrateMutation, QueryClient } from "@tanstack/react-query";
-import { removeOldestQuery } from "@tanstack/react-query-persist-client";
-import { useIsRestoring } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-
+import {
+  defaultShouldDehydrateMutation,
+  defaultShouldDehydrateQuery,
+  QueryClient,
+  useIsRestoring,
+} from "@tanstack/react-query";
+import {
+  PersistQueryClientProvider,
+  removeOldestQuery,
+} from "@tanstack/react-query-persist-client";
 
 const persister = createSyncStoragePersister({
   storage: window.localStorage,
   // !mark(1:1)
   retry: removeOldestQuery,
-})
+});
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // !mark(1:1)
       gcTime: 1000 * 60 * 60,
-    }
-  }
+    },
+  },
 });
 
 // !mark(1:1)
 queryClient.setMutationDefaults(["posts", "add"], {
-  mutationFn: addPost
-})
+  mutationFn: addPost,
+});
 
 function App() {
-  const isRestoring = useIsRestoring()
+  const isRestoring = useIsRestoring();
   if (isRestoring) {
-    return <div>Restoring...</div>
+    return <div>Restoring...</div>;
   }
 
-  return <PersistQueryClientProvider
+  return (
+    <PersistQueryClientProvider
       client={queryClient}
       persistOptions={{
         persister,
@@ -1603,23 +1600,26 @@ function App() {
           // !callout[/defaultShouldDehydrateQuery/] selectively dehydrate queries
           shouldDehydrateQuery: (query) =>
             defaultShouldDehydrateQuery(query) && query.meta?.persist === true,
-          shouldDehydrateMutation: (mutation) => defaultShouldDehydrateMutation(mutation) && mutation.meta?.persist === true,
+          shouldDehydrateMutation: (mutation) =>
+            defaultShouldDehydrateMutation(mutation) &&
+            mutation.meta?.persist === true,
         },
         // !callout[/onSuccess/] resume mutations
         onSuccess: () => {
-          return queryClient.resumePausedMutations()
+          return queryClient.resumePausedMutations();
         },
       }}
     ></PersistQueryClientProvider>
+  );
 }
 
 // later in components
 useQuery({
-  queryKey: ['todos'],
+  queryKey: ["todos"],
   queryFn: fetchTodos,
   // !mark(1:1)
   meta: { persist: true },
-})
+});
 ```
 
 Notes for the code above:
@@ -1642,14 +1642,14 @@ As an experimental feature, we can now set `persist` per query
 import { experimental_createPersister } from "@tanstack/react-query-persist-client";
 
 useQuery({
-  queryKey: ['todos'],
+  queryKey: ["todos"],
   queryFn: fetchTodos,
   // !mark(1:3)
   persister: experimental_createPersister({
     storage: localStorage,
     // ..other options
   }),
-})
+});
 ```
 
 The default options for the persister are
@@ -1684,7 +1684,6 @@ export default async function Home() {
     queryKey: ['todos'],
     queryFn: fetchTodos,
     staleTime: 1000 * 10
-
   })
 
   return <main>
