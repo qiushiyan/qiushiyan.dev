@@ -96,8 +96,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.2",
-    "@cloudflare/workers-types": "^4.20240821.1",
+    "@cloudflare/next-on-pages": "^1.13.6",
+    "@cloudflare/workers-types": "^4.20241205.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@tailwindcss/typography": "^0.5.15",
     "@total-typescript/ts-reset": "^0.6.0",
@@ -114,7 +114,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-next-on-pages": "^1.13.2",
+    "eslint-plugin-next-on-pages": "^1.13.6",
     "fast-glob": "^3.3.2",
     "hast-util-to-string": "^3.0.0",
     "postcss": "^8",
@@ -131,7 +131,7 @@
     "typescript": "^5",
     "vfile": "^6.0.3",
     "vfile-reporter": "^8.1.1",
-    "wrangler": "^3.73.0"
+    "wrangler": "^3.93.0"
   },
   "pnpm": {
     "patchedDependencies": {

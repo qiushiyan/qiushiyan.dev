@@ -11,7 +11,6 @@ export function SectionIndicator() {
   const [activeHeading, setActiveHeading] = useState<string | undefined>(
     undefined
   );
-  const observers = new Map<string, IntersectionObserver>();
 
   useEffect(() => {
     const blogObserver = new IntersectionObserver(
@@ -43,11 +42,9 @@ export function SectionIndicator() {
       document.getElementById(HOME_SECTIONS.projects.id) as Element
     );
 
-    observers.set(HOME_SECTIONS.blogs.label, blogObserver);
-    observers.set(HOME_SECTIONS.projects.label, projectObserver);
-
     return () => {
-      observers.forEach((observer) => observer.disconnect());
+      blogObserver.disconnect();
+      projectObserver.disconnect();
     };
   }, []);
 
