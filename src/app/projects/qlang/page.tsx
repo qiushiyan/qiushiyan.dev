@@ -9,7 +9,7 @@ import { ArticleProse } from "@/components/prose-wrapper";
 import { buttonVariants } from "@/components/ui/button";
 import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-// @ts-ignore
+// @ts-expect-error import markdown with plugin
 import Content from "./content.md";
 import { Selectable, Selection, SelectionProvider } from "./utils";
 

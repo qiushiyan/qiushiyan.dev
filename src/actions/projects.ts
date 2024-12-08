@@ -14,7 +14,8 @@ export const getProject = memoize(
   },
   {
     // log: isProduction ? undefined : ["dedupe", "datacache", "verbose"],
-    revalidateTags: (repo: string) => ["get-project", repo],
+    // @ts-expect-error bypass server action check
+    revalidateTags: async (repo: string) => ["get-project", repo],
     // logid: "get-project",
     persist: true,
     duration: 60 * 60,

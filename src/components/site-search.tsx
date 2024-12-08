@@ -2,7 +2,7 @@
 
 import React, {
   createContext,
-  ElementRef,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -49,7 +49,7 @@ const SearchProvider: React.FC<{
   const [searchQuery, setSearchQuery] = useState("");
   const [results, _setResults] = useState<SearchResult[]>([]);
   const [pending, startTransition] = useTransition();
-  const fuse = useRef<Fuse<SearchData>>();
+  const fuse = useRef<Fuse<SearchData>>(null);
 
   const search = useCallback(async (query: string) => {
     const domPurity = (await import("dompurify")).default;
@@ -212,7 +212,7 @@ const SearchFeedback: React.FC = () => {
 
 const SearchForm: React.FC = () => {
   const { searchQuery, setSearchQuery, search } = useSearch();
-  const formRef = useRef<ElementRef<"form">>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [debouncedSearchQuery] = useDebounceValue(searchQuery, 500);
   useEffect(() => {
@@ -279,7 +279,7 @@ const HighlightedText: React.FC<{
     }
 
     return acc;
-  }, [] as JSX.Element[]);
+  }, [] as ReactNode[]);
 
   return <>{parts}</>;
 };

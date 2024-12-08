@@ -16,11 +16,12 @@ export const generateStaticParams = () => {
   return allRecipes;
 };
 
-export const generateMetadata = ({
-  params,
-}: {
-  params: { group: string; slug: string };
-}) => {
+export const generateMetadata = async (
+  props: {
+    params: Promise<{ group: string; slug: string }>;
+  }
+) => {
+  const params = await props.params;
   const recipe = findRecipe(params.group, params.slug);
   if (!recipe) {
     return {};
@@ -42,13 +43,18 @@ export const generateMetadata = ({
   };
 };
 
-export default function Layout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { group: string; slug: string };
-}) {
+export default async function Layout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ group: string; slug: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const recipe = findRecipe(params.group, params.slug);
   if (!recipe) {
     return notFound();

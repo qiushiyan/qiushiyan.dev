@@ -16,11 +16,12 @@ import { MAIN_CONTENT_ID } from "@/constants";
 import { findPost, getPosts } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 
-export default async function PostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default async function PostPage(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const params = await props.params;
   const post = findPost(params.slug);
   if (!post) {
     return notFound();

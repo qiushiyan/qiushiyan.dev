@@ -1,4 +1,4 @@
-import { posts } from "#content";
+import { cookies } from "next/headers";
 
 import { SiteNav } from "@/components/nav/site-nav";
 import { PostActiveHeading } from "@/components/post/post-active-heading";
@@ -9,11 +9,10 @@ import { PostSidebar } from "./post-sidebar";
 
 export const runtime = "edge";
 
-export const generateStaticParams = async () => {
-  return getPosts().map((post) => ({ slug: post.slug }));
-};
-
-export const generateMetadata = ({ params }: { params: { slug: string } }) => {
+export const generateMetadata = async (props: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const params = await props.params;
   const page = getPosts().find((page) => page.slug === params.slug);
   if (!page) {
     return {
@@ -41,19 +40,19 @@ export const generateMetadata = ({ params }: { params: { slug: string } }) => {
   };
 };
 
-export default async function Layout({
-  children,
-  params,
-}: {
+export default async function Layout(props: {
   children: React.ReactNode;
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { cookies } = await import("next/headers");
+  const params = await props.params;
+
+  const { children } = props;
+  const c = await cookies();
 
   return (
     <>
       <SidebarLayout
-        defaultOpen={cookies().get("sidebar:state")?.value === "true"}
+        defaultOpen={c.get("sidebar:state")?.value === "true"}
         className="flex-col"
       >
         <SiteNav

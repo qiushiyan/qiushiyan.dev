@@ -19,7 +19,7 @@ const featured = [
   },
   {
     name: "qiushiyan/qlang",
-    href: "/projects/qlang",
+    href: "https://qlang.qiushiyan.dev/",
   },
 ];
 

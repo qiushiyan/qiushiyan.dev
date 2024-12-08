@@ -11,3 +11,18 @@ index aa3751021809c614a4db18ba01756dea41d9bf2c..eab05f351835d02adfdc543846b3a6f1
    "react-native": "lib/htmr.js",
    "types": "index.d.ts",
    "files": [
+diff --git a/src/types.ts b/src/types.ts
+index c798df5b0ffe472c99079b98b41525e02ad4851e..d520b95a6036dc75715662ee6ccabfd16bcd43ec 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -1,7 +1,7 @@
+-import React, { ReactHTML, ReactSVG, ReactNode, ComponentType } from "react";
++import React, { SVGElementType, HTMLElementType, ReactNode, ComponentType } from "react";
+ 
+-export type HTMLTags = keyof ReactHTML;
+-export type SVGTags = keyof ReactSVG;
++export type HTMLTags = HTMLElementType;
++export type SVGTags = SVGElementType;
+ type AllTags = HTMLTags | SVGTags
+ 
+ type HTMLTransform = {

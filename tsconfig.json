@@ -1,7 +1,13 @@
 {
   "compilerOptions": {
-    "types": ["@cloudflare/workers-types"],
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": [
+      "@cloudflare/workers-types"
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,9 +25,14 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "#content": ["./.velite"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "#content": [
+        "./.velite"
+      ]
+    },
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
@@ -34,5 +45,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

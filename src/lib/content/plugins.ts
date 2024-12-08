@@ -2,10 +2,6 @@
 import { Element, Root } from "hast";
 import { h } from "hastscript";
 import { Root as MdastRoot } from "mdast";
-import rehypeStringify from "rehype-stringify";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import { unified } from "unified";
 import { SKIP, visit } from "unist-util-visit";
 
 import { htmlProcessor } from "./processor";

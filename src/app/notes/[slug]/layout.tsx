@@ -3,11 +3,10 @@ import { getNotes } from "@/lib/content/notes";
 
 export const runtime = "edge";
 
-export const generateStaticParams = async () => {
-  return getNotes().map((note) => ({ slug: note.slug }));
-};
-
-export const generateMetadata = ({ params }: { params: { slug: string } }) => {
+export const generateMetadata = async (props: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const params = await props.params;
   const page = getNotes().find((page) => page.slug === params.slug);
   if (!page) {
     return {

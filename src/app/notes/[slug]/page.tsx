@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getComponents } from "@/components/components-registry";
 import { Container } from "@/components/container";
 import { HtmlRenderer } from "@/components/html-renderer";
-import { ArticleProse, BasicProse } from "@/components/prose-wrapper";
+import { ArticleProse } from "@/components/prose-wrapper";
 import { MAIN_CONTENT_ID } from "@/constants";
 import { findNote } from "@/lib/content/notes";
 import { cn, noteViewTransitionName } from "@/lib/utils";
@@ -13,11 +13,13 @@ import "./page.scss";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export default async function Page({
-  params: { slug },
-}: {
-  params: { slug: string };
+export default async function Page(props: {
+  params: Promise<{ slug: string }>;
 }) {
+  const params = await props.params;
+
+  const { slug } = params;
+
   const note = findNote(slug);
   if (!note) {
     return notFound();

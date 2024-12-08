@@ -18,7 +18,8 @@ type Params = {
   group: string;
 };
 
-export default function Page({ params }: { params: Params }) {
+export default async function Page(props: { params: Promise<Params> }) {
+  const params = await props.params;
   const recipe = findRecipe(params.group, params.slug);
   if (!recipe || !recipe.codes) {
     return notFound();
