@@ -84,7 +84,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
         <Image
           src={"/featured.avif"}
           alt={"a nature scene"}
-          layout="fill"
+          fill={true}
           objectFit="cover"
           className="rounded-md px-2"
           priority
