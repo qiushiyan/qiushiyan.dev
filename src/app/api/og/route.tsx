@@ -4,8 +4,6 @@ const size = {
   width: 1200,
   height: 630,
 };
-export const runtime = "edge";
-
 export const GET = async (request: Request) => {
   const url = new URL(request.url);
   const title = url.searchParams.get("title");

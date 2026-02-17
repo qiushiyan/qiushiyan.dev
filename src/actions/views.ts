@@ -1,10 +1,10 @@
 "use server";
 
 import { cache } from "react";
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export const incrementView = cache(async (slug: string) => {
-  const { env } = getRequestContext();
+  const { env } = await getCloudflareContext({ async: true });
   await env.DB.prepare(
     `INSERT INTO post_views (post_slug, view_count)
    VALUES (?, 1)
@@ -24,7 +24,7 @@ export const incrementView = cache(async (slug: string) => {
 });
 
 export const getViews = cache(async (slug: string) => {
-  const { env } = getRequestContext();
+  const { env } = await getCloudflareContext({ async: true });
 
   const result = await env.DB.prepare(
     `SELECT view_count FROM post_views WHERE post_slug = ? LIMIT 1`

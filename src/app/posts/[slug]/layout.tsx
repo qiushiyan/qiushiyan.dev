@@ -7,8 +7,6 @@ import { host } from "@/constants";
 import { findPost, getPosts } from "@/lib/content/posts";
 import { PostSidebar } from "./post-sidebar";
 
-export const runtime = "edge";
-
 export const generateMetadata = async (props: {
   params: Promise<{ slug: string }>;
 }) => {

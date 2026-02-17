@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "qiushiyan",
+  "compatibility_date": "2024-12-30",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "qiushiyan",
+    },
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "personal-website",
+      "database_id": "327bba3d-2bc5-434a-86a7-67c78582f0fa",
+    },
+  ],
+  "images": {
+    // Enable image optimization
+    // see https://opennext.js.org/cloudflare/howtos/image
+    "binding": "IMAGES",
+  },
+}

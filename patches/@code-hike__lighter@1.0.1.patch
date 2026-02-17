@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 41a2d0c0f24a30a6dd5980f309191555e7a4fe76..90d5370dc9934f3a0232bb91e603e3f98ff1df9a 100644
+--- a/package.json
++++ b/package.json
+@@ -7,6 +7,7 @@
+   "exports": {
+     ".": {
+       "types": "./dist/index.d.ts",
++      "workerd": "./dist/worker.esm.mjs",
+       "worker": "./dist/worker.esm.mjs",
+       "browser": "./dist/browser.esm.mjs",
+       "default": "./dist/index.esm.mjs"

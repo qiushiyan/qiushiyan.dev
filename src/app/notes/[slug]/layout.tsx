@@ -1,8 +1,6 @@
 import { SiteNav } from "@/components/nav/site-nav";
 import { getNotes } from "@/lib/content/notes";
 
-export const runtime = "edge";
-
 export const generateMetadata = async (props: {
   params: Promise<{ slug: string }>;
 }) => {

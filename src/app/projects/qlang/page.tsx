@@ -18,6 +18,10 @@ const Schema = Block.extend({
   steps: z.array(Block.extend({ code: CodeBlock })),
 });
 
+// Force static generation so highlight() runs at build time in Node.js,
+// not at runtime on Cloudflare Workers where WASM is restricted
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "QLang",
   description: "A programming language with a mix of R, Python and JavaScript",

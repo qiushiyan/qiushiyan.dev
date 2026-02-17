@@ -5,11 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "gen:types": "pnpm wrangler types --env-interface CloudflareEnv",
-    "build:pages": "pnpm next-on-pages",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv",
     "shadcn": "pnpx shadcn-ui@latest",
-    "preview": "pnpm run build:pages && wrangler pages dev",
-    "deploy": "pnpm run build:pages && wrangler pages deploy",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
@@ -34,6 +33,7 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "15.0.4",
+    "@opennextjs/cloudflare": "^1.16.5",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-collapsible": "^1.1.0",
@@ -53,7 +53,7 @@
     "better-sqlite3": "^11.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "codehike": "1.0.4",
+    "codehike": "1.0.7",
     "dompurify": "^3.1.6",
     "drizzle-orm": "^0.33.0",
     "fluid-tailwind": "^1.0.3",
@@ -66,7 +66,7 @@
     "lucide-react": "^0.436.0",
     "mdast": "^3.0.0",
     "motion": "12.0.0-alpha.2",
-    "next": "15.0.4",
+    "next": "15.2.9",
     "next-themes": "^0.4.4",
     "next-view-transitions": "^0.3.4",
     "nextjs-better-unstable-cache": "^1.1.0",
@@ -96,8 +96,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12225142780/npm-package-next-on-pages-918",
-    "@cloudflare/workers-types": "^4.20241127.0",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.16.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
@@ -117,7 +115,6 @@
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-drizzle": "^0.2.3",
-    "eslint-plugin-next-on-pages": "^1.13.6",
     "eslint-plugin-only-warn": "^1.1.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.1.0",
@@ -139,11 +136,12 @@
     "vercel": "^39.1.3",
     "vfile": "^6.0.3",
     "vfile-reporter": "^8.1.1",
-    "wrangler": "^3.93.0"
+    "wrangler": "^4.66.0"
   },
   "pnpm": {
     "patchedDependencies": {
-      "htmr@1.0.2": "patches/htmr@1.0.2.patch"
+      "htmr@1.0.2": "patches/htmr@1.0.2.patch",
+      "@code-hike/lighter@1.0.1": "patches/@code-hike__lighter@1.0.1.patch"
     }
   }
 }

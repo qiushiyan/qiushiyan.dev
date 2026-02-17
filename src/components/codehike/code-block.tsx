@@ -1,4 +1,4 @@
-import { highlight, Pre } from "codehike/code";
+import { HighlightedCode, Pre } from "codehike/code";
 import { FileCodeIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -15,17 +15,27 @@ type CodeBlockProps = {
   value: string;
   lang?: string;
   customMeta?: CodeBlockMeta;
+  highlighted?: string;
 };
 
-export const CodeBlock = async ({
+export const CodeBlock = ({
   value,
   lang,
   customMeta,
+  highlighted: highlightedJson,
 }: CodeBlockProps) => {
-  const highlighted = await highlight(
-    { value, lang: lang ?? "", meta: "" },
-    "github-from-css"
-  );
+  if (!highlightedJson) {
+    // Fallback: render code without syntax highlighting
+    return (
+      <figure className="my-2 py-2">
+        <pre className="my-0 border p-2">
+          <code>{value}</code>
+        </pre>
+      </figure>
+    );
+  }
+
+  const highlighted = JSON.parse(highlightedJson) as HighlightedCode;
   const noteAnnotations = highlighted.annotations.filter(
     ({ name }) => name === "ref"
   );

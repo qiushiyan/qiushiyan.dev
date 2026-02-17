@@ -1,6 +1,9 @@
-import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev";
+import { createRequire } from "module";
+import path from "path";
 import createMDX from "@next/mdx";
 import { recmaCodeHike, remarkCodeHike } from "codehike/mdx";
+
+const require = createRequire(import.meta.url);
 
 const isDev = process.argv.indexOf("dev") !== -1;
 const isBuild = process.argv.indexOf("build") !== -1;
@@ -8,10 +11,6 @@ if (!process.env.VELITE_STARTED && (isDev || isBuild)) {
   process.env.VELITE_STARTED = "1";
   const { build } = await import("velite");
   await build({ watch: isDev, clean: !isDev });
-}
-
-if (process.env.NODE_ENV === "development") {
-  await setupDevPlatform();
 }
 
 /** @type {import("codehike/mdx").CodeHikeConfig} */
@@ -30,9 +29,8 @@ const withMDX = createMDX({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  sassOptions: {
-    includePaths: ["./src/styles"],
-  },
+  output: "standalone",
+  // @code-hike/lighter is no longer needed at runtime - highlighting is pre-computed at build time
   images: {
     remotePatterns: [
       {
@@ -56,3 +54,6 @@ const nextConfig = {
 };
 
 export default withMDX(nextConfig);
+
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+initOpenNextCloudflareForDev();

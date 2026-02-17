@@ -1,16 +1,20 @@
-import { highlight, Inline } from "codehike/code";
+import { HighlightedCode, Inline } from "codehike/code";
 
-export async function InlineCode({
+export function InlineCode({
   value,
   lang,
+  highlighted: highlightedJson,
 }: {
   value: string;
   lang: string;
+  highlighted?: string;
 }) {
-  const highlighted = await highlight(
-    { value, lang, meta: "" },
-    "github-from-css"
-  );
+  if (!highlightedJson) {
+    // Fallback: render code without syntax highlighting
+    return <code data-inline-code>{value}</code>;
+  }
+
+  const highlighted = JSON.parse(highlightedJson) as HighlightedCode;
 
   return (
     <Inline style={highlighted.style} code={highlighted} data-inline-code />

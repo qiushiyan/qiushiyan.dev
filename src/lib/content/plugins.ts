@@ -6,8 +6,19 @@ import { SKIP, visit } from "unist-util-visit";
 
 import { htmlProcessor } from "./processor";
 
+// Lazy-loaded highlight function (only used at Velite build time in Node.js)
+let _highlight: any = null;
+async function getHighlight() {
+  if (!_highlight) {
+    const mod = await import("codehike/code");
+    _highlight = mod.highlight;
+  }
+  return _highlight;
+}
+
 export const rehypeCode = () => {
-  return (tree: Root) => {
+  return async (tree: Root) => {
+    // Phase 1: Transform tree structure (synchronous, same as before)
     visit(tree, "element", (node, index, parent) => {
       if (node.tagName === "code-switcher") {
         const pres = node.children
@@ -70,11 +81,74 @@ export const rehypeCode = () => {
         }
       }
     });
+
+    // Phase 2: Pre-highlight all code elements at build time
+    // This runs in Node.js (Velite build) where WASM is supported,
+    // so components don't need to call highlight() at runtime on Cloudflare Workers
+    const highlight = await getHighlight();
+    const tasks: Promise<void>[] = [];
+
+    visit(tree, "element", (node) => {
+      if (node.tagName === "code-block" || node.tagName === "code-inline") {
+        tasks.push(
+          highlight(
+            {
+              value: String(node.properties.value || ""),
+              lang: String(node.properties.lang || ""),
+              meta: "",
+            },
+            "github-from-css"
+          )
+            .then((result) => {
+              node.properties.highlighted = JSON.stringify(result);
+            })
+            .catch((e) => {
+              console.warn(
+                `Pre-highlight failed for ${node.tagName}:`,
+                e.message
+              );
+            })
+        );
+      }
+
+      if (node.tagName === "code-switcher" && node.properties.data) {
+        tasks.push(
+          (async () => {
+            const entries = JSON.parse(String(node.properties.data));
+            const highlightedEntries = await Promise.all(
+              entries.map(async (entry) => {
+                try {
+                  const result = await highlight(
+                    {
+                      value: entry.code,
+                      lang: entry.lang || "",
+                      meta: "",
+                    },
+                    "github-from-css"
+                  );
+                  return { ...entry, highlighted: result };
+                } catch (e) {
+                  console.warn(
+                    "Pre-highlight switcher entry failed:",
+                    e.message
+                  );
+                  return entry;
+                }
+              })
+            );
+            node.properties.data = JSON.stringify(highlightedEntries);
+          })()
+        );
+      }
+    });
+
+    await Promise.all(tasks);
   };
 };
 
 export const rehypeCodeInline = () => {
-  return (tree: Root) => {
+  return async (tree: Root) => {
+    // Phase 1: Transform em to code-inline (synchronous)
     visit(tree, "element", (node, index, parent) => {
       if (node.tagName === "em") {
         const lang = node.children[0].value;
@@ -92,6 +166,33 @@ export const rehypeCodeInline = () => {
         }
       }
     });
+
+    // Phase 2: Pre-highlight inline code at build time
+    const highlight = await getHighlight();
+    const tasks: Promise<void>[] = [];
+
+    visit(tree, "element", (node) => {
+      if (node.tagName === "code-inline") {
+        tasks.push(
+          highlight(
+            {
+              value: String(node.properties.value || ""),
+              lang: String(node.properties.lang || ""),
+              meta: "",
+            },
+            "github-from-css"
+          )
+            .then((result) => {
+              node.properties.highlighted = JSON.stringify(result);
+            })
+            .catch((e) => {
+              console.warn("Pre-highlight inline code failed:", e.message);
+            })
+        );
+      }
+    });
+
+    await Promise.all(tasks);
   };
 };
 

@@ -1,30 +1,23 @@
-import { highlight, Pre } from "codehike/code";
+import { HighlightedCode, Pre } from "codehike/code";
 import { FileCodeIcon } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { callout } from "./callout";
 import { mark } from "./mark";
 
-export const CodeSwitcher = async ({ data }: { data: string }) => {
-  const entries = await Promise.all(
-    (
-      JSON.parse(data) as Array<{
-        lang: string;
-        code: string;
-        filename?: string;
-      }>
-    ).map(async (entry, index) => {
-      const highlightedCode = await highlight(
-        { value: entry.code, lang: entry.lang, meta: "" },
-        "github-from-css"
-      );
-      return {
-        ...entry,
-        key: entry.filename || `tab ${index}`,
-        highlightedCode,
-      };
-    })
-  );
+export const CodeSwitcher = ({ data }: { data: string }) => {
+  const entries = (
+    JSON.parse(data) as Array<{
+      lang: string;
+      code: string;
+      filename?: string;
+      highlighted?: HighlightedCode;
+    }>
+  ).map((entry, index) => ({
+    ...entry,
+    key: entry.filename || `tab ${index}`,
+    highlightedCode: entry.highlighted,
+  }));
 
   if (entries.length === 0) {
     return null;
@@ -50,13 +43,19 @@ export const CodeSwitcher = async ({ data }: { data: string }) => {
           value={entry.key}
           className="rounded-md border"
         >
-          <Pre
-            handlers={[callout, mark]}
-            code={entry.highlightedCode}
-            lang={entry.lang}
-            style={entry.highlightedCode.style}
-            className="my-2"
-          />
+          {entry.highlightedCode ? (
+            <Pre
+              handlers={[callout, mark]}
+              code={entry.highlightedCode}
+              lang={entry.lang}
+              style={entry.highlightedCode.style}
+              className="my-2"
+            />
+          ) : (
+            <pre className="my-2">
+              <code>{entry.code}</code>
+            </pre>
+          )}
         </TabsContent>
       ))}
     </Tabs>

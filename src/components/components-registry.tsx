@@ -27,13 +27,24 @@ export const sharedComponents = {
     );
   },
   a: BlogLink,
-  "code-block": ({ value, lang, filename, caption }: CodeBlockProps) => {
+  "code-block": ({
+    value,
+    lang,
+    filename,
+    caption,
+    highlighted,
+  }: CodeBlockProps) => {
     return (
-      <CodeBlock value={value} lang={lang} customMeta={{ filename, caption }} />
+      <CodeBlock
+        value={value}
+        lang={lang}
+        customMeta={{ filename, caption }}
+        highlighted={highlighted}
+      />
     );
   },
-  "code-inline": ({ value, lang }: CodeInlineProps) => {
-    return <InlineCode value={value} lang={lang} />;
+  "code-inline": ({ value, lang, highlighted }: CodeInlineProps) => {
+    return <InlineCode value={value} lang={lang} highlighted={highlighted} />;
   },
   "my-steps": Steps,
   "wider-content": WiderContent,
@@ -89,9 +100,11 @@ type CodeBlockProps = {
   lang: string;
   filename?: string;
   caption?: string;
+  highlighted?: string;
 };
 
 type CodeInlineProps = {
   value: string;
   lang: string;
+  highlighted?: string;
 };

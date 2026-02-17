@@ -86,13 +86,13 @@ const posts = defineCollection({
         rehypePlugins: [rehypeCode, rehypeUnwrapImages],
       }),
     })
-    .transform((data) => {
+    .transform(async (data) => {
       const postSlug = data.slug || slug(data.title);
       return {
         ...data,
-        descriptionHtml: descriptionProcessor
-          .processSync(data.description)
-          .toString(),
+        descriptionHtml: (
+          await descriptionProcessor.process(data.description)
+        ).toString(),
         slug: postSlug,
         href: routes.post(postSlug),
       };

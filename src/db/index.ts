@@ -1,18 +1,9 @@
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { drizzle } from "drizzle-orm/d1";
 
 import * as schema from "./schema";
 
-export const runtime = "edge";
-
-function initDbConnection() {
-  if (process.env.NODE_ENV === "development") {
-    const { env } = getRequestContext();
-
-    return drizzle(env.DB, { schema });
-  }
-
-  return drizzle(process.env.DB as unknown as D1Database, { schema });
+export async function getDb() {
+  const { env } = await getCloudflareContext({ async: true });
+  return drizzle(env.DB, { schema });
 }
-
-export const db = initDbConnection();

@@ -14,8 +14,20 @@ export const PostDescription = ({
       <HtmlRenderer
         content={description}
         components={{
-          "code-inline": ({ value, lang }: { value: string; lang: string }) => (
-            <InlineCode value={value} lang={lang} />
+          "code-inline": ({
+            value,
+            lang,
+            highlighted,
+          }: {
+            value: string;
+            lang: string;
+            highlighted?: string;
+          }) => (
+            <InlineCode
+              value={value}
+              lang={lang}
+              highlighted={highlighted}
+            />
           ),
         }}
       />

@@ -10,7 +10,7 @@ import { Container } from "@/components/container";
 import { SiteNav } from "@/components/nav/site-nav";
 import { getPosts } from "@/lib/content/posts";
 
-export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export default function Page() {
   return (
