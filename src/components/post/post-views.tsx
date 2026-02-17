@@ -21,5 +21,4 @@ export const PostViews = async ({
   );
 };
 
-// eslint-disable-next-line react/display-name
 PostViews.Skeleton = () => <Skeleton className="h-4 w-10" />;

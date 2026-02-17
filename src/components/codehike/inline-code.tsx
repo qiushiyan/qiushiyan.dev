@@ -1,4 +1,4 @@
-import { highlight, Inline, RawCode } from "codehike/code";
+import { highlight, Inline } from "codehike/code";
 
 export async function InlineCode({
   value,

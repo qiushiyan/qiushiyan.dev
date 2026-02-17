@@ -2,9 +2,6 @@
   "name": "qiushiyan.dev",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -99,8 +96,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12214892713/npm-package-next-on-pages-917",
-    "@cloudflare/workers-types": "^4.20241205.0",
+    "@cloudflare/next-on-pages": "https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12225142780/npm-package-next-on-pages-918",
+    "@cloudflare/workers-types": "^4.20241127.0",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.16.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",

@@ -11,9 +11,9 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { cn, postViewTransitionName } from "@/lib/utils";
-import { Badge } from "../../ui/badge";
-import { PostDescription } from "../post-description";
-import { PostViews } from "../post-views";
+import { Badge } from "../ui/badge";
+import { PostDescription } from "./post-description";
+import { PostViews } from "./post-views";
 
 export const PostCard = ({
   post,
@@ -80,12 +80,11 @@ function FeaturedPostCard({ post }: { post: Post }) {
           <PostCardFooter post={post} />
         </CardFooter>
       </Card>
-      <div className="relative order-2">
+      <div className="relative order-2 object-cover">
         <Image
           src={"/featured.avif"}
           alt={"a nature scene"}
           fill={true}
-          objectFit="cover"
           className="rounded-md px-2"
           priority
         />

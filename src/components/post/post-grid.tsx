@@ -1,11 +1,7 @@
 import { getPostsByTags } from "@/lib/content/posts";
 import { PostCard } from "./post-card";
 
-export const PostGrid = ({ selectedTags }: { selectedTags: string[] }) => {
-  return <PostCards selectedTags={selectedTags} />;
-};
-
-const PostCards = ({ selectedTags }: { selectedTags: string[] }) => {
+export function PostGrid({ selectedTags }: { selectedTags: string[] }) {
   const posts = getPostsByTags(selectedTags);
 
   return (
@@ -19,4 +15,4 @@ const PostCards = ({ selectedTags }: { selectedTags: string[] }) => {
       )}
     </div>
   );
-};
+}

@@ -219,10 +219,10 @@ importers:
         version: 3.23.8
     devDependencies:
       '@cloudflare/next-on-pages':
-        specifier: https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12214892713/npm-package-next-on-pages-917
-        version: https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12214892713/npm-package-next-on-pages-917(@cloudflare/workers-types@4.20241205.0)(vercel@39.1.3)(wrangler@3.93.0(@cloudflare/workers-types@4.20241205.0))
+        specifier: https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12225142780/npm-package-next-on-pages-918
+        version: https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12225142780/npm-package-next-on-pages-918(@cloudflare/workers-types@4.20241205.0)(vercel@39.1.3)(wrangler@3.93.0(@cloudflare/workers-types@4.20241205.0))
       '@cloudflare/workers-types':
-        specifier: ^4.20241205.0
+        specifier: ^4.20241127.0
         version: 4.20241205.0
       '@eslint/eslintrc':
         specifier: ^3.2.0
@@ -440,9 +440,9 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
-  '@cloudflare/next-on-pages@https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12214892713/npm-package-next-on-pages-917':
-    resolution: {tarball: https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12214892713/npm-package-next-on-pages-917}
-    version: 0.0.0-28ee1db
+  '@cloudflare/next-on-pages@https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12225142780/npm-package-next-on-pages-918':
+    resolution: {tarball: https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12225142780/npm-package-next-on-pages-918}
+    version: 0.0.0-e9c9571
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20240208.0
@@ -2717,10 +2717,6 @@ packages:
 
   crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
-
-  cross-spawn@7.0.3:
-    resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
-    engines: {node: '>= 8'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -5826,7 +5822,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/next-on-pages@https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12214892713/npm-package-next-on-pages-917(@cloudflare/workers-types@4.20241205.0)(vercel@39.1.3)(wrangler@3.93.0(@cloudflare/workers-types@4.20241205.0))':
+  '@cloudflare/next-on-pages@https://prerelease-registry.devprod.cloudflare.dev/next-on-pages/runs/12225142780/npm-package-next-on-pages-918(@cloudflare/workers-types@4.20241205.0)(vercel@39.1.3)(wrangler@3.93.0(@cloudflare/workers-types@4.20241205.0))':
     dependencies:
       acorn: 8.14.0
       ast-types: 0.14.2
@@ -8028,12 +8024,6 @@ snapshots:
 
   crelt@1.0.6: {}
 
-  cross-spawn@7.0.3:
-    dependencies:
-      path-key: 3.1.1
-      shebang-command: 2.0.0
-      which: 2.0.2
-
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -8834,7 +8824,7 @@ snapshots:
 
   foreground-child@3.3.0:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
   framer-motion@12.0.0-alpha.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
