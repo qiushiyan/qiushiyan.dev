@@ -40,7 +40,7 @@ export default function NotesPage() {
                     <li key={note.href}>
                       <Link href={note.href}>
                         <h3
-                          className="inline-flex font-medium tracking-tight ~text-base/lg"
+                          className="inline-flex font-medium tracking-tight text-base lg:text-lg"
                           style={{
                             viewTransitionName: noteViewTransitionName(
                               note.slug

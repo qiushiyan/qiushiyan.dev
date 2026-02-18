@@ -25,7 +25,7 @@ export function MobileNav() {
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="size-5"
           >
             <path
               d="M3 5H11"
@@ -53,7 +53,7 @@ export function MobileNav() {
         </Button>
       </PopoverTrigger>
       <PopoverContent side="bottom" align="start" className="p-4">
-        <nav aria-label="Mobile navigation" className="flex flex-col space-y-3">
+        <nav aria-label="Mobile navigation" className="flex flex-col gap-3">
           {NavLinks.Mobile.map((link, index) => (
             <MobileLink
               onOpenChange={setOpen}

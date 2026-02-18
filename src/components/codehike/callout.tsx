@@ -50,7 +50,7 @@ export const callout: AnnotationHandler = {
         >
           <div
             style={{ left: `${column - marginLeft}ch` }}
-            className="absolute -top-[1px] h-2 w-2 -translate-y-1/2 rotate-45 border-l border-t border-current bg-secondary text-foreground"
+            className="absolute -top-px h-2 w-2 -translate-y-1/2 rotate-45 border-l border-t border-current bg-secondary text-foreground"
           />
           {annotation.query}
         </div>

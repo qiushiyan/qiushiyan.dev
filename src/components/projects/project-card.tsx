@@ -36,13 +36,13 @@ export const ProjectCard = ({ data, className, ...rest }: ProjectCardProps) => {
         <footer className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <p className="flex items-center gap-1">
-              <StarIcon className="h-4 w-4" />
+              <StarIcon className="size-4" />
               <span className="text-sm text-muted-foreground">
                 {data.stargazers_count}
               </span>
             </p>
             <p className="flex items-center gap-1">
-              <GitForkIcon className="h-4 w-4" />
+              <GitForkIcon className="size-4" />
               <span className="text-sm text-muted-foreground">
                 {data.forks_count}
               </span>

@@ -1,12 +1,12 @@
-@tailwind base;
+@reference "tailwindcss";
 
 @layer base {
   .full-width {
-    @apply lg:col-span-full lg:mx-6 !important;
+    @apply lg:col-span-full! lg:mx-6!;
   }
 
   .wider {
-    @apply lg:col-span-full lg:mx-12 !important;
+    @apply lg:col-span-full! lg:mx-12!;
   }
 }
 
@@ -25,12 +25,14 @@
   }
 
   .two-column {
-    @apply ~gap-2/8 grid grid-cols-1 lg:grid-cols-2;
+    @apply grid grid-cols-1 lg:grid-cols-2;
+    gap: clamp(0.5rem, 0.324rem + 0.7512vw, 2rem);
   }
 
   // quarto classes
   .column-margin {
-    @apply relative col-span-1 col-start-3 hidden text-sm text-muted-foreground lg:block xl:pl-6;
+    @apply relative col-span-1 col-start-3 hidden text-sm lg:block xl:pl-6;
+    color: hsl(var(--muted-foreground));
 
     &::before {
       @apply absolute hidden lg:-top-6 lg:left-0 lg:block lg:size-4 xl:left-0 xl:top-0;
@@ -47,7 +49,7 @@
     }
   }
   .column-body-outset {
-    @apply wider;
+    @apply lg:col-span-full! lg:mx-12!;
   }
 }
 

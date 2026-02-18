@@ -16,7 +16,7 @@ export const FootnoteNumber = ({ n }: { n: number }) => {
   return (
     <span
       data-value={n}
-      className="inline-block h-4 w-4 self-center rounded-full border border-slate-400 text-center font-mono text-sm leading-4 after:content-[attr(data-value)]"
+      className="inline-block size-4 self-center rounded-full border border-slate-400 text-center font-mono text-sm/4 after:content-[attr(data-value)]"
     />
   );
 };

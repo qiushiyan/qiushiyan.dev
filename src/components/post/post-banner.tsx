@@ -24,22 +24,22 @@ export const PostBanner = ({ post }: { post: Post }) => {
         {post.draft && <Badge>Draft</Badge>}
       </div>
       <PostDescription
-        className="flex-grow text-sm lg:text-base"
+        className="grow text-sm lg:text-base"
         description={post.descriptionHtml}
       />
       <div className="flex flex-col flex-wrap gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-6">
         <div className="flex items-center">
-          <CalendarIcon className="mr-2 h-4 w-4" />
+          <CalendarIcon className="mr-2 size-4" />
           <time dateTime={post.date}>
             {new Date(post.date).toLocaleDateString()}
           </time>
         </div>
         <div className="flex items-center">
-          <ClockIcon className="mr-2 h-4 w-4" />
+          <ClockIcon className="mr-2 size-4" />
           <span>{post.metadata.readingTime} min read</span>
         </div>
         <div className="flex items-center">
-          <EyeIcon className="mr-2 h-4 w-4" />
+          <EyeIcon className="mr-2 size-4" />
           <PostViews slug={post.slug} />
         </div>
       </div>

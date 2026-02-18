@@ -1,13 +1,18 @@
 .steps {
-  @apply my-8 ml-4 border-l pl-8 [counter-reset:step];
+  margin-top: calc(var(--spacing) * 8);
+  margin-bottom: calc(var(--spacing) * 8);
+  margin-left: calc(var(--spacing) * 4);
+  border-left-width: 1px;
+  padding-left: calc(var(--spacing) * 8);
+  counter-reset: step;
 }
 
 .steps > h4 {
-  @apply step;
+  counter-increment: step;
 }
 
 .steps:first-child > h4:first-child {
-  @apply mt-0;
+  margin-top: 0;
 }
 
 .step {
@@ -15,7 +20,20 @@
 }
 
 .step:before {
-  @apply absolute inline-flex h-9 w-9 items-center justify-center rounded-full border-2 bg-background text-center -indent-px font-mono text-base font-medium;
-  @apply ml-[-50px] mt-[-4px];
+  position: absolute;
+  display: inline-flex;
+  size: calc(var(--spacing) * 9);
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border-width: 2px;
+  background-color: hsl(var(--background));
+  text-align: center;
+  text-indent: -1px;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-weight: 500;
+  margin-top: -4px;
+  margin-left: -50px;
   content: counter(step);
 }

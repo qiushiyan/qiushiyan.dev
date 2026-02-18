@@ -22,7 +22,7 @@ export const RecipesHeader = ({ title, slug, group }: Props) => {
   const icon = iconMap[group] || null;
   return (
     <header className={cn("w-full bg-background p-4")}>
-      <div className="flex h-[var(--nav-height)] items-center space-x-4 sm:justify-between sm:space-x-2">
+      <div className="flex h-(--nav-height) items-center gap-4 sm:justify-between sm:gap-2">
         <div className="flex items-center gap-2">
           <div className={"flex items-center gap-2"}>
             <BoxIcon className="size-6" />
@@ -44,7 +44,7 @@ export const RecipesHeader = ({ title, slug, group }: Props) => {
             {icon}
           </h2>
         </div>
-        <div className="ml-auto flex items-center justify-end space-x-4">
+        <div className="ml-auto flex items-center justify-end gap-4">
           <Link
             href={routes.home}
             className={cn(buttonVariants({ variant: "ghost" }), "gap-2")}

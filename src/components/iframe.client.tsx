@@ -25,7 +25,7 @@ export const IFrameClient = ({
           <a
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon" }),
-              "!text-inherit"
+              "text-inherit!"
             )}
             target="_blank"
             rel="noreferrer noopener"
@@ -39,7 +39,7 @@ export const IFrameClient = ({
           </Button>
         </div>
 
-        <div className="flex-grow">
+        <div className="grow">
           <input
             type="text"
             readOnly

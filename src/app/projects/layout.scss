@@ -1,12 +1,12 @@
-@tailwind base;
+@reference "tailwindcss";
 
 @layer base {
   .full-width {
-    @apply lg:col-span-full lg:mx-6 !important;
+    @apply lg:col-span-full! lg:mx-6!;
   }
 
   .wider {
-    @apply lg:col-span-full lg:mx-12 !important;
+    @apply lg:col-span-full! lg:mx-12!;
   }
 }
 

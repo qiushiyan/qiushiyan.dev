@@ -36,7 +36,7 @@ export default async function PostPage(
           <PostBanner post={post} />
           <Separator />
 
-          <article className="post center-grid !m-0" id={MAIN_CONTENT_ID}>
+          <article className="post center-grid m-0!" id={MAIN_CONTENT_ID}>
             <HtmlRenderer
               content={post.content}
               components={await getComponents(post.components)}

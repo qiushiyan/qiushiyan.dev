@@ -59,7 +59,7 @@ const SidebarLayout = React.forwardRef<
           } as React.CSSProperties
         }
         className={cn(
-          "flex min-h-screen pl-0 motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out data-[sidebar=closed]:pl-0 sm:pl-[--sidebar-width]",
+          "flex min-h-dvh pl-0 motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out data-[sidebar=closed]:pl-0 sm:pl-(--sidebar-width)",
           className
         )}
         {...props}
@@ -101,7 +101,7 @@ const Sidebar = ({ children, className }: React.ComponentProps<"div">) => {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
-          className="w-[260px] p-0 md:w-[--sidebar-width]"
+          className="w-[260px] p-0 md:w-(--sidebar-width)"
           side="left"
         >
           <SheetTitle className="sr-only">Sidebar</SheetTitle>
@@ -112,7 +112,7 @@ const Sidebar = ({ children, className }: React.ComponentProps<"div">) => {
   }
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-[--sidebar-width] motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out md:block [[data-sidebar=closed]_&]:left-[calc(var(--sidebar-width)*-1)]">
+    <aside className="fixed inset-y-0 left-0 z-50 hidden w-(--sidebar-width) motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out md:block in-data-[sidebar=closed]:left-[calc(var(--sidebar-width)*-1)]">
       <SidebarInner>{children}</SidebarInner>
     </aside>
   );

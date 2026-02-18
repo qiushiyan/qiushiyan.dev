@@ -27,7 +27,7 @@ export default async function Page(props: {
 
   return (
     <main id={MAIN_CONTENT_ID} className="mb-24">
-      <Container innerClassName="grid grid-cols-1 lg:grid-cols-[minmax(auto,240px),65ch] ~gap-6/12">
+      <Container innerClassName="grid grid-cols-1 lg:grid-cols-[minmax(auto,240px)_65ch] gap-6 lg:gap-12">
         <aside className="col-span-1">
           <div className="sticky top-[calc(2rem+var(--nav-height))] h-[80vh]">
             <ScrollArea className="h-full">
@@ -35,7 +35,7 @@ export default async function Page(props: {
                 {note.headings.map((heading) => (
                   <li
                     key={heading.slug}
-                    className={cn("~text-xs/base", {
+                    className={cn("text-xs lg:text-base", {
                       "pl-3": heading.depth === 3,
                     })}
                   >

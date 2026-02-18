@@ -41,7 +41,7 @@ const TabsList = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ ...props }, ref) => (
-  <div ref={ref} className="flex space-x-1 pb-2" {...props} />
+  <div ref={ref} className="flex gap-1 pb-2" {...props} />
 ));
 TabsList.displayName = "TabsList";
 

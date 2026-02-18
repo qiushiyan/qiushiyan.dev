@@ -1,5 +1,8 @@
+@reference "tailwindcss";
+
 .two-column {
-  @apply ~gap-2/8 grid grid-cols-1 lg:grid-cols-2;
+  @apply grid grid-cols-1 lg:grid-cols-2;
+  gap: clamp(0.5rem, 0.324rem + 0.7512vw, 2rem);
 }
 
 h1,

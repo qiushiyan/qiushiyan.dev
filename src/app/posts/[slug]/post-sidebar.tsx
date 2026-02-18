@@ -49,15 +49,15 @@ const SimilarPosts = () => {
 
   return (
     <Collapsible defaultOpen={false}>
-      <CollapsibleTrigger className="group flex w-full items-center rounded-md text-sm font-medium outline-none ring-ring transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2">
+      <CollapsibleTrigger className="group flex w-full items-center rounded-md text-sm font-medium outline-hidden ring-ring transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2">
         <div className="flex h-8 min-w-8 flex-1 items-center gap-2 overflow-hidden px-1.5">
-          <AtomIcon className="h-4 w-4 shrink-0" />
+          <AtomIcon className="size-4 shrink-0" />
           <div className="flex flex-1 overflow-hidden">
             <div className="line-clamp-1 pr-6">Similar Posts</div>
           </div>
         </div>
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-transform group-data-[state=open]:rotate-90" aria-hidden="true">
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-md transition-transform group-data-[state=open]:rotate-90" aria-hidden="true">
+          <ChevronRight className="size-4 text-muted-foreground" />
         </span>
       </CollapsibleTrigger>
 
@@ -92,15 +92,15 @@ export const PostToc = () => {
 
   return (
     <Collapsible defaultOpen={true}>
-      <CollapsibleTrigger className="group flex w-full items-center rounded-md text-sm font-medium outline-none ring-ring transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2">
+      <CollapsibleTrigger className="group flex w-full items-center rounded-md text-sm font-medium outline-hidden ring-ring transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2">
         <div className="flex h-8 min-w-8 flex-1 items-center gap-2 overflow-hidden px-1.5">
-          <TableOfContents className="h-4 w-4 shrink-0" />
+          <TableOfContents className="size-4 shrink-0" />
           <div className="flex flex-1 overflow-hidden">
             <div className="line-clamp-1 pr-6">Table of contents</div>
           </div>
         </div>
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-transform group-data-[state=open]:rotate-90" aria-hidden="true">
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-md transition-transform group-data-[state=open]:rotate-90" aria-hidden="true">
+          <ChevronRight className="size-4 text-muted-foreground" />
         </span>
       </CollapsibleTrigger>
 

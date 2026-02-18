@@ -173,7 +173,7 @@ const SearchResults: React.FC = () => {
           >
             <Link
               href={result.href}
-              className="block rounded-md p-2.5 outline-none ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:ring-2"
+              className="block rounded-md p-2.5 outline-hidden ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:ring-2"
             >
               <div className="text-base font-medium">
                 {titleMatches ? (
@@ -213,7 +213,7 @@ const SearchFeedback: React.FC = () => {
 
   return (
     <>
-      <p className="my-1.5 rounded-md px-2.5 py-1 text-sm text-muted-foreground outline-none ring-ring hover:text-foreground focus-visible:ring-2">
+      <p className="my-1.5 rounded-md px-2.5 py-1 text-sm text-muted-foreground outline-hidden ring-ring hover:text-foreground focus-visible:ring-2">
         {searchQuery.length < 3
           ? "Search all pages (at least 3 characters)"
           : null}
@@ -246,7 +246,7 @@ const SearchForm: React.FC = () => {
         <Input
           type="search"
           placeholder="Search..."
-          className="h-8 rounded-sm shadow-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="h-8 rounded-xs shadow-none focus-visible:ring-1 focus-visible:ring-ring"
           name="search"
           aria-label="Search posts"
           minLength={3}

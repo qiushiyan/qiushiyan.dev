@@ -1,17 +1,7 @@
-import fluid, { extract, fontSize, screens } from "fluid-tailwind";
-import { fontFamily } from "tailwindcss/defaultTheme";
-
 import type { Config } from "tailwindcss";
 
 const config = {
-  darkMode: ["class"],
-  content: {
-    files: ["./src/**/*.{ts,tsx}", "./content/**/*.{md,mdx}"],
-    extract,
-  },
   theme: {
-    screens,
-    fontSize,
     container: {
       center: true,
       padding: "2rem",
@@ -23,6 +13,20 @@ const config = {
       typography: {
         DEFAULT: {
           css: {
+            "--tw-prose-body": "hsl(var(--foreground))",
+            "--tw-prose-headings": "hsl(var(--foreground))",
+            "--tw-prose-lead": "hsl(var(--muted-foreground))",
+            "--tw-prose-links": "hsl(var(--primary))",
+            "--tw-prose-bold": "hsl(var(--foreground))",
+            "--tw-prose-counters": "hsl(var(--muted-foreground))",
+            "--tw-prose-bullets": "hsl(var(--muted-foreground))",
+            "--tw-prose-hr": "hsl(var(--border))",
+            "--tw-prose-quotes": "hsl(var(--foreground))",
+            "--tw-prose-quote-borders": "hsl(var(--border))",
+            "--tw-prose-captions": "hsl(var(--muted-foreground))",
+            "--tw-prose-code": "hsl(var(--foreground))",
+            "--tw-prose-th-borders": "hsl(var(--border))",
+            "--tw-prose-td-borders": "hsl(var(--border))",
             p: {
               "+ ul": {
                 margin: "0px",
@@ -33,11 +37,6 @@ const config = {
             },
           },
         },
-      },
-      fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-        serif: ["var(--font-serif)", ...fontFamily.serif],
-        mono: ["var(--font-mono)", ...fontFamily.mono],
       },
 
       colors: {
@@ -100,11 +99,6 @@ const config = {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"),
-    fluid,
-  ],
 } satisfies Config;
 
 export default config;

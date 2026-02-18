@@ -5,7 +5,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const basicProseClasses = cn(
-  "prose-quoteless prose prose-neutral max-w-none dark:prose-invert prose-a:underline prose-a:underline-offset-4 prose-a:transition-colors prose-a:hover:text-primary/80 prose-code:before:hidden prose-code:after:hidden"
+  "prose max-w-none prose-a:underline prose-a:underline-offset-4 prose-a:transition-colors hover:prose-a:text-primary/80 prose-code:before:hidden prose-code:after:hidden"
 );
 
 export const ArticleProse = ({ children, className, ...rest }: Props) => {
@@ -13,7 +13,7 @@ export const ArticleProse = ({ children, className, ...rest }: Props) => {
     <div
       className={cn(
         basicProseClasses,
-        "~/lg:~text-base/lg ~/lg:~leading-7/10",
+        "text-base/7 lg:text-lg/10",
         className
       )}
       {...rest}
