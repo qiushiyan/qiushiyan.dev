@@ -16,7 +16,7 @@ export const TocItem = ({
     <Link
       href={`#${slug}`}
       className={cn(
-        "flex items-center gap-2 overflow-hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground ring-ring transition-all hover:text-primary/80 focus-visible:ring-2",
+        "flex items-center gap-2 overflow-hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground ring-ring transition-colors hover:text-primary/80 focus-visible:ring-2",
         className
       )}
       {...props}

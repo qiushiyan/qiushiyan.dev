@@ -54,7 +54,7 @@ export function SectionIndicator() {
         <Link href={`#${id}`} className="flex items-center gap-2" key={id}>
           <ArrowRightIcon
             className={cn(
-              "size-3 shrink-0 transition-transform duration-300",
+              "size-3 shrink-0 transition-[transform,opacity] duration-300",
               activeHeading === id
                 ? "translate-x-0"
                 : "-translate-x-2 opacity-0"

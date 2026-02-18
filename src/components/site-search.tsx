@@ -13,6 +13,7 @@ import React, {
 import Link from "next/link";
 import Fuse, { FuseResultMatch } from "fuse.js";
 import { Search } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { useDebounceValue } from "usehooks-ts";
 
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
@@ -109,7 +110,7 @@ export function SiteSearch() {
 
 const SiteSearchMobile: React.FC = () => (
   <Drawer>
-    <DrawerTrigger className="rounded-md p-2 transition-all hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+    <DrawerTrigger className="rounded-md p-2 transition-colors hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
       <span className="sr-only">search</span>
       <Search className="size-6 shrink-0" />
     </DrawerTrigger>
@@ -123,7 +124,7 @@ const SiteSearchMobile: React.FC = () => (
 
 const SearchDesktop: React.FC = () => (
   <Popover>
-    <PopoverTrigger className="rounded-md p-2 transition-all hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+    <PopoverTrigger className="rounded-md p-2 transition-colors hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
       <span className="sr-only">search</span>
       <Search className="size-6 shrink-0" />
     </PopoverTrigger>
@@ -142,12 +143,13 @@ const SearchDesktop: React.FC = () => (
 
 const SearchResults: React.FC = () => {
   const { results, pending } = useSearch();
+  const shouldReduceMotion = useReducedMotion();
 
   if (pending) return <Spinner />;
 
   return (
     <div className="grid gap-1 p-1.5 text-sm">
-      {results.map((result) => {
+      {results.map((result, index) => {
         const contentMatches = result.matches?.find(
           (match) => match.key === "raw"
         );
@@ -159,37 +161,47 @@ const SearchResults: React.FC = () => {
         );
 
         return (
-          <Link
-            href={result.href}
+          <motion.div
             key={result.title}
-            className="rounded-md p-2.5 outline-none ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:ring-2"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.1,
+              delay: index * 0.03,
+              ease: [0.25, 0.46, 0.45, 0.94] as const,
+            }}
           >
-            <div className="text-base font-medium">
-              {titleMatches ? (
+            <Link
+              href={result.href}
+              className="block rounded-md p-2.5 outline-none ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:ring-2"
+            >
+              <div className="text-base font-medium">
+                {titleMatches ? (
+                  <HighlightedText
+                    text={titleMatches.value as string}
+                    match={titleMatches}
+                  />
+                ) : (
+                  result.title
+                )}
+              </div>
+              {descriptionMatches && (
                 <HighlightedText
-                  text={titleMatches.value as string}
-                  match={titleMatches}
+                  text={descriptionMatches.value as string}
+                  match={descriptionMatches}
                 />
-              ) : (
-                result.title
               )}
-            </div>
-            {descriptionMatches && (
-              <HighlightedText
-                text={descriptionMatches.value as string}
-                match={descriptionMatches}
-              />
-            )}
 
-            {contentMatches?.value && (
-              <p className="text-sm text-muted-foreground">
-                <HighlightedText
-                  text={contentMatches.value.slice(0, 150) + "..."}
-                  match={contentMatches}
-                />
-              </p>
-            )}
-          </Link>
+              {contentMatches?.value && (
+                <p className="text-sm text-muted-foreground">
+                  <HighlightedText
+                    text={contentMatches.value.slice(0, 150) + "..."}
+                    match={contentMatches}
+                  />
+                </p>
+              )}
+            </Link>
+          </motion.div>
         );
       })}
     </div>

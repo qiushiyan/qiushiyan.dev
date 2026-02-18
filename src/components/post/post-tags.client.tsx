@@ -45,7 +45,7 @@ export const PostTagsClient = ({
               />
               <Label
                 htmlFor={`tag-${tag}`}
-                className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ease-in-out hover:ring-2 hover:ring-ring ${
+                className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-shadow duration-200 ease-in-out hover:ring-2 hover:ring-ring ${
                   optimisticTags.includes(tag)
                     ? "text-foreground ring-2 ring-ring"
                     : ""
