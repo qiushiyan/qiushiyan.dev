@@ -5,6 +5,7 @@ import { Root as MdastRoot } from "mdast";
 import { SKIP, visit } from "unist-util-visit";
 
 import { htmlProcessor } from "./processor";
+import { tailwindCodeTheme } from "./tailwind-code-theme";
 
 // Lazy-loaded highlight function (only used at Velite build time in Node.js)
 let _highlight: any = null;
@@ -97,7 +98,7 @@ export const rehypeCode = () => {
               lang: String(node.properties.lang || ""),
               meta: "",
             },
-            "github-from-css"
+            tailwindCodeTheme
           )
             .then((result) => {
               node.properties.highlighted = JSON.stringify(result);
@@ -124,7 +125,7 @@ export const rehypeCode = () => {
                       lang: entry.lang || "",
                       meta: "",
                     },
-                    "github-from-css"
+                    tailwindCodeTheme
                   );
                   return { ...entry, highlighted: result };
                 } catch (e) {
@@ -180,7 +181,7 @@ export const rehypeCodeInline = () => {
               lang: String(node.properties.lang || ""),
               meta: "",
             },
-            "github-from-css"
+            tailwindCodeTheme
           )
             .then((result) => {
               node.properties.highlighted = JSON.stringify(result);
