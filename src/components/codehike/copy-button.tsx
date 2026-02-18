@@ -18,7 +18,7 @@ export function CopyButton({
     <button
       type="button"
       className={cn(
-        "absolute right-2 top-2 z-10 rounded p-1 text-background hover:bg-muted-foreground dark:text-foreground",
+        "absolute right-1 top-1 z-10 flex size-10 items-center justify-center rounded text-background hover:bg-muted-foreground focus-visible:ring-2 focus-visible:ring-ring dark:text-foreground",
         className
       )}
       aria-label="Copy to clipboard"

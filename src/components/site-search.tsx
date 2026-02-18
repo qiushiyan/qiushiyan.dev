@@ -109,7 +109,7 @@ export function SiteSearch() {
 
 const SiteSearchMobile: React.FC = () => (
   <Drawer>
-    <DrawerTrigger className="transition-all hover:text-primary/80">
+    <DrawerTrigger className="rounded-md p-2 transition-all hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
       <span className="sr-only">search</span>
       <Search className="size-6 shrink-0" />
     </DrawerTrigger>
@@ -123,7 +123,7 @@ const SiteSearchMobile: React.FC = () => (
 
 const SearchDesktop: React.FC = () => (
   <Popover>
-    <PopoverTrigger className="transition-all hover:text-primary/80">
+    <PopoverTrigger className="rounded-md p-2 transition-all hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
       <span className="sr-only">search</span>
       <Search className="size-6 shrink-0" />
     </PopoverTrigger>
@@ -234,8 +234,9 @@ const SearchForm: React.FC = () => {
         <Input
           type="search"
           placeholder="Search..."
-          className="h-8 rounded-sm shadow-none focus-visible:ring-0"
+          className="h-8 rounded-sm shadow-none focus-visible:ring-1 focus-visible:ring-ring"
           name="search"
+          aria-label="Search posts"
           minLength={3}
           maxLength={50}
           onChange={(e) => setSearchQuery(e.target.value)}

@@ -49,7 +49,10 @@ const nextConfig = {
   },
   experimental: {
     typedRoutes: false,
-    // optimizePackageImports: ["@icons-pack/react-simple-icons"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@icons-pack/react-simple-icons",
+    ],
   },
 };
 

@@ -76,11 +76,11 @@
 
   & > h2::after {
     opacity: 0;
-    content: "##";
+    content: "##" / "";
   }
   & > h3::after {
     opacity: 0;
-    content: "###";
+    content: "###" / "";
   }
 
   h2 + p {

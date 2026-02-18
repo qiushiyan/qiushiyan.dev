@@ -30,10 +30,11 @@ export const IFrameClient = ({
             target="_blank"
             rel="noreferrer noopener"
             href={src}
+            aria-label="Open in new tab"
           >
             <LinkIcon className="size-4" />
           </a>
-          <Button variant="ghost" size="icon" onClick={handleRefresh}>
+          <Button variant="ghost" size="icon" onClick={handleRefresh} aria-label="Refresh">
             <RotateCw className="size-4" />
           </Button>
         </div>
@@ -43,6 +44,7 @@ export const IFrameClient = ({
             type="text"
             readOnly
             value={src}
+            aria-label="Page URL"
             className="w-full rounded-lg bg-background px-3 py-1 text-foreground"
           />
         </div>

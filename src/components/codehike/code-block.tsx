@@ -71,7 +71,7 @@ export const CodeBlock = ({
         />
       </div>
       {notes.length > 0 && (
-        <ul className="my-2 list-none">
+        <ul className="my-2 list-none" role="list">
           {notes.map((ref, index) => (
             <li key={index} className="text-sm">
               <FootnoteNumber n={index + 1} />

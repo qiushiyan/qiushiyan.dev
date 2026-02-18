@@ -3,7 +3,7 @@
 import * as React from "react";
 import { PanelLeft } from "lucide-react";
 
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
@@ -59,7 +59,7 @@ const SidebarLayout = React.forwardRef<
           } as React.CSSProperties
         }
         className={cn(
-          "flex min-h-screen pl-0 transition-all duration-300 ease-in-out data-[sidebar=closed]:pl-0 sm:pl-[--sidebar-width]",
+          "flex min-h-screen pl-0 motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out data-[sidebar=closed]:pl-0 sm:pl-[--sidebar-width]",
           className
         )}
         {...props}
@@ -80,13 +80,13 @@ const SidebarTrigger = React.forwardRef<
       ref={ref}
       id="sidebar-trigger"
       className={cn(
-        "flex size-6 transition-all hover:text-primary/80",
+        "flex size-10 items-center justify-center rounded-md transition-all hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className
       )}
       onClick={() => onOpenChange(!open)}
       {...props}
     >
-      <PanelLeft className="size-6" />
+      <PanelLeft className="size-5" />
       <span className="sr-only">Toggle Sidebar</span>
     </button>
   );
@@ -101,9 +101,10 @@ const Sidebar = ({ children, className }: React.ComponentProps<"div">) => {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
-          className="w-[260px] p-0 md:w-[--sidebar-width] [&>button]:hidden"
+          className="w-[260px] p-0 md:w-[--sidebar-width]"
           side="left"
         >
+          <SheetTitle className="sr-only">Sidebar</SheetTitle>
           <SidebarInner>{children}</SidebarInner>
         </SheetContent>
       </Sheet>
@@ -111,7 +112,7 @@ const Sidebar = ({ children, className }: React.ComponentProps<"div">) => {
   }
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-[--sidebar-width] transition-all duration-300 ease-in-out md:block [[data-sidebar=closed]_&]:left-[calc(var(--sidebar-width)*-1)]">
+    <aside className="fixed inset-y-0 left-0 z-50 hidden w-[--sidebar-width] motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out md:block [[data-sidebar=closed]_&]:left-[calc(var(--sidebar-width)*-1)]">
       <SidebarInner>{children}</SidebarInner>
     </aside>
   );

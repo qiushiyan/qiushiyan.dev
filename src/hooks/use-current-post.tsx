@@ -1,23 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { posts } from "#content";
 
 import type { Post } from "#content";
 
-export const useCurrentPost = () => {
-  const [post, setPost] = useState<Post | undefined>(undefined);
+export const useCurrentPost = (): Post | undefined => {
   const pathname = usePathname();
-  useEffect(() => {
-    if (pathname.startsWith("/posts")) {
-      const slug = pathname.split("/posts/")[1];
-      const post = posts.find((p) => p.slug === slug);
-      setPost(post);
-    } else {
-      setPost(undefined);
-    }
+  return useMemo(() => {
+    if (!pathname.startsWith("/posts/")) return undefined;
+    const slug = pathname.split("/posts/")[1];
+    return posts.find((p) => p.slug === slug);
   }, [pathname]);
-
-  return post;
 };

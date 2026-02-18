@@ -1,20 +1,20 @@
-import Comments from "@/components/comments";
-import { getComponents } from "@/components/components-registry";
-import { ArticleProse } from "@/components/prose-wrapper";
-import { Separator } from "@/components/ui/separator";
-
-import "./page.scss";
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 import { incrementView } from "@/actions/views";
+import Comments from "@/components/comments";
+import { getComponents } from "@/components/components-registry";
 import { HtmlRenderer } from "@/components/html-renderer";
 import { PostBanner } from "@/components/post/post-banner";
+import { ArticleProse } from "@/components/prose-wrapper";
+import { Separator } from "@/components/ui/separator";
 import { MAIN_CONTENT_ID } from "@/constants";
 import { findPost, getPosts } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
+
+import "./page.scss";
 
 export default async function PostPage(
   props: {
@@ -27,7 +27,7 @@ export default async function PostPage(
     return notFound();
   }
 
-  incrementView(post.slug);
+  after(() => incrementView(post.slug));
 
   return (
     <main className="space-y-8 overflow-x-hidden pb-8">
@@ -68,6 +68,7 @@ const Pager = ({ slug }: { slug: string }) => {
         <Link
           className="group flex items-center gap-2 rounded-md px-2 py-3 text-sm text-muted-foreground no-underline transition-all hover:bg-accent lg:text-base"
           href={routes.post(prevPost.slug)}
+          aria-label={`Previous post: ${prevPost.title}`}
         >
           <ChevronLeftIcon className="size-6 transition-all group-hover:-translate-x-1" />
           <span>{prevPost.title}</span>
@@ -77,6 +78,7 @@ const Pager = ({ slug }: { slug: string }) => {
         <Link
           className="group col-start-2 flex items-center gap-2 rounded-md px-2 py-3 text-right text-sm text-muted-foreground no-underline transition-all hover:bg-accent lg:text-base"
           href={routes.post(nextPost.slug)}
+          aria-label={`Next post: ${nextPost.title}`}
         >
           <span>{nextPost.title}</span>
           <ChevronRightIcon className="size-6 transition-all group-hover:translate-x-1" />

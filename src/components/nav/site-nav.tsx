@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SiGithub } from "@icons-pack/react-simple-icons";
 
 import { routes } from "@/lib/navigation";
 import { NavLinks } from "../config";
@@ -41,10 +40,19 @@ export function SiteNav({
                 </div>
               )}
             </div>
-            <DesktopNav additionalControls={additionalControls} />
-            <PlusGridItem className="px-4 py-3 lg:hidden">
-              <MobileNav />
-            </PlusGridItem>
+            <div className="flex items-center">
+              <DesktopNav />
+              <PlusGridItem className="relative flex px-4 py-3">
+                <div className="flex items-center gap-4">
+                  {additionalControls}
+                  <SiteSearch />
+                  <ThemeToggle />
+                </div>
+              </PlusGridItem>
+              <PlusGridItem className="px-4 py-3 lg:hidden">
+                <MobileNav />
+              </PlusGridItem>
+            </div>
           </PlusGridRow>
         </PlusGrid>
       </header>
@@ -52,13 +60,9 @@ export function SiteNav({
   );
 }
 
-function DesktopNav({
-  additionalControls,
-}: {
-  additionalControls?: React.ReactNode;
-}) {
+function DesktopNav() {
   return (
-    <nav className="relative hidden lg:flex">
+    <nav className="relative hidden lg:flex" aria-label="Main navigation">
       {NavLinks.Main.map(({ href, label, viewTransitionName }) => (
         <PlusGridItem
           key={href}
@@ -76,13 +80,6 @@ function DesktopNav({
           </Link>
         </PlusGridItem>
       ))}
-      <PlusGridItem className="relative flex px-4 py-3">
-        <div className="flex items-center gap-4">
-          {additionalControls}
-          <SiteSearch />
-          <ThemeToggle />
-        </div>
-      </PlusGridItem>
     </nav>
   );
 }

@@ -107,20 +107,11 @@
   }
 
   .skip-link {
-    position: absolute;
-    clip-path: rect(0px, 0px, 0px, 0px);
-    margin: -1px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
+    @apply sr-only;
   }
   .skip-link:focus {
-    position: static;
-    clip-path: auto;
+    @apply not-sr-only;
     padding: 12px;
-    width: auto;
-    height: auto;
-    overflow: auto;
     text-decoration: underline;
     text-decoration-color: hsl(var(--primary));
     text-underline-offset: 0.4em;

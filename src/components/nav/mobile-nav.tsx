@@ -17,7 +17,8 @@ export function MobileNav() {
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="mr-2 px-0 text-base hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          aria-label="Toggle menu"
         >
           <svg
             strokeWidth="1.5"
@@ -52,7 +53,7 @@ export function MobileNav() {
         </Button>
       </PopoverTrigger>
       <PopoverContent side="bottom" align="start" className="p-4">
-        <div className="flex flex-col space-y-3">
+        <nav aria-label="Mobile navigation" className="flex flex-col space-y-3">
           {NavLinks.Mobile.map((link, index) => (
             <MobileLink
               onOpenChange={setOpen}
@@ -64,7 +65,7 @@ export function MobileNav() {
               {link.label}
             </MobileLink>
           ))}
-        </div>
+        </nav>
       </PopoverContent>
     </Popover>
   );

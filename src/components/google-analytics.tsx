@@ -1,5 +1,3 @@
-"use client";
-
 import Script from "next/script";
 
 const GTAG_ID = "G-49H8YKV7QV";

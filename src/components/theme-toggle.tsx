@@ -21,7 +21,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="relative flex transition-all hover:text-primary/80"
+      className="relative flex rounded-md p-2 transition-all hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       onClick={toggleTheme}
       aria-label="Toggle theme"
     >

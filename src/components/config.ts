@@ -1,4 +1,9 @@
-import { HomeIcon, InfoIcon, NotebookPenIcon } from "lucide-react";
+import {
+  FileTextIcon,
+  HomeIcon,
+  InfoIcon,
+  NotebookPenIcon,
+} from "lucide-react";
 
 import { routes } from "@/lib/navigation";
 
@@ -26,6 +31,11 @@ export const NavLinks = {
       href: routes.posts,
       label: "Posts",
       icon: NotebookPenIcon,
+    },
+    {
+      href: routes.notes,
+      label: "Notes",
+      icon: FileTextIcon,
     },
     {
       href: routes.about,
