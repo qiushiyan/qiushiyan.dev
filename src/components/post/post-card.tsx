@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Image from "next/image";
 import { Post } from "#content";
 import { CalendarIcon, EyeIcon, TagIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
@@ -15,17 +14,7 @@ import { Badge } from "../ui/badge";
 import { PostDescription } from "./post-description";
 import { PostViews } from "./post-views";
 
-export const PostCard = ({
-  post,
-  featured = false,
-}: {
-  post: Post;
-  featured?: boolean;
-}) => {
-  if (featured) {
-    return <FeaturedPostCard post={post} />;
-  }
-
+export const PostCard = ({ post }: { post: Post }) => {
   return (
     <Link
       href={post.href}
@@ -51,47 +40,6 @@ export const PostCard = ({
     </Link>
   );
 };
-
-function FeaturedPostCard({ post }: { post: Post }) {
-  return (
-    <Link
-      href={post.href}
-      className={
-        "col-span-full grid rounded border lg:min-h-[360px] lg:grid-cols-subgrid"
-      }
-    >
-      <Card
-        className={cn(
-          "group order-1 flex flex-col gap-2 overflow-hidden rounded-md border-none px-0 py-4 shadow-none"
-        )}
-      >
-        <CardHeader className="py-2">
-          <PostCardHeader post={post} />
-        </CardHeader>
-
-        <CardContent className="space-y-4">
-          <PostCardBody post={post} />
-          <div className="hidden lg:block">
-            <Badge variant={"secondary"}>Latest</Badge>
-          </div>
-        </CardContent>
-
-        <CardFooter className="mt-auto items-center justify-between gap-2">
-          <PostCardFooter post={post} />
-        </CardFooter>
-      </Card>
-      <div className="relative order-2 object-cover">
-        <Image
-          src={"/featured.avif"}
-          alt={"a nature scene"}
-          fill={true}
-          className="rounded-md px-2"
-          priority
-        />
-      </div>
-    </Link>
-  );
-}
 
 function PostCardHeader({ post }: { post: Post }) {
   return (

@@ -9,7 +9,7 @@ export function PostGrid({ selectedTags }: { selectedTags: string[] }) {
     <StaggerList className="grid grid-cols-1 gap-4 lg:auto-rows-min lg:grid-cols-2">
       {posts.length > 0 ? (
         posts.map((post, index) => (
-          <PostCard key={post.slug} post={post} featured={index === 0} />
+          <PostCard key={post.slug} post={post} />
         ))
       ) : (
         <div className="col-span-2 text-muted-foreground">No posts found</div>
