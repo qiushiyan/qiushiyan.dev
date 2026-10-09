@@ -93,7 +93,7 @@ headings:
   depth: 2
 ---
 
-Some general resources
+Some general resources:
 
 - The [performance](https://web.dev/learn/performance) section on
   https://web.dev
@@ -113,9 +113,9 @@ critical resources necessary for rendering that document.
 ![CRP
 diagram](https://web.dev/static/learn/performance/understanding-the-critical-path/image/fig-1-v2.svg)
 
-**Resources that on are CRP**
+**Resources that are on the CRP**
 
-- Part of the HTML. HTML are parsed incrementally, so the browser can
+- Part of the HTML. HTML is parsed incrementally, so the browser can
   start rendering the page before the entire HTML is downloaded.
 
 - Render-blocking CSS in the `<head>` element.
@@ -140,17 +140,16 @@ wait for**:
 ## Render-blocking and Parser-blocking Resources {#render-blocking-and-parser-blocking-resources}
 
 - **Render-blocking resources**: the browser pauses page rendering until
-  it has dealt with them. CSS that are imported via
+  it has dealt with them. CSS imported via
   `<link rel="stylesheet" href="...">` falls into this category by
-  default. It is implied that although the rendering is paused, the
-  browser can still parse the rest of the HTML and look for other work
-  to do in the meantime.
+  default. Although rendering is paused, the browser can still parse the
+  rest of the HTML and look for other work to do in the meantime.
 
-**Render-blocking resources does not necessarily affect initial
-render**. A `<link rel="stylesheet" />` is render-blocking regardless of
-if it is placed in `<head>` or not, it will block the **final** paint of
-the browser. But stylesheets outside of `<head>`is moved out of the CRP
-and does not affect FCP.
+**Render-blocking resources do not necessarily affect the initial
+render**. A `<link rel="stylesheet" />` is render-blocking whether or
+not it is placed in `<head>`: it blocks the browser’s **final** paint.
+But stylesheets outside `<head>` are moved out of the CRP and do not
+affect FCP.
 
 - **Parser-blocking resources**: prevent the browser from looking for
   other work to do by continuing to parse the HTML. JavaScript by
@@ -159,32 +158,32 @@ and does not affect FCP.
   execution.
 
 **Parser-blocking resources are effectively render-blocking as well**.
-Since the parser can’t continue past a parsing-blocking resource until
-it has been fully processed, it can’t access and render the content
-after it. The browser can render any HTML received so far while it
-waits, but where the critical rendering path is concerned, any
-parser-blocking resources in the `<head>` effectively mean that all page
-content is blocked from being rendered.
+Since the parser can’t continue past a parser-blocking resource until it
+has been fully processed, it can’t access and render the content after
+it. The browser can render any HTML received so far while it waits, but
+where the critical rendering path is concerned, any parser-blocking
+resources in the `<head>` effectively mean that all page content is
+blocked from being rendered.
 
 ### `defer` and `async` scripts {#defer-and-async-scripts}
 
-TLDR: you should almost always use `defer` instead of `async` to create
-non parser-blocking scripts.
+TL;DR: you should almost always use `defer` instead of `async` to create
+non-parser-blocking scripts.
 
 `defer` and `async` scripts allow external scripts to load without
 blocking the HTML parser while scripts (including inline scripts) with
 type=“module” are deferred automatically. However, async and defer have
 some differences that are important to understand.
 
-`defer` scripts are executed until the HTML document is completely
+`defer` scripts are executed after the HTML document is completely
 parsed (before the `DOMContentLoaded` event), and multiple `defer`
-scripts are executed in the order of their appearance in the document
+scripts are executed in the order they appear in the document.
 
 `async` scripts are executed as soon as they are downloaded, which means
 they can be executed out of order. This can cause issues if the script
 relies on other scripts or the DOM being in a certain state.
 
-![A digram showing the differences between defer and async
+![A diagram showing the differences between defer and async
 scripts](https://web.dev/static/learn/performance/optimize-resource-loading/image/fig-2.svg)
 
 ### The Preload Scanner {#the-preload-scanner}
@@ -242,18 +241,18 @@ to a specific cross-origin server in the very near future, and that the
 browser should open that connection as soon as possible, ideally before
 waiting for the HTML parser or preload scanner to do so.
 
-A closely related hint is `dns-prefetch`, because opening connections to
+A closely related hint is `dns-prefetch`. While opening connections to
 cross-origin servers early can significantly improve initial page load
-time, it may not be either reasonable or possible to establish
-connections to many cross-origin servers at once. If you’re concerned
-that you may be overusing preconnect, use `dns-prefetch` instead, which
-does not make a connect but only does a DNS lookup.
+time, it may not be reasonable or possible to establish connections to
+many cross-origin servers at once. If you’re concerned that you may be
+overusing preconnect, use `dns-prefetch` instead, which only does a DNS
+lookup without opening a connection.
 
 2.  **Prefetch**: “I might need this resource LATER”. The `prefetch`
     directive is used to initiate a low priority request for a resource
-    likely to be used for future navigations: This is what Next.js
-    `router.prefetch(href)` does. It gets a list of scripts for `href`
-    and append `<link rel="prefetch" href="script.js">` to the head.
+    likely to be used for future navigations. This is what Next.js
+    `router.prefetch(href)` does: it gets a list of scripts for `href`
+    and appends `<link rel="prefetch" href="script.js">` to the head.
 
 <!-- -->
 
@@ -283,17 +282,17 @@ does not make a connect but only does a DNS lookup.
 
 Modern browsers load resources in two phases. The first phase is
 reserved for critical resources and ends once all blocking scripts have
-been downloaded and executed. During this phase, Low priority resources
+been downloaded and executed. During this phase, low-priority resources
 may be delayed from downloading. By using `fetchpriority="high"` you can
 increase the priority of a resource, enabling the browser to download it
 during the first phase.
 
 By default, images are fetched with a **lower** priority. After layout,
 if the image is found to be within the initial viewport, the priority is
-increased to **High** priority. In the snippet below, fetchpriority
-immediately tells the browser to download the larger LCP image with a
-High priority, while the less important thumbnail images are downloaded
-with a lower priority.
+increased to **High**. In the snippet below, fetchpriority immediately
+tells the browser to download the larger LCP image with a High priority,
+while the less important thumbnail images are downloaded with a lower
+priority.
 
 ``` html
 <div class="gallery">
@@ -335,7 +334,7 @@ discoverable early in your HTML
 
 ## Optimizing CSS {#optimizing-css}
 
-There are render-blocking CSS and non-render blocking CSS.
+CSS is either render-blocking or non-render-blocking:
 
 - **Render-blocking**: stylesheets in the `<head>` element
 
@@ -346,8 +345,8 @@ There are render-blocking CSS and non-render blocking CSS.
 We want to divide the CSS into two parts: critical CSS and non-critical
 CSS.
 
-For critical CSS, we want the browser to fetch them as soon as possible.
-Techniques include
+We want the browser to fetch critical CSS as soon as possible.
+Techniques include:
 
 - inline critical CSS in the `<head>` element in a `<style>` tag to
   avoid an extra network request
@@ -358,7 +357,7 @@ Techniques include
   </style>
   ```
 
-- download non-critical css as `print` styles
+- download non-critical CSS as `print` styles
 
   ``` html
   <link
@@ -382,9 +381,9 @@ Techniques include
       High priority download
       Must be processed before first paint
 
-- minification, remove unused css, use the
+- minify and remove unused CSS (use the
   [Coverage](https://developer.chrome.com/docs/devtools/css/reference/#coverage)
-  tab for checking,
+  tab to find it)
 
 - avoid sequential chains, use a bundler instead
 
@@ -395,18 +394,17 @@ Techniques include
   <link rel="stylesheet" href="layout.css" />
   ```
 
-- avoid `@import` specifier in CSS. The difference between `<link>` and
-  `@import` is that the HTML `<link>` element is part of the HTML
-  response, and therefore discovered much sooner than a CSS file
-  downloaded by an `@import` declaration, can `@import` stylesheets
-  cannot be discovered by the preload scanner. If you can’t remove
-  `@import`, use a `preload` hint.
+- avoid `@import` in CSS. The HTML `<link>` element is part of the HTML
+  response, so it is discovered much sooner than a CSS file downloaded
+  by an `@import` declaration, and `@import` stylesheets cannot be
+  discovered by the preload scanner. If you can’t remove `@import`, use
+  a `preload` hint.
 
 ## Optimizing Images {#optimizing-images}
 
 ### Lazy Loading {#lazy-loading}
 
-Lazy loading can be used to remove assets on the critical path, and
+Lazy loading can be used to remove assets from the critical path, and
 defer loading of non-critical assets.
 
 The `loading` attribute determines WHEN the browser should start loading
@@ -418,9 +416,9 @@ the image:
   this for images that are in the initial viewport.
 
 Compared to `loading`, `fetchpriority` determines HOW URGENTLY the
-browser should download the resource **after** it starts loading. So in
-summary, `loading` is about WHEN to start loading, and `fetchpriority`
-is about HOW URGENTLY to download the resource.
+browser should download the resource **after** it starts loading. In
+short, `loading` is about WHEN, and `fetchpriority` is about HOW
+URGENTLY.
 
 ``` html
 <!-- The high priority only takes effect AFTER the lazy loading threshold is met -->
@@ -457,11 +455,11 @@ The `loading` attribute also applies to `<iframe>` elements.
 ### Image Formats {#image-formats}
 
 Modern image formats like WebP and AVIF may provide better compression
-than PNG or JPEG,
+than PNG or JPEG.
 
 If you can’t use a newer format, use a compression tool.
 
-PNG compressing tool https://tinypng.com/
+PNG compression tool: https://tinypng.com/
 
 ### Responsive Images {#responsive-images}
 
@@ -482,11 +480,11 @@ Understanding the `srcset` and `sizes` attributes
   ```
 
   The preceding HTML snippet uses the pixel density descriptor to hint
-  the browser to use `image-500.png` on devices with a DPR of 1,
+  the browser to use `image-500.jpg` on devices with a DPR of 1,
   `image-1000.jpg` on devices with a DPR of 2, and `image-1500.jpg` on
   devices with a DPR of 3.
 
-- `sizes` make the container size responsive by specifying the “hole”
+- `sizes` makes the container size responsive by specifying the “hole”
   for the image dependent upon a media condition
 
   ``` html
@@ -502,8 +500,8 @@ Understanding the `srcset` and `sizes` attributes
 
   The `sizes` attribute tells the browser that:
 
-  When viewport width ≥ 768px, the image will be 500px wide Otherwise,
-  the image will be 100% of viewport width
+  When viewport width ≥ 768px, the image will be 500px wide. Otherwise,
+  the image will be 100% of viewport width.
 
   Using this information, the browser might choose:
 
@@ -577,7 +575,7 @@ h1 {
 In the example above, downloading begins when the browser encounters the
 `h1` element.
 
-There are ways to let the browser start downloading the font earlier
+There are ways to let the browser start downloading the font earlier:
 
 - use a `preload` hint
 
@@ -590,7 +588,7 @@ There are ways to let the browser start downloading the font earlier
   />
   ```
 
-  If the font is hosted by a third party provider (e.g. Google Fonts),
+  If the font is hosted by a third-party provider (e.g. Google Fonts),
   we can also use a `preconnect` hint to establish a connection to the
   font provider’s server.
 
@@ -618,29 +616,28 @@ There are ways to let the browser start downloading the font earlier
 
 - Subset your font. For example, the
   https://fonts.googleapis.com/css?family=Roboto&subset=latin URL serves
-  a style sheet with the Roboto web font that only use the Latin
+  a style sheet with the Roboto web font that only uses the Latin
   alphabet. This can reduce download size.
 
 After the font is downloaded, there is another aspect by which we can
-control the font rendering behavior. Possible values are
+control the font rendering behavior. Possible values are:
 
-- the default `block`: browser blocks the rendering of any text that
+- the default `block`: the browser blocks the rendering of any text that
   uses the specified web font before it is downloaded. Different
   browsers behave slightly differently. Chromium and Firefox block
   rendering for up to a maximum of 3 seconds before using a fallback.
   Safari blocks indefinitely until the web font has loaded.
 
-- `swap` does not block rendering, and shows the text immediately in a
-  fallback before swapping in the specified web font. This lets you show
-  your content immediately without waiting for the web font to download.
-  This will hurt CLS.
+- `swap` does not block rendering: it shows the text immediately in a
+  fallback before swapping in the specified web font. This will hurt
+  CLS.
 
-- `optional` is in between of `block` and `swap`. It only uses the web
-  font resource if it downloads within 100 milliseconds. If a web font
-  takes longer than that to load, it isn’t used on the page, and the
-  browser uses the fallback typeface for the current navigation while
-  the web font is downloaded in the background and placed in the browser
-  cache. As a result, subsequent page navigations can use the web font
+- `optional` is in between `block` and `swap`. It only uses the web font
+  resource if it downloads within 100 milliseconds. If a web font takes
+  longer than that to load, it isn’t used on the page, and the browser
+  uses the fallback typeface for the current navigation while the web
+  font is downloaded in the background and placed in the browser cache.
+  As a result, subsequent page navigations can use the web font
   immediately, since it’s already downloaded. `font-display: optional`
   avoids the layout shift seen with `swap`, but some users don’t see the
   web font if it arrives too late on the initial page navigation.
@@ -652,10 +649,10 @@ Waterfall chart
 ![example waterfall
 chart](https://web.dev/static/articles/identify-resources-via-network-panel/image/chrome-devtools-network-4df907e09f1c1_1920.png)
 
-Waterfall chart usually shows the time frame at a 10ms resolution and
-the flame chart provides a more detailed view of the time spent on each
-task, it looked at each task and what child tasks it spins up. Take the
-following example HTML
+A waterfall chart usually shows the time frame at a 10ms resolution,
+while a flame chart provides a more detailed view of the time spent on
+each task: it looks at each task and the child tasks it spins up. Take
+the following example HTML:
 
 ``` html
 <html>
@@ -689,7 +686,7 @@ The flame chart would be
 
 LCP reports the render time of the largest image, text block, or video
 visible in the viewport, relative to when the user first navigated to
-the page. The candidates are
+the page. The candidates are:
 
 - `<img>` elements: (the first frame presentation time is used for
   animated content such as GIFs or animated PNGs), or `<image>` elements
@@ -703,8 +700,8 @@ the page. The candidates are
 - Block-level elements containing text nodes or other inline-level text
   elements
 
-In come cases, a candidate will be excluded so that developers can’t
-trick the metric by adding a easy-to-load element.
+In some cases, a candidate is excluded so that developers can’t trick
+the metric by adding an easy-to-load element:
 
 - Elements with an opacity of 0, that are invisible to the user
 
@@ -716,11 +713,11 @@ trick the metric by adding a easy-to-load element.
 
 Among all valid candidates, the one with the largest area is chosen as
 the LCP candidate. The size of an element is typically the size that’s
-visible to the user within the view port. For images, this is the
-visible size, for text elements, this is te rectangle that contains the
-text. The size does not count margins, paddings, or borders.
+visible to the user within the viewport. For images, this is the visible
+size; for text elements, this is the rectangle that contains the text.
+The size does not count margins, paddings, or borders.
 
-To provide a good user experience, sites should strive to have Largest
+To provide a good user experience, sites should strive to have a Largest
 Contentful Paint of **2.5** seconds or less.
 
 ### First Contentful Paint {#first-contentful-paint}
@@ -739,10 +736,9 @@ Contentful Paint of **1.8** seconds or less.
 TTFB is a metric that measures the time between the request for a
 resource and when the first byte of a response begins to arrive.
 
-This is measuring the performance for the server, and is generally not
-related to client-side performance. But TTFB is the first step before
-FCP and LCP can be measured, so it is important to know how to optimize
-it.
+This measures server performance and is generally unrelated to
+client-side performance. But TTFB is the first step before FCP and LCP
+can be measured, so it is important to know how to optimize it.
 
 TTFB is the sum of the following request phases:
 
@@ -763,12 +759,13 @@ or less.
 
 Ways to improve TTFB:
 
-- **compress** your assets: use gzip or brotli, Vercel uses brotli by
+- **compress** your assets: use gzip or Brotli; Vercel uses Brotli by
   default
 
-- use efficient **protocols** like HTTP/2 or HTTP/3 (requires http),
-  hard to debug locally. Vercel uses H2 and Cloudflare Pages uses H3.
-  Set this up yourself if you are self-hosting a Node.js server.
+- use efficient **protocols** like HTTP/2 or HTTP/3 (requires HTTPS),
+  which are hard to debug locally. Vercel uses H2 and Cloudflare Pages
+  uses H3. Set this up yourself if you are self-hosting a Node.js
+  server.
 
 - **edge** deployment for proximity
 
@@ -793,7 +790,7 @@ Techniques to improve FCP and LCP:
 
 ## CLS (Cumulative Layout Shift) {#cls-cumulative-layout-shift}
 
-A sum of all the layout shift scores. Individual layout shift score is
+CLS is the sum of all layout shift scores. Each layout shift score is
 calculated by multiplying the impact fraction by the distance fraction.
 
     layout shift score = impact fraction * distance fraction
@@ -828,7 +825,7 @@ To provide a good user experience, sites should strive to have a CLS of
   elements
 
 - **styling** solutions: `aspect-ratio` for images, fixed or absolute
-  position dynamic elements
+  positioning for dynamic elements
 
 ## INP (Interaction to Next Paint) {#inp-interaction-to-next-paint}
 
@@ -852,13 +849,13 @@ threshold).
 
 ### FID (First Input Delay) {#fid-first-input-delay}
 
-A retired measure in favor of INP
+Retired in favor of INP.
 
 FID measures the first INP.
 
 ## Optimize INP {#optimize-inp}
 
-The delay can be divided into 3 stages
+The delay can be divided into three stages:
 
 - The **input delay**, which starts when the user initiates an
   interaction with the page, and ends when the event callbacks for the
@@ -871,22 +868,22 @@ The delay can be divided into 3 stages
 
   Ways to optimize input delay include:
 
-  - avoid recurring timers and long running tasks that blocks the main
-    thread, more on this in how to optimize the processing duration
-    later
+  - avoid recurring timers and long-running tasks that block the main
+    thread (more on this under processing duration below)
 
-  - reduce interaction overlay by introducing a debouncing mechanism and
-    use `AbortController` to cancel congesting fetch requests
+  - reduce interaction overlap by introducing a debouncing mechanism and
+    using `AbortController` to cancel congesting fetch requests
 
 - The **processing duration**, which consists of the time it takes for
   event callbacks to run to completion.
 
-  The best general advice in optimizing event callbacks is to do as
+  The best general advice for optimizing event callbacks is to do as
   little work as possible in them. But if we can’t avoid it, we can
-  split the work into smaller tasks by **yielding** the main thread.
-  Details of yielding in https://web.dev/articles/optimize-long-tasks.
+  split the work into smaller tasks by **yielding** to the main thread.
+  Details on yielding are in
+  https://web.dev/articles/optimize-long-tasks.
 
-  A classic example is perform the critical DOM update first, then
+  A classic example is to perform the critical DOM update first, then
   schedule the rest of the work using `setTimeout` in the
   `requestAnimationFrame` callback. This way, the next paint happens
   quickly after the critical update, and the expensive work is finished
@@ -921,9 +918,9 @@ The delay can be divided into 3 stages
   to present the next frame which contains the visual result of the
   interaction.
 
-  Presentation delay could be a problem if the DOM tree is large, DOM
-  can cause rendering updates to be very expensive, and therefore
-  increase the time it takes for the browser to present the next frame.
+  Presentation delay can be a problem if the DOM tree is large: a large
+  DOM makes rendering updates very expensive and therefore increases the
+  time it takes for the browser to present the next frame.
 
   Use `content-visibility` to lazily render off-screen elements. Details
   in https://web.dev/articles/content-visibility
@@ -946,7 +943,7 @@ observer.observe({
 });
 ```
 
-Use the `web-vitals` library to get the metrics
+Use the `web-vitals` library to get the metrics:
 
 ``` ts
 import { onCLS, onINP, onLCP } from "web-vitals";
@@ -962,25 +959,25 @@ onLCP(console.log);
 
 - Blink Engine supports all: Chrome, Edge, Opera
 
-- Webkit supports none: Safari, Chrome on IOS, zero Safari user will
-  send these metrics, though FCP and TTFB are available.
+- WebKit supports none: Safari, Chrome on iOS. No Safari user will send
+  these metrics, though FCP and TTFB are available.
 
 - Gecko only supports LCP: Firefox
 
 ### Legacy Metrics {#legacy-metrics}
 
-Two legacy metrics are
+Two legacy metrics are:
 
 - `DOMContentLoaded` event: fires when the HTML document has been
   completely parsed, and all deferred scripts are executed
 
 - `load` event: all things in the `DOMContentLoaded` event, and
-  resources such as images, fonts have been loaded
+  resources such as images and fonts have been loaded
 
 For SPA apps, these two events fire almost immediately, so they are not
 useful for measuring performance. Note that although `DOMContentLoaded`
-and `load` will wait for scripts to be executed, it won’t wait for the
-actual async initialization of what the SPA script does.
+and `load` wait for scripts to be executed, they won’t wait for the
+actual async initialization the SPA script does.
 
 ``` html
 <body>
@@ -1013,11 +1010,12 @@ actual async initialization of what the SPA script does.
 
 - [Speed
   Check](https://requestmetrics.com/resources/tools/crux/?origin=):
-  query chrome UX report, find the web vitals for MDN, target.com, etc.
+  query the Chrome UX Report to find the web vitals for MDN, target.com,
+  etc.
 
 - [PageSpeed
   Insights](https://pagespeed.web.dev/analysis/https-qiushiyan-dev/pq16m14nqa?form_factor=desktop):
-  run lighthouse report, but on google’s machines
+  run a Lighthouse report, but on Google’s machines
 
-- [Web Page Test](https://www.webpagetest.org/): starting a robot at a
+- [Web Page Test](https://www.webpagetest.org/): starts a robot at a
   specific location and network condition

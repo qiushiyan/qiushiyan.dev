@@ -2,7 +2,7 @@
 title: A Taste of dplyr 1.0.0
 date: '2020-06-02'
 description: |
-  A quick summary of some exciting features coming in dplyr 1.0, e.g. `across()`, row-wise operations and context-dependent expressions
+  A quick summary of new features coming in dplyr 1.0, e.g. `across()`, row-wise operations and context-dependent expressions
 tags:
 - R
 headings:
@@ -48,7 +48,7 @@ headings:
 - title: Recipes
   slug: recipes
   depth: 2
-- title: Replace Missing Values in Multiple Columnes
+- title: Replace Missing Values in Multiple Columns
   slug: replace-missing-values-in-multiple-columnes
   depth: 3
 - title: Rolling Regression
@@ -59,9 +59,9 @@ headings:
 <my-callout> This article has been updated to keep up with dplyr 1.1.
 </my-callout>
 
-This post uses the penguins dataset modified by [Allison
-Horst](https://github.com/allisonhorst/penguins) in all the code
-examples (as an alternative to `iris`).
+The code examples use the penguins dataset modified by [Allison
+Horst](https://github.com/allisonhorst/penguins) as an alternative to
+`iris`.
 
 ``` r
 library(dplyr)
@@ -114,12 +114,12 @@ penguins %>%
 
 ## Column-wise Workflows {#column-wise-workflows}
 
-The new `across()` function supersedes functionalities of `_at`, `_if`,
-`_all` variants. The first argument, `.cols`, selects the columns you
-want to operate on. It uses tidy selection (like `select()`) so you can
-pick variables by position, name, and type. The second argument, `.fns`,
-is a function or list of functions to apply to each column. This can
-also be a purrr style formula
+The new `across()` function supersedes the `_at`, `_if` and `_all`
+variants. The first argument, `.cols`, selects the columns you want to
+operate on. It uses tidy selection (like `select()`) so you can pick
+variables by position, name, and type. The second argument, `.fns`, is a
+function or list of functions to apply to each column. This can also be
+a purrr-style formula:
 
 ``` r
 penguins_grouped <- penguins %>% group_by(species)
@@ -137,8 +137,8 @@ penguins_grouped %>%
 #> 3 Gentoo              47.5          15.0   124
 ```
 
-For conditional selection (previous `_if` variants), predicate function
-should be wrapped in `where`.
+For conditional selection (previously the `_if` variants), wrap the
+predicate function in `where`.
 
 ``` r
 # double all numeric columns
@@ -167,7 +167,7 @@ penguins %>%
 #> # A tibble: 1 × 0
 ```
 
-Apply multiple functions using list and use the `.names` argument to
+Apply multiple functions with a list, and use the `.names` argument to
 control column names.
 
 ``` r
@@ -247,10 +247,10 @@ df %>%
 #> 4          4    13    23    33    43    28
 ```
 
-`rowwise` takes each row, feeds it into a function, and return a tibble
-with the same number of rows. This essentially parallelize a function
-over the rows in the dataframe. In this case, the `mean()` function is
-vectorized. But, if a function is already vectorized, then `rowwise` is
+`rowwise` takes each row, feeds it into a function, and returns a tibble
+with the same number of rows. This essentially parallelizes a function
+over the rows in the data frame. In this case, the `mean()` function is
+vectorized. But if a function is already vectorized, then `rowwise` is
 not needed.
 
 ``` r
@@ -278,7 +278,7 @@ df %>%
 #> 4          4    13    23    33    43    69
 ```
 
-Another family of summary functions have “parallel” extensions where you
+Another family of summary functions has “parallel” extensions where you
 can provide multiple variables in the arguments:
 
 ``` r
@@ -302,9 +302,9 @@ Where these functions exist, they’ll usually be faster than `rowwise`.
 The advantage of `rowwise` is that it works with any function, not just
 those that are already vectorized.
 
-However, an advantage of `rowwise` even there is other ways is that it’s
-paired with `c_across()`, which works like `c()` but uses the same
-tidyselect syntax as `across()`. That makes it easy to operate on
+However, even when there are other ways, an advantage of `rowwise` is
+that it’s paired with `c_across()`, which works like `c()` but uses the
+same tidyselect syntax as `across()`. That makes it easy to operate on
 multiple variables:
 
 ``` r
@@ -325,8 +325,8 @@ df %>%
 #> 4          4    13    23    33    43    13    43
 ```
 
-Plus, a rowwise df will naturally contain exactly the same rows after
-`summarize()`, the same as `mutate`
+Plus, a rowwise df naturally keeps exactly the same rows after
+`summarize()`, just like `mutate`:
 
 ``` r
 df %>%
@@ -413,8 +413,8 @@ df %>%
 #> 3     3     2   100  1000 <dbl [2]>
 ```
 
-Or taking advantage of `summarize`’s new features to return multiple
-rows per group
+Or take advantage of `summarize`’s new features to return multiple rows
+per group:
 
 ``` r
 df %>%
@@ -545,7 +545,7 @@ by_species %>%
 #> 6 Gentoo    bill_depth_mm    2.02      0.219      9.24 1.02e-15
 ```
 
-An alternative approach
+An alternative approach:
 
 ``` r
 penguins %>%
@@ -578,8 +578,8 @@ starting from dplyr 1.1.
 Two big changes make `summarize()` much more flexible. A single summary
 expression can now return:
 
-- A vector of any length, creating multiple rows. (so we can use summary
-  that returns multiple values without `list`)
+- A vector of any length, creating multiple rows (so we can use summary
+  functions that return multiple values without `list`).
 
 - A data frame, creating multiple columns.
 
@@ -632,12 +632,12 @@ penguins_grouped %>%
 #> 3 Gentoo     13.1  17.3
 ```
 
-At the first glance this may seem not so different with supplying
-multiple name-value pairs. But this can be useful inside functions. For
-example, in the previous `quantile` code it would be nice to be able to
-reduce the duplication so that we don’t have to type the quantile values
-twice. We can now write a simple function because summary expressions
-can now be data frames or tibbles:
+At first glance, this may not seem so different from supplying multiple
+name-value pairs, but it is useful inside functions. For example, in the
+previous `quantile` code, it would be nice to reduce the duplication so
+that we don’t have to type the quantile values twice. Because summary
+expressions can now be data frames or tibbles, we can write a simple
+function:
 
 ``` r
 quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
@@ -669,8 +669,8 @@ penguins_grouped %>%
 #> 9 Gentoo     15.7  0.75
 ```
 
-When combining glue syntax and tidy evaluation, it is easy to
-dynamically name the column names.
+Combining glue syntax and tidy evaluation makes it easy to name the
+columns dynamically.
 
 ``` r
 quibble <- function(x, q = c(0.25, 0.5, 0.75), na.rm = TRUE) {
@@ -705,9 +705,9 @@ penguins_grouped %>%
 #> 9 Gentoo                           221                0.75
 ```
 
-As an aside, if we name the tibble expression in `summarize()` that part
-will be packed in the result, which can be solved by `tidyr::unpack`.
-That’s because when we leave the name off, the data frame result is
+As an aside, if we name the tibble expression in `summarize()`, that
+part will be packed in the result, which can be solved with
+`tidyr::unpack`. When we leave the name off, the data frame result is
 automatically unpacked.
 
 ``` r
@@ -742,8 +742,8 @@ In combination with rowwise operations, `summarize()` is now
 sufficiently powerful to replace many workflows that previously required
 a `map()` function.
 
-For example, to read all the all the .csv files in the current
-directory, you could write:
+For example, to read all the .csv files in the current directory, you
+could write:
 
 ``` r
 tibble(path = dir(pattern = "\\.csv$")) %>%
@@ -753,9 +753,9 @@ tibble(path = dir(pattern = "\\.csv$")) %>%
 
 ## Move Columns {#move-columns}
 
-New verb `relocate` is provided to change column positions with the same
-syntax as `select`. The default behavior is to move selected columns to
-the left-hand side
+The new verb `relocate` changes column positions with the same syntax as
+`select`. By default, it moves the selected columns to the left-hand
+side:
 
 ``` r
 penguins %>% relocate(island)
@@ -947,7 +947,7 @@ df %>% rows_patch(tibble(a = 1:3, b = "patch"))
 #> 3     3 patch   2.5
 ```
 
-`row_upsert` update a df or insert new rows.
+`rows_upsert` updates a df or inserts new rows.
 
 ``` r
 df %>%
@@ -967,15 +967,15 @@ df %>%
 
 ## Context Dependent Expressions {#context-dependent-expressions}
 
-`n()` is a special function in dplyr which return the number of
-observations in the current group. Now the new version comes with more
-such special functions, aka context dependent expressions. These
-functions return information about the “current” group or “current”
-variable, so only work inside specific contexts like `summarize()` and
-`mutate()`. Specifically, a family of `cur_` functions are added:
+`n()` is a special function in dplyr that returns the number of
+observations in the current group. The new version adds more such
+functions, aka context-dependent expressions. They return information
+about the “current” group or “current” variable, so they only work
+inside specific contexts like `summarize()` and `mutate()`.
+Specifically, a family of `cur_` functions is added:
 
 - `cur_data()` gives the current data for the current group (excluding
-  grouping variables, `cur_data_all` in developmental version returns
+  grouping variables, `cur_data_all` in the development version returns
   grouping variables as well)
 
 - `cur_group()` gives the group keys, a tibble with one row and one
@@ -1118,11 +1118,11 @@ penguins %>%
 #> # ℹ 2 more variables: sex <fct>, year <int>
 ```
 
-`summarize()` gains new argument `.groups` to control grouping structure
-of theh result.
+`summarize()` gains a new argument `.groups` to control the grouping
+structure of the result.
 
 - `.groups = "drop_last"` drops the last grouping level (i.e. the
-  default behaviour).
+  default behavior).
 
 - `.groups = "drop"` drops all grouping levels and returns a tibble.
 
@@ -1180,7 +1180,7 @@ penguins %>%
 #> # ℹ 2 more variables: sex <fct>, year <int>
 ```
 
-`mutate()` gains argument `.keep` that allows you to control which
+`mutate()` gains an argument `.keep` that allows you to control which
 columns are retained in the output:
 
 ``` r
@@ -1225,14 +1225,14 @@ penguins %>% mutate(double_mass = body_mass_g * 2, .keep = "none")
 
 ## Recipes {#recipes}
 
-This in-progress section documents tasks that would otherwise been
-impossible or laborious with previous version of dplyr.
+This in-progress section documents tasks that would otherwise have been
+impossible or laborious with previous versions of dplyr.
 
-### Replace Missing Values in Multiple Columnes {#replace-missing-values-in-multiple-columnes}
+### Replace Missing Values in Multiple Columns {#replace-missing-values-in-multiple-columnes}
 
 Since `tidyr::replace_na` does not support tidy select syntax, replacing
-NA values in multiple columns could be a drudgery. Now this is made easy
-with `coalesce` and `across`
+NA values in multiple columns could be drudgery. Now `coalesce` and
+`across` make it easy:
 
 ``` r
 penguins %>% summarize(across(starts_with("bill"), ~ sum(is.na(.x))))
@@ -1252,7 +1252,7 @@ penguins %>%
 
 ### Rolling Regression {#rolling-regression}
 
-We can easily perform rolling computation with the `slider` package and
+We can easily perform rolling computations with the `slider` package and
 `pick()`.
 
 ``` r

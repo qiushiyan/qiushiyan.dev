@@ -31,7 +31,7 @@ class GitHubUserEvents:
         return text
 
 
-# abstract class for event types: commit, start, etc.
+# abstract class for event types: commit, star, etc.
 class EventList:
     def __init__(self):
         self.events = []

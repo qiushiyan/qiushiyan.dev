@@ -14,10 +14,9 @@ headings:
 
 ## Views and Materialized Views {#views-and-materialized-views}
 
-Cache an expensive query with a materialized view with historical data
-(except for the latest two days), then union it with the live data. This
-way, we get the best of both worlds: fast query times and up-to-date
-data.
+Cache the historical part of an expensive query (everything except the
+latest two days) in a materialized view, then union it with the live
+data. This way, we get both fast queries and up-to-date data.
 
 ``` sql
 -- create the materialized view
@@ -26,7 +25,7 @@ SELECT id, avg(duration) as avg_duration
 FROM logs
 WHERE timestamp < NOW() - INTERVAL '2 days';
 
--- combine hisotical data with live data
+-- combine historical data with live data
 SELECT id, avg(duration) as avg_duration
 FROM logs
 WHERE timestamp >= NOW() - INTERVAL '2 days'
@@ -40,7 +39,7 @@ REFRESH MATERIALIZED VIEW historical_data;
 
 ## Working with Data Duplication {#working-with-data-duplication}
 
-Pick the latest record per group with `DISTINCT ON` and `ORDER BY`
+Pick the latest record per group with `DISTINCT ON` and `ORDER BY`:
 
 ``` sql
 -- get the highest score for each student and the associated subject
@@ -54,7 +53,7 @@ FROM logs
 ORDER BY url, timestamp DESC
 ```
 
-Add a `is_duplicate` flag with window functions
+Add an `is_duplicate` flag with window functions:
 
 ``` sql
 CREATE VIEW table_with_duplicates AS (
