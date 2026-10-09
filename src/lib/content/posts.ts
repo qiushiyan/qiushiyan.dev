@@ -1,38 +1,38 @@
-import "server-only";
+import { getCollection } from "astro:content";
 
-import { posts } from "#content";
+import { byDateDesc, isPublished } from "./articles";
+import type { CollectionEntry } from "astro:content";
 
-import { byDateDesc, isPublished } from "./collection";
-import type { Post } from "#content";
-
-// Velite output is static, so the published list is computed once.
-const publishedPosts = posts.filter(isPublished).sort(byDateDesc);
+export type Post = CollectionEntry<"posts">;
 
 /** Published posts, newest first. */
-export const getPosts = () => publishedPosts;
+export const getPosts = async () =>
+  (await getCollection("posts", isPublished)).sort(byDateDesc);
 
-export const getPost = (slug: string) =>
-  publishedPosts.find((post) => post.slug === slug);
-
-export const getAllTags = () => [
-  ...new Set(publishedPosts.flatMap((post) => post.tags)),
-];
+export const getAllTags = (posts: Post[]) =>
+  [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) =>
+    a.localeCompare(b)
+  );
 
 /** Other posts that share at least one tag with `post`, newest first. */
-export const getRelatedPosts = (post: Post, limit = 3) =>
-  publishedPosts
+export const getRelatedPosts = (posts: Post[], post: Post, limit = 3) =>
+  posts
     .filter(
       (other) =>
-        other.slug !== post.slug &&
-        other.tags.some((tag) => post.tags.includes(tag))
+        other.id !== post.id &&
+        other.data.tags.some((tag) => post.data.tags.includes(tag))
     )
     .slice(0, limit);
 
-/** The neighbours of `slug` in date order. */
-export const getAdjacentPosts = (slug: string) => {
-  const index = publishedPosts.findIndex((post) => post.slug === slug);
+/** The neighbours of `post` in date order. */
+export const getAdjacentPosts = (posts: Post[], post: Post) => {
+  const index = posts.findIndex((other) => other.id === post.id);
   return {
-    older: index === -1 ? undefined : publishedPosts[index + 1],
-    newer: index > 0 ? publishedPosts[index - 1] : undefined,
+    older: index === -1 ? undefined : posts[index + 1],
+    newer: index > 0 ? posts[index - 1] : undefined,
   };
 };
+
+/** URL form of a post tag: "Machine Learning" → "machine-learning". */
+export const tagSlug = (tag: string) =>
+  tag.toLowerCase().replace(/[^a-z0-9]+/g, "-");

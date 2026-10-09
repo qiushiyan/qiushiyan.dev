@@ -1,0 +1,26 @@
+---
+/* Cloudflare Web Analytics and Google Analytics, loaded after the page. */
+const GTAG_ID = "G-49H8YKV7QV";
+---
+
+<script
+  is:inline
+  defer
+  src="https://static.cloudflareinsights.com/beacon.min.js"
+  data-cf-beacon='{"token": "ebc8e642434a45cd9fcb862ef2d97a67"}'
+></script>
+<script
+  is:inline
+  async
+  src={`https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`}
+></script>
+<script is:inline define:vars={{ GTAG_ID }}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    // gtag.js reads the Arguments object itself; a rest array is not the same.
+    // eslint-disable-next-line prefer-rest-params
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", GTAG_ID);
+</script>

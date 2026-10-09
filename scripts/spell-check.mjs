@@ -23,7 +23,7 @@ import { reporter } from "vfile-reporter";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-// Velite reads frontmatter itself; remark would otherwise parse it as prose.
+// Frontmatter is metadata, not prose; strip it before remark parses the file.
 const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/;
 
 // Bare URLs and domains such as web.dev are not prose.

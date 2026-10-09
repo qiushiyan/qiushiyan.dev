@@ -1,0 +1,71 @@
+---
+import PanelLeft from "@lucide/astro/icons/panel-left";
+
+import RecipeSidebar from "@/components/recipe/recipe-sidebar.astro";
+import { RecipeWorkspace } from "@/components/recipe/recipe-workspace";
+import BaseLayout from "@/layouts/base-layout.astro";
+import { getRecipes, groupLabel, runnableGroups } from "@/lib/content/recipes";
+import { routes } from "@/lib/navigation";
+import { MAIN_CONTENT_ID } from "@/lib/site";
+import type { Recipe } from "@/lib/content/recipes";
+
+/*
+  A full-height tool page: the recipe list beside a workspace that fills the
+  rest of the viewport. Only groups with a runnable editor get a page.
+*/
+export async function getStaticPaths() {
+  const recipes = await getRecipes();
+  return recipes
+    .filter((recipe) =>
+      (runnableGroups as readonly string[]).includes(recipe.data.group)
+    )
+    .map((recipe) => ({
+      params: { group: recipe.data.group, slug: recipe.data.slug },
+      props: { recipe, recipes },
+    }));
+}
+
+type Props = { recipe: Recipe; recipes: Recipe[] };
+const { recipe, recipes } = Astro.props;
+---
+
+<BaseLayout
+  title={recipe.data.title}
+  description={`A ${groupLabel(recipe.data.group)} code snippet`}
+  canonical={routes.recipe(recipe.data.group, recipe.data.slug)}
+  ogCard={`recipes/${recipe.id}`}
+  bodyClass="h-dvh"
+>
+  <button
+    slot="nav-controls"
+    type="button"
+    aria-label="Recipes"
+    popovertarget="recipes-menu"
+    class="grid size-11 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground md:hidden"
+  >
+    <PanelLeft aria-hidden="true" stroke-width={1.5} class="size-5" />
+  </button>
+  <div id="recipes-menu" popover class="nav-popover w-64 p-2">
+    <RecipeSidebar recipes={recipes} current={recipe.id} />
+  </div>
+  <div class="flex min-h-0 flex-1">
+    <aside class="hidden w-60 shrink-0 overflow-y-auto border-r p-3 md:block">
+      <RecipeSidebar recipes={recipes} current={recipe.id} />
+    </aside>
+    <main
+      id={MAIN_CONTENT_ID}
+      class="flex min-h-0 min-w-0 flex-1 flex-col px-4 pb-4"
+    >
+      <RecipeWorkspace
+        client:only="react"
+        title={recipe.data.title}
+        recipesHref={routes.recipes}
+        files={recipe.data.files}
+      >
+        <p slot="fallback" class="py-3 text-sm text-muted-foreground">
+          Loading the editor…
+        </p>
+      </RecipeWorkspace>
+    </main>
+  </div>
+</BaseLayout>

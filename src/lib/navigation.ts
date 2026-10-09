@@ -6,7 +6,10 @@ export const routes = {
   recipes: "/recipes",
   note: (slug: string) => `/notes/${slug}`,
   post: (slug: string) => `/posts/${slug}`,
-  recipe: (lang: string, slug: string) => `/recipes/${lang}/${slug}`,
+  recipe: (group: string, slug: string) => `/recipes/${group}/${slug}`,
+  feed: "/feed.xml",
+  /** The Open Graph card for a page, e.g. `og("posts/durable-object-chat")` (src/pages/og/[...card].png.ts). */
+  og: (card: string) => `/og/${card}.png`,
 };
 
 /** The site's primary sections, in nav order (desktop bar and mobile menu). */

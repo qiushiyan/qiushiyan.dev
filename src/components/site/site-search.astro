@@ -1,0 +1,55 @@
+---
+import Search from "@lucide/astro/icons/search";
+
+/*
+  Full-text search over posts and notes, with Pagefind. `astro build` indexes
+  every element marked `data-pagefind-body` (the article layout) into
+  dist/pagefind/; in `astro dev`, astro-pagefind serves the last build's index.
+
+  Nothing loads until the reader asks: the first click (or ⌘K / Ctrl+K)
+  imports Pagefind's component UI and opens its modal.
+*/
+---
+
+<button
+  type="button"
+  aria-label="Search"
+  aria-keyshortcuts="Meta+K Control+K"
+  data-site-search
+  class="grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11"
+>
+  <Search aria-hidden="true" stroke-width={1.5} class="size-5" />
+</button>
+
+<script>
+  type PagefindModal = HTMLElement & { open(): void };
+
+  let modal: Promise<PagefindModal> | undefined;
+
+  const loadModal = () =>
+    (modal ??= Promise.all([
+      import("@pagefind/component-ui"),
+      import("@pagefind/component-ui/css"),
+    ]).then(() => {
+      const element = document.createElement("pagefind-modal") as PagefindModal;
+      element.setAttribute("reset-on-close", "");
+      document.body.append(element);
+      return customElements.whenDefined("pagefind-modal").then(() => element);
+    }));
+
+  const openSearch = () => void loadModal().then((element) => element.open());
+
+  document
+    .querySelector("[data-site-search]")
+    ?.addEventListener("click", openSearch);
+  // Warm the import when the pointer gets close, so the first open feels instant.
+  document
+    .querySelector("[data-site-search]")
+    ?.addEventListener("pointerenter", () => void loadModal(), { once: true });
+  document.addEventListener("keydown", (event) => {
+    if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      openSearch();
+    }
+  });
+</script>

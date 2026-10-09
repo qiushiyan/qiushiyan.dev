@@ -1,13 +1,22 @@
-import "server-only";
+import { getCollection } from "astro:content";
 
-import { notes } from "#content";
+import { byDateDesc, isPublished } from "./articles";
+import type { CollectionEntry } from "astro:content";
 
-import { byDateDesc, isPublished } from "./collection";
-
-const publishedNotes = notes.filter(isPublished).sort(byDateDesc);
+export type Note = CollectionEntry<"notes">;
 
 /** Published notes, newest first. */
-export const getNotes = () => publishedNotes;
+export const getNotes = async () =>
+  (await getCollection("notes", isPublished)).sort(byDateDesc);
 
-export const getNote = (slug: string) =>
-  publishedNotes.find((note) => note.slug === slug);
+/** Notes grouped by category, categories in alphabetical order with "Other" last. */
+export const groupNotesByCategory = (notes: Note[]) => {
+  const groups = Map.groupBy(notes, (note) => note.data.category);
+  const categories = [...groups.keys()].sort((a, b) =>
+    a === "Other" ? 1 : b === "Other" ? -1 : a.localeCompare(b)
+  );
+  return categories.map((category) => ({
+    category,
+    notes: groups.get(category)!,
+  }));
+};

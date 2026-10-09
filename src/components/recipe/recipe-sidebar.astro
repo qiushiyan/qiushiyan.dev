@@ -1,0 +1,35 @@
+---
+import { groupRecipes } from "@/lib/content/recipes";
+import { routes } from "@/lib/navigation";
+import type { Recipe } from "@/lib/content/recipes";
+
+/* Every recipe by language, with the current one marked. */
+type Props = { recipes: Recipe[]; current: string };
+const { recipes, current } = Astro.props;
+---
+
+<nav aria-label="Recipes" class="grid gap-6 text-sm">
+  {groupRecipes(recipes).map(({ label, recipes: list }) => (
+    <div>
+      <p class="px-2 pb-1.5 text-xs font-medium text-muted-foreground">
+        {label}
+      </p>
+      <ul class="flex flex-col gap-0.5">
+        {list.map((recipe) => {
+          const href = routes.recipe(recipe.data.group, recipe.data.slug);
+          return (
+            <li>
+              <a
+                href={href}
+                aria-current={recipe.id === current ? "page" : undefined}
+                class="block rounded-md px-2 py-1.5 text-muted-foreground -outline-offset-2 transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
+              >
+                {recipe.data.title}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  ))}
+</nav>

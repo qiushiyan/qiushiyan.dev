@@ -1,0 +1,65 @@
+---
+import { render } from "astro:content";
+
+import PostFooter from "@/components/post/post-footer.astro";
+import ArticleLayout from "@/layouts/article-layout.astro";
+import { pipelineFrontmatter } from "@/lib/content/articles";
+import {
+  getAdjacentPosts,
+  getPosts,
+  getRelatedPosts,
+} from "@/lib/content/posts";
+import { routes } from "@/lib/navigation";
+import { siteConfig } from "@/lib/site";
+import type { Post } from "@/lib/content/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, posts },
+  }));
+}
+
+type Props = { post: Post; posts: Post[] };
+const { post, posts } = Astro.props;
+const { older, newer } = getAdjacentPosts(posts, post);
+const url = new URL(routes.post(post.id), siteConfig.url).href;
+const { lastModified } = pipelineFrontmatter(
+  (await render(post)).remarkPluginFrontmatter
+);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.descriptionText,
+  datePublished: post.data.date.toISOString(),
+  dateModified: lastModified ?? post.data.date.toISOString(),
+  url,
+  mainEntityOfPage: url,
+  keywords: post.data.tags,
+  author: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+};
+---
+
+<ArticleLayout
+  entry={post}
+  description={post.data.descriptionText}
+  lead={post.data.descriptionHtml}
+  showReadingTime
+  showViewCount
+>
+  {/* `<` is escaped so a value containing `</script>` can't close the tag. */}
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd).replace(/</g, "\\u003c")}
+  />
+  <PostFooter
+    slot="footer"
+    related={getRelatedPosts(posts, post)}
+    older={older}
+    newer={newer}
+  />
+</ArticleLayout>

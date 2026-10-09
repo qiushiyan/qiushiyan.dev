@@ -1,0 +1,47 @@
+---
+import { isActivePath, navLinks } from "@/lib/navigation";
+
+const pathname = Astro.url.pathname;
+---
+
+{/* A native popover: light dismiss, Escape and focus return come from the browser. */}
+<button
+  type="button"
+  aria-label="Menu"
+  popovertarget="mobile-menu"
+  class="grid size-11 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] md:hidden"
+>
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="size-5"
+  >
+    <path d="M3 5H11"></path>
+    <path d="M3 12H16"></path>
+    <path d="M3 19H21"></path>
+  </svg>
+</button>
+<div id="mobile-menu" popover class="nav-popover w-56 p-1">
+  <nav aria-label="Main">
+    <ul>
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            aria-current={
+              isActivePath(pathname, link.href) ? "page" : undefined
+            }
+            class="flex h-11 items-center rounded-sm px-3 text-base text-muted-foreground -outline-offset-2 transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</div>

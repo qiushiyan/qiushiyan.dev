@@ -1,0 +1,68 @@
+---
+/*
+  Marks the section the reader is in, in every table of contents on the page:
+  the last heading whose top has passed the nav, or the last heading once the
+  page is scrolled to the end. Reading positions on every scroll (not an
+  IntersectionObserver band) keeps it right after jumps, deep links and
+  scrolling up.
+*/
+---
+
+<script>
+  // Reading room below the sticky nav: a heading counts as current once it
+  // scrolls within this distance of its anchor position.
+  const READING_ROOM = 32;
+
+  const links = [
+    ...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"),
+  ];
+  const slugs = [...new Set(links.map((link) => link.dataset.tocLink!))];
+  const headings = slugs
+    .map((slug) => document.getElementById(slug))
+    .filter((element): element is HTMLElement => element !== null);
+
+  if (headings.length > 0) {
+    const offset =
+      parseFloat(getComputedStyle(headings[0]).scrollMarginTop) + READING_ROOM;
+    let frame = 0;
+    let active: string | undefined;
+
+    const update = () => {
+      frame = 0;
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2;
+      let current = headings[0];
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top - offset > 0) break;
+        current = heading;
+      }
+      const next = atBottom ? headings[headings.length - 1].id : current.id;
+      if (next === active) return;
+      active = next;
+      for (const link of links) {
+        if (link.dataset.tocLink === active) {
+          link.setAttribute("aria-current", "location");
+          // Long notes overflow the rail; keep the current entry in view.
+          const container = link.closest("nav");
+          if (container && container.scrollHeight > container.clientHeight) {
+            const bounds = container.getBoundingClientRect();
+            const rect = link.getBoundingClientRect();
+            if (rect.top < bounds.top)
+              container.scrollTop -= bounds.top - rect.top;
+            else if (rect.bottom > bounds.bottom)
+              container.scrollTop += rect.bottom - bounds.bottom;
+          }
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      }
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+  }
+</script>

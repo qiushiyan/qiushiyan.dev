@@ -1,0 +1,46 @@
+---
+/*
+  Runs before first paint: applies the saved theme (or the OS preference) as
+  a class on <html>, so the page never flashes the wrong theme. The choice is
+  `localStorage.theme`: "light" or "dark"; anything else follows the OS.
+*/
+---
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    const media = matchMedia("(prefers-color-scheme: dark)");
+    const stored = () => {
+      try {
+        return localStorage.getItem("theme");
+      } catch {
+        return null;
+      }
+    };
+    const apply = (theme) => {
+      const resolved =
+        theme === "light" || theme === "dark"
+          ? theme
+          : media.matches
+            ? "dark"
+            : "light";
+      root.classList.toggle("dark", resolved === "dark");
+      root.classList.toggle("light", resolved === "light");
+      root.style.colorScheme = resolved;
+      return resolved;
+    };
+    apply(stored());
+    media.addEventListener("change", () => apply(stored()));
+    window.__setTheme = (theme) => {
+      try {
+        localStorage.setItem("theme", theme);
+      } catch {
+        // Storage unavailable: the choice lasts for this page only.
+      }
+      const resolved = apply(theme);
+      window.dispatchEvent(
+        new CustomEvent("themechange", { detail: resolved })
+      );
+    };
+  })();
+</script>

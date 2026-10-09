@@ -1,44 +1,38 @@
 import js from "@eslint/js";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
+import astro from "eslint-plugin-astro";
 import onlyWarn from "eslint-plugin-only-warn";
+import reactHooks from "eslint-plugin-react-hooks";
 import { defineConfig, globalIgnores } from "eslint/config";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   globalIgnores([
     // Build outputs and generated files
-    ".next/",
-    ".open-next/",
-    ".velite/",
+    "dist/",
+    ".astro/",
     ".wrangler/",
-    "out/",
-    "build/",
     "public/",
-    "next-env.d.ts",
     "worker-configuration.d.ts",
-    // Config files
-    "*.config.{js,ts,mjs}",
     // Quarto sources and their generated output
     "quarto-contents/",
+    "content/",
   ]),
   js.configs.recommended,
-  // React, React Hooks, Next.js core-web-vitals, import and jsx-a11y rules
-  ...nextVitals,
-  // typescript-eslint recommended
-  ...nextTs,
+  ...tseslint.configs.recommended,
+  ...astro.configs.recommended,
+  // The recipe editor is the only React code
+  { files: ["**/*.tsx"], ...reactHooks.configs.flat.recommended },
+  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   // Turn off rules that conflict with Prettier
   prettier,
   {
     name: "project-custom",
     rules: {
-      semi: ["error", "always"],
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },
   // Report every rule as a warning
-  {
-    name: "only-warn",
-    plugins: { onlyWarn },
-  },
+  { name: "only-warn", plugins: { onlyWarn } },
 ]);

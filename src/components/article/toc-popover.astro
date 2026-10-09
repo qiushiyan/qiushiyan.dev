@@ -1,0 +1,43 @@
+---
+import TableOfContents from "@lucide/astro/icons/table-of-contents";
+
+import ArticleToc from "./article-toc.astro";
+
+type Props = { headings: { slug: string; depth: number; html: string }[] };
+const { headings } = Astro.props;
+---
+
+{/* The table of contents below 80rem, where there is no room for the rail: a native popover from the nav. */}
+{headings.length > 0 && (
+  <>
+    <button
+      type="button"
+      aria-label="On this page"
+      popovertarget="toc-popover"
+      class="grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11 xl:hidden"
+    >
+      <TableOfContents aria-hidden="true" stroke-width={1.5} class="size-5" />
+    </button>
+    <div
+      id="toc-popover"
+      popover
+      class="nav-popover w-80 overflow-hidden text-sm/6"
+    >
+      <nav
+        aria-label="On this page"
+        class="max-h-[min(70dvh,32rem)] overflow-y-auto p-3"
+      >
+        <ArticleToc headings={headings} itemClass="py-2.5" />
+      </nav>
+    </div>
+  </>
+)}
+
+<script>
+  // Jumping to a section closes the popover and leaves focus at the section.
+  document.getElementById("toc-popover")?.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("a")) {
+      (event.currentTarget as HTMLElement).hidePopover();
+    }
+  });
+</script>

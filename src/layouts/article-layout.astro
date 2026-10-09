@@ -1,0 +1,122 @@
+---
+import { render } from "astro:content";
+
+import "@/styles/article.css";
+import "@/styles/content.css";
+
+import TocPopover from "@/components/article/toc-popover.astro";
+import TocRail from "@/components/article/toc-rail.astro";
+import TocScript from "@/components/article/toc-script.astro";
+import ViewCount from "@/components/article/view-count.astro";
+import ContentElements from "@/components/content-elements/content-elements.astro";
+import { pipelineFrontmatter } from "@/lib/content/articles";
+import { formatDate } from "@/lib/format";
+import { proseClasses } from "@/lib/prose";
+import { MAIN_CONTENT_ID } from "@/lib/site";
+import BaseLayout from "./base-layout.astro";
+import type { Article } from "@/lib/content/articles";
+
+/*
+  A post or note page: the title block, the table of contents (a rail at
+  80rem and up, a nav popover below), the rendered Markdown and a footer
+  slot. Only the article body is indexed for site search.
+*/
+type Props = {
+  entry: Article;
+  /** Plain-text description for meta tags. */
+  description: string;
+  /** The lead under the title, as HTML (posts render their Markdown description). */
+  lead?: string;
+  showReadingTime?: boolean;
+  showViewCount?: boolean;
+};
+
+const {
+  entry,
+  description,
+  lead,
+  showReadingTime = false,
+  showViewCount = false,
+} = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(entry);
+const { readingTime, lastModified, elements } = pipelineFrontmatter(
+  remarkPluginFrontmatter
+);
+
+const kind = entry.collection === "posts" ? "post" : "note";
+const path = `/${entry.collection}/${entry.id}`;
+const date = entry.data.date.toISOString();
+// "Updated" only when the last edit falls on a later day than publication.
+const updated =
+  lastModified && formatDate(lastModified) !== formatDate(date)
+    ? lastModified
+    : undefined;
+const tags = entry.collection === "posts" ? entry.data.tags : undefined;
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={description}
+  canonical={path}
+  ogCard={`${entry.collection}/${entry.id}`}
+  article={{ publishedTime: date, modifiedTime: lastModified, tags }}
+>
+  <slot name="head" slot="head" />
+  <TocPopover slot="nav-controls" headings={entry.data.headings} />
+  <main id={MAIN_CONTENT_ID} class="pb-24">
+    <div class:list={["article lg:prose-lg", proseClasses]}>
+      <header class="article-column not-prose grid gap-4 pt-10 pb-8">
+        <h1
+          class="text-3xl/tight font-semibold tracking-tight text-balance sm:text-4xl/tight"
+          style={{ viewTransitionName: `${kind}-${entry.id}` }}
+          data-pagefind-meta="title"
+        >
+          {entry.data.title}
+        </h1>
+        {lead && (
+          <div
+            class="text-base/7 text-pretty text-muted-foreground sm:text-lg/8"
+            set:html={lead}
+          />
+        )}
+        <p class="flex flex-wrap gap-x-2 text-sm text-muted-foreground">
+          {entry.data.draft && (
+            <>
+              <span class="font-medium text-foreground">Draft</span>
+              <span aria-hidden="true">·</span>
+            </>
+          )}
+          <time datetime={date}>{formatDate(date)}</time>
+          {showReadingTime && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{readingTime} min read</span>
+            </>
+          )}
+          {updated && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>
+                Updated <time datetime={updated}>{formatDate(updated)}</time>
+              </span>
+            </>
+          )}
+          {showViewCount && <ViewCount slug={entry.id} />}
+        </p>
+      </header>
+      <div class="relative">
+        <TocRail headings={entry.data.headings} />
+        <article
+          class="article-column article-body"
+          data-pagefind-body
+          data-pagefind-filter={`type:${kind}`}
+        >
+          <Content />
+        </article>
+      </div>
+      <slot name="footer" />
+    </div>
+  </main>
+  <ContentElements names={elements} />
+  <TocScript />
+</BaseLayout>

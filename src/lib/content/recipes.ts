@@ -1,8 +1,26 @@
-import "server-only";
+import { getCollection } from "astro:content";
 
-import { recipes } from "#content";
+import type { CollectionEntry } from "astro:content";
 
-export const getRecipeGroups = () => recipes;
+export type Recipe = CollectionEntry<"recipes">;
 
-export const getRecipe = (group: string, slug: string) =>
-  recipes[group]?.find((recipe) => recipe.slug === slug);
+/** Groups with a runnable editor; the recipe page renders only these. */
+export const runnableGroups = ["python"] as const;
+
+export const getRecipes = async () => getCollection("recipes");
+
+/** Recipes grouped by language, in index.yaml order. */
+export const groupRecipes = (recipes: Recipe[]) => {
+  const groups = Map.groupBy(recipes, (recipe) => recipe.data.group);
+  return [...groups].map(([group, list]) => ({
+    group,
+    label: groupLabel(group),
+    recipes: list,
+  }));
+};
+
+const groupLabels: Record<string, string> = { python: "Python", css: "CSS" };
+
+/** Display name of a recipe group key: "python" → "Python". */
+export const groupLabel = (group: string) =>
+  groupLabels[group] ?? group.charAt(0).toUpperCase() + group.slice(1);

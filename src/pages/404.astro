@@ -1,0 +1,28 @@
+---
+import PageLayout from "@/layouts/page-layout.astro";
+import { routes } from "@/lib/navigation";
+
+/* Served for unknown paths by Workers Static Assets (`not_found_handling` in wrangler.jsonc). */
+---
+
+<PageLayout
+  title="Page not found"
+  heading="Page not found"
+  lead="This page doesn’t exist or has moved."
+  class="sm:py-24"
+>
+  <p class="mt-6 flex gap-6 text-sm font-medium">
+    <a
+      href={routes.home}
+      class="underline underline-offset-4 transition-colors hover:text-primary"
+    >
+      Home
+    </a>
+    <a
+      href={routes.posts}
+      class="underline underline-offset-4 transition-colors hover:text-primary"
+    >
+      All posts
+    </a>
+  </p>
+</PageLayout>

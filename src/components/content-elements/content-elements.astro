@@ -1,0 +1,18 @@
+---
+import CodeSwitcher from "./code-switcher.astro";
+import DoCounterExample from "./do-counter-example.astro";
+import type { InteractiveElement } from "@/lib/markdown/elements";
+
+/*
+  Defines the interactive custom elements an entry's content uses. The
+  Markdown pipeline records them per entry (`elements` in the frontmatter
+  from `render()`), and Astro only includes a component's script on pages
+  that render it, so a post without a code switcher ships none of its code.
+  A new element needs its name in src/lib/markdown/elements.ts and a line here.
+*/
+type Props = { names: string[] };
+const names = new Set(Astro.props.names as InteractiveElement[]);
+---
+
+{names.has("code-switcher") && <CodeSwitcher />}
+{names.has("do-counter-example") && <DoCounterExample />}
