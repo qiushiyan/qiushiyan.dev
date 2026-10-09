@@ -1,0 +1,40 @@
+---
+type Props = { slug: string };
+const { slug } = Astro.props;
+---
+
+{/* Filled in after load by the script below; the slot keeps its width so the meta line never shifts. */}
+<view-count data-slug={slug} class="inline-flex min-w-28 gap-x-2 tabular-nums"></view-count>
+
+<script>
+  const formatter = new Intl.NumberFormat("en-US");
+
+  /*
+    The page is static, so the count is fetched after load: the first visit in
+    a browser session counts a view (POST), later ones only read it (GET).
+  */
+  class ViewCount extends HTMLElement {
+    connectedCallback() {
+      const slug = this.dataset.slug!;
+      const key = `viewed:${slug}`;
+      let counted = false;
+      try {
+        counted = sessionStorage.getItem(key) !== null;
+        if (!counted) sessionStorage.setItem(key, "1");
+      } catch {
+        // Storage unavailable (private mode, blocked): count once per page load.
+      }
+      fetch(`/api/views/${encodeURIComponent(slug)}`, { method: counted ? "GET" : "POST" })
+        .then((response) => (response.ok ? response.json() : undefined))
+        .then((data: { views?: unknown } | undefined) => {
+          const views = data?.views;
+          if (typeof views !== "number") return;
+          this.innerHTML = `<span aria-hidden="true">·</span><span>${formatter.format(views)} ${views === 1 ? "view" : "views"}</span>`;
+        })
+        .catch(() => {
+          // Offline: the slot stays empty.
+        });
+    }
+  }
+  customElements.define("view-count", ViewCount);
+</script>

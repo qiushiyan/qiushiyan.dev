@@ -1,0 +1,24 @@
+---
+type Props = { headings: { slug: string; depth: number; html: string }[]; itemClass?: string };
+const { headings, itemClass = "" } = Astro.props;
+---
+
+{/* The current section is marked by src/components/article/toc-script.astro. */}
+<ul class="border-l" data-toc>
+  {
+    headings.map((heading) => (
+      <li>
+        <a
+          href={`#${heading.slug}`}
+          data-toc-link={heading.slug}
+          class:list={[
+            "-ml-px block border-l-2 border-transparent pr-2 text-pretty text-muted-foreground transition-colors duration-150 hover:text-foreground aria-[current=location]:border-primary aria-[current=location]:text-foreground",
+            heading.depth === 3 ? "pl-6" : "pl-3.5",
+            itemClass,
+          ]}
+          set:html={heading.html}
+        />
+      </li>
+    ))
+  }
+</ul>

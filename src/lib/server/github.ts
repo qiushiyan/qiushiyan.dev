@@ -1,5 +1,3 @@
-import "server-only";
-
 export type RepoStats = {
   description: string | null;
   stars: number;
@@ -11,15 +9,14 @@ export type RepoStats = {
  * `GITHUB_TOKEN` is optional; it only raises the rate limit. Pages that call
  * this are prerendered, so it runs once per build.
  */
-export async function getRepoStats(
-  fullName: string
-): Promise<RepoStats | null> {
-  const token = process.env.GITHUB_TOKEN;
+export async function getRepoStats(fullName: string): Promise<RepoStats | null> {
+  const token = import.meta.env.GITHUB_TOKEN;
   try {
     const res = await fetch(`https://api.github.com/repos/${fullName}`, {
       headers: {
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "qiushiyan.dev",
         ...(token && { Authorization: `Bearer ${token}` }),
       },
       // A slow API should cost the build a few seconds, not hang it.

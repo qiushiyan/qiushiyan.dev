@@ -1,11 +1,10 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @plugin "@tailwindcss/typography";
 /* prose overrides; see the file for why they cannot move into this stylesheet */
 @config "./typography.config.mjs";
 
-/* next-themes toggles the `dark` class on <html> */
+/* The theme script (src/components/theme-script.astro) toggles the `dark` class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
@@ -13,8 +12,8 @@
   (e.g. `bg-primary` → `hsl(var(--primary))`), so they follow the light/dark
   HSL channel variables defined in the base layer below.
 
-  The font variables come from next/font classes on <html> (see
-  src/app/layout.tsx), so they are defined wherever these values resolve.
+  The font variables come from Astro's Fonts API (`fonts` in astro.config.ts,
+  rendered by <Font> in the base layout).
 */
 @theme inline {
   --font-sans:
@@ -162,6 +161,15 @@
   code {
     font-family: var(--font-mono);
   }
+
+  /* Highlighted inline code outside prose (descriptions in lists and headers) keeps the chip. */
+  .code-inline {
+    border-radius: calc(var(--radius) - 4px);
+    background: hsl(var(--muted));
+    padding: 0.15em 0.3em;
+    font-size: 0.875em;
+    box-decoration-break: clone;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -169,8 +177,16 @@
     scroll-behavior: smooth;
   }
 
-  /* The list-to-article title morph (next-view-transitions). */
-  ::view-transition-group(root) {
+  /*
+    Cross-document view transitions: the browser morphs a post's title from
+    the list into the article without client JavaScript. Browsers without
+    support navigate normally.
+  */
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-group(*) {
     animation-duration: 0.4s;
     animation-timing-function: var(--expo-out);
   }
@@ -186,4 +202,17 @@
   ::view-transition-old(*) {
     animation: none;
   }
+}
+
+/* Nav popovers (mobile menu, contents): native [popover], pinned under the nav. */
+.nav-popover {
+  position: fixed;
+  inset: calc(var(--nav-height) + 0.25rem) 1rem auto auto;
+  margin: 0;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--popover));
+  color: hsl(var(--popover-foreground));
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  max-width: calc(100vw - 2rem);
 }

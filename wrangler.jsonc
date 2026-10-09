@@ -1,19 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
   "name": "qiushiyan",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-10-06",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
-    "directory": ".open-next/assets",
     "binding": "ASSETS",
   },
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "qiushiyan",
-    },
-  ],
   "d1_databases": [
     {
       "binding": "DB",
@@ -22,7 +15,7 @@
     },
   ],
   // Limits view-count increments to one per visitor IP and post per minute
-  // (src/app/api/views/[slug]/route.ts). `period` must be 10 or 60.
+  // (src/pages/api/views/[slug].ts). `period` must be 10 or 60.
   "ratelimits": [
     {
       "name": "VIEWS_RATE_LIMITER",
@@ -30,9 +23,4 @@
       "simple": { "limit": 1, "period": 60 },
     },
   ],
-  "images": {
-    // Enable image optimization
-    // see https://opennext.js.org/cloudflare/howtos/image
-    "binding": "IMAGES",
-  },
 }

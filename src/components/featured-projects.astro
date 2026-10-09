@@ -1,0 +1,66 @@
+---
+import Star from "@lucide/astro/icons/star";
+
+import { getRepoStats } from "@/lib/server/github";
+
+const featured = [
+  {
+    name: "tidymodels/agua",
+    href: "https://tidymodels.github.io/agua",
+    description: "Create and evaluate models using tidymodels and h2o",
+  },
+  {
+    name: "qiushiyan/js-notebook",
+    href: "https://javascript-notebook.netlify.app",
+    description: "An interactive notebook for JavaScript and TypeScript",
+  },
+  {
+    name: "qiushiyan/linux-command-line-cheatsheet",
+    href: "https://github.com/qiushiyan/linux-command-line-cheatsheet",
+    description: "A cheatsheet of common Linux commands",
+  },
+];
+
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+// GitHub data is fetched at build time; the written description covers a failed request.
+const projects = await Promise.all(
+  featured.map(async (project) => {
+    const stats = await getRepoStats(project.name);
+    return {
+      ...project,
+      description: capitalize(stats?.description || project.description),
+      stars: stats?.stars ?? 0,
+    };
+  })
+);
+---
+
+<ul class="mt-4 divide-y divide-border">
+  {
+    projects.map((project) => (
+      <li class="group relative py-4 first:pt-0">
+        <div class="flex items-baseline justify-between gap-4">
+          <h3 class="min-w-0 font-mono text-sm font-medium break-words">
+            <a
+              href={project.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="transition-colors group-hover:text-primary after:absolute after:inset-0"
+            >
+              {project.name}
+            </a>
+          </h3>
+          {project.stars > 0 && (
+            <span class="flex shrink-0 items-center gap-1 text-sm text-muted-foreground tabular-nums">
+              <Star aria-hidden="true" stroke-width={1.5} class="size-3.5" />
+              {project.stars}
+              <span class="sr-only">stars</span>
+            </span>
+          )}
+        </div>
+        <p class="mt-1 text-sm/6 text-pretty text-muted-foreground">{project.description}</p>
+      </li>
+    ))
+  }
+</ul>

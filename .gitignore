@@ -51,3 +51,7 @@ _freeze
 
 
 __pycache__
+
+# astro
+/dist/
+/.astro/
