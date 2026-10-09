@@ -2,6 +2,8 @@
 
 Branch `trial/astro`, 2026-10-09. This proposal comes from a working trial, not from reading docs. Everything measured below was measured on this machine against `main` at `211d074`.
 
+**Status:** accepted. The whole site is migrated on this branch (commit "Migrate the whole site to Astro"). See [Answers to the open questions](#answers-to-the-open-questions) to the open questions, and [Before merge](#before-merge) for what's left.
+
 ## Verdict: go
 
 Move the site to **Astro 7 as a fully static build**, with a plain Worker in front of Workers Static Assets for the view-count API. Render code with **Expressive Code**, plus a site plugin that reads Code Hike's comment syntax. Keep the content as it is: plain Markdown through Astro's remark/rehype processor, with no codemod.
@@ -32,6 +34,10 @@ What the move buys:
 | JS on load, home / `/posts` (gzip) | 235 KB, 16 files | **1.1 KB**, 1 file |
 | JS on load, post page (gzip) | 243 KB, 17 files | **2.2 KB**, 2 files |
 | JS on the counter-demo post, after scrolling to the demo | 243 KB | 72 KB (React island, that page only) |
+| *Migrated site:* index pages / post or note (gzip) | 234–243 KB | **2.2 KB / 3.4 KB** (adds the search button and the counter as a custom element) |
+| *Migrated site:* recipe page (gzip) | 402 KB | **240 KB** (the editor island) |
+| *Migrated site:* react-query note HTML (gzip) | 66 KB | **34 KB** |
+| *Migrated site:* `astro build`, all 20 pages + OG cards + Pagefind | — | 6.2 s cold, 2.9 s warm |
 | HTML, code-heavy post (gzip) | 35–37 KB (page + RSC payload) | **17–18 KB** |
 | Deploy build, cold (what Workers Builds runs) | 13.8 s (`opennextjs-cloudflare build`) | **~3.0 s** (`astro build`, all post and note content rendered) |
 | `next build` / `astro build`, cold | 7.2 s | 2.6 s (posts only), 3.0 s (+ notes content) |
@@ -146,6 +152,19 @@ The authoring syntax doesn't change, so no codemod is needed.
   - The Worker validates a slug by asking `ASSETS` whether `/posts/<slug>` exists, so drafts stay out of `post_views`, as before.
   - Prerendering runs in Node again, so satori and resvg work for OG images as they do today.
 - **The trade-off:** `astro dev` doesn't run the Worker, so the view count slot stays empty in dev. `pnpm preview` runs the real thing against local D1. If that matters, a Vite proxy from `/api` to a `wrangler dev` on another port restores it in dev.
+- **Not hand-rolled, and the adapter's best setting is still slower.**
+  - Both sides document this setup: Astro's Cloudflare guide says "If you're using Astro as a static site builder, you don't need an adapter". Cloudflare's [Worker script routing](https://developers.cloudflare.com/workers/static-assets/routing/worker-script/) documents a `main` script plus `run_worker_first` for the paths that need code.
+  - The adapter option that comes closest is `prerenderEnvironment: 'node'`, which renders prerendered pages in Node during dev too. Benchmarked interleaved with the static setup, it gave:
+
+    | | Static + Worker | Adapter, `prerenderEnvironment: 'node'` |
+    |---|---|---|
+    | Dev start to first page, cold / warm | 2.1 s / 1.4 s | 3.3 s / 2.6 s |
+    | Dev memory | 1.0–1.4 GB | 1.6–2.4 GB |
+    | Cold build | 2.6 s | 4.9 s |
+
+    That's because workerd still runs for the endpoint. Combining this option with on-demand routes has also had a run of dev-mode bugs in 2026 ([#16436](https://github.com/withastro/astro/issues/16436), [#16553](https://github.com/withastro/astro/issues/16553), [#17348](https://github.com/withastro/astro/issues/17348)), all fixed now.
+  - The view-count handler is the same code either way; the adapter would only save the few lines that dispatch `/api/views/:slug`.
+  - Without an adapter, the build itself guarantees that pages are static: an on-demand page can't be added by accident.
 
 ### Astro-native features: used or not
 
@@ -158,8 +177,8 @@ The authoring syntax doesn't change, so no codemod is needed.
 | Prefetch | **Use** | `prefetchAll` on hover. |
 | Fonts API | **Use** | Geist and JetBrains Mono, self-hosted at build from Google Fonts. |
 | `@astrojs/rss` | **Use** | `/feed.xml` keeps the same URL and the same GUIDs (post URLs), so subscribers see no duplicates. |
-| `@astrojs/sitemap` | **Use** | It writes `sitemap-index.xml`; a `_redirects` line keeps `/sitemap.xml` working. |
-| Search | **Pagefind** (recommended) | Today the Fuse index is serialized into every page. Pagefind indexes the built HTML, loads nothing until search opens, and adds full-text search over posts and notes. The index is only built by `astro build`, so dev search shows the last build. |
+| `@astrojs/sitemap` | **No: a small endpoint instead** | `@astrojs/sitemap` writes `sitemap-index.xml` and can't see content dates. `src/pages/sitemap.xml.ts` (~50 lines) keeps the URL and the git `lastmod` per article; its URL list matches the live sitemap exactly. |
+| Search | **Pagefind** | Today the Fuse index is serialized into every page. Pagefind indexes the article bodies at build. The nav button imports Pagefind's component UI on first click or ⌘K (38 KB of JS and 5.5 KB of CSS, gzipped), so no page pays for search until it's used. Dev search shows the last build's index. |
 | OG images | **satori + resvg in a prerendered endpoint** | A direct port of `src/lib/og.tsx`, kerning fix included. `astro-og-canvas` is the alternative, but it's a fixed template. |
 | Actions, sessions, live collections, server islands | **No** | Nothing on the site needs them. |
 | Cloudflare adapter | **No** | See above. |
@@ -193,8 +212,9 @@ The authoring syntax doesn't change, so no codemod is needed.
 | Inline `` _py`code`_ `` | Keep | Shiki, both themes. |
 | `<my-callout>`, `<my-steps>`, `<iframe>` | Keep | Build-time HTML and CSS. |
 | Markdown images | Keep, improved | Optimised WebP with intrinsic size. |
-| DO counter demo, quiz table | Keep | React islands (`client:visible`). The quiz table is only in a draft post and isn't ported in the trial. |
-| Recipe editor (CodeMirror + react-py) | Keep | React island on recipe pages only. Not ported in the trial; estimated at today's 402 KB minus the ~150 KB Next runtime. |
+| DO counter demo | Keep | A `<do-counter-example>` custom element, ~2 KB, instead of a 72 KB React island. Only the posts that use it load it. |
+| Quiz table (draft Postgres post) | Replace | It was static data in a React component; it's now a plain HTML `<table>` in the post. |
+| Recipe editor (CodeMirror + react-py) | Keep | `client:only` React island on recipe pages only: 240 KB gzipped, against 402 KB on `main`. The site's only React code. |
 | Search (Fuse + Radix dialog) | Replace | Pagefind with its component UI. Full-text results; titles-only fuzzy matching changes to word matching. |
 | Theme toggle (next-themes) | Keep | A pre-paint inline script and a button, using the same `localStorage` key, so saved choices carry over. |
 | `/posts` tag filter | Keep | Custom element over the static list; same `?tag=` URLs. |
@@ -204,7 +224,7 @@ The authoring syntax doesn't change, so no codemod is needed.
 | Next `<Link>` client-side navigation | Drop | Full page loads with hover prefetch and native view transitions. Readers lose nothing visible except the title morph in Firefox. |
 | `next/image` with the Cloudflare `IMAGES` binding | Drop | Build-time optimisation; the binding goes away. |
 | `next/og` OG images | Replace | satori + resvg endpoint. The `og:image` URLs change; platforms re-scrape. |
-| Sitemap, robots, RSS, JSON-LD | Keep | Same URLs. |
+| Sitemap, robots, RSS, JSON-LD | Keep | Same URLs. The feed's GUIDs and links match the live feed. `@astrojs/rss` adds trailing slashes by default, which would have re-sent every post to subscribers, so `trailingSlash: false` is set. |
 | `WORKER_SELF_REFERENCE` binding | Drop | OpenNext-only. |
 | Cloudflare and Google analytics | Keep | Plain script tags. |
 
@@ -281,20 +301,37 @@ The Worker name (`qiushiyan`), custom domain, D1 database and rate-limit namespa
   - Medians of 2–3 runs.
   - Build and dev numbers cover posts (plus notes content for the build). Note pages, recipe pages, OG images and Pagefind will add a few seconds to the build.
 
-## Questions only you can answer
+## Answers to the open questions
 
-1. **What does "heavy" mean to you?**
-   - Astro wins on:
-     - warm restarts (2.0 s against 3.5 s);
-     - a page's first compile (~80 ms against ~400–600 ms);
-     - memory (1.0–1.4 GB against 2.2 GB).
-   - Cold start is about even.
-   - It's about 0.5 s slower on each content edit.
-   - If the latency of Markdown edits is the main complaint, that is the one place this move doesn't help.
-2. **Are full page loads acceptable?** Navigation would use hover prefetch and native view transitions instead of client-side routing; Firefox loses the title morph.
-3. **Pagefind, or keep Fuse?** Pagefind is full-text, over posts and notes. Fuse searches only titles and descriptions.
-4. **Collapsed output:** is Expressive Code's separate "N collapsed lines" row fine, or should the site own a collapse renderer to keep Code Hike's toggle-on-the-first-line?
-5. **Copy button:** hover-revealed on desktop (Expressive Code's default), or always visible as now?
-6. **The counter demo:** keep it as a React island (72 KB on that page), or rewrite it as a ~1 KB custom element?
-7. **The two `!mark(…) <text>` annotations in the react-query note:** were they meant to be callouts?
-8. **The prep step:** OK to repoint the Workers Builds commands to package scripts before the PR?
+Your answers to the open questions, and what the migration did with them:
+
+1. **Dev latency doesn't matter; agent-friendly structure does.** The code is laid out by domain:
+   - `src/lib/markdown/`: the content pipeline, one file per concern.
+   - `src/lib/content/`: collection queries.
+   - `src/layouts/`: the base, page and article layouts.
+   - `src/components/<area>/`.
+   - `worker/`: the only request-time code.
+
+   Interactive content elements are listed in one registry (`src/lib/markdown/elements.ts`). The pipeline records which ones each entry uses, so there's no hand-maintained `components` frontmatter. The build warns on unknown custom elements.
+2. **Full page loads with prefetch and native view transitions:** done.
+3. **Full-text search:** Pagefind, loaded on first use.
+4. **Collapsed-range look:** kept.
+5. **Copy button:** shown on hover (Expressive Code's default).
+6. **Counter:** rewritten as a custom element. Verified loading values, incrementing and the rate-limit notice against a stubbed API.
+7. **The two react-query marks:** now `!mark` plus `!callout` (`.qmd` and `.md`).
+8. **Workers Builds commands:** branch `chore/workers-build-scripts` adds `cf:build`, `cf:deploy` and `cf:upload` to `main` with the OpenNext commands; this branch defines them for Astro.
+
+## Before merge
+
+1. **Repoint the build commands.**
+   - Merge `chore/workers-build-scripts` into `main`.
+   - Set the Workers Builds dashboard to `pnpm cf:build` (build), `pnpm cf:deploy` (deploy) and `pnpm cf:upload` (non-production branches).
+   - From then on, this branch's preview builds deploy the Astro site.
+2. **Check the preview deployment:**
+   - view counts against the real D1 database;
+   - a Giscus thread on a post;
+   - the counter demo, which only answers qiushiyan.dev origins;
+   - social cards in a link-preview checker.
+3. **Docs pass:** `CLAUDE.md` and the README still describe the Next.js architecture.
+4. **Delete `docs/astro-trial/`**, and decide whether this proposal stays as a decision record.
+5. **After the merge deploys,** remove the `IMAGES` binding from the dashboard if it was set there.
