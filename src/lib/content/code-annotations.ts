@@ -100,9 +100,10 @@ export function pluginCodeHikeAnnotations(): ExpressiveCodePlugin {
             const target = code[anchor];
             const found = new RegExp(pattern).exec(target.text);
             const right = /\s*:right$/.test(query);
+            // Code Hike's 1-based column of the match's middle.
             data.callouts.set(target, {
               text: query.replace(/\s*:right$/, ""),
-              column: found ? found.index + found[0].length / 2 : 0,
+              column: found ? found.index + 1 + (found[0].length - 1) / 2 : 1,
               right,
             });
           }
@@ -122,8 +123,9 @@ export function pluginCodeHikeAnnotations(): ExpressiveCodePlugin {
         const callout = blockData.getOrCreateFor(codeBlock).callouts.get(line);
         if (!callout) return;
         const { text, column, right } = callout;
-        // The bubble's arrow points at the middle of the matched text.
-        const offset = right ? 0 : Math.max(column / 1.5, 1);
+        // Code Hike's placement: the bubble starts near the line's left edge
+        // and its arrow points at the middle of the matched text.
+        const offset = right ? 0 : column < 20 ? 1 : column / 1.5;
         renderData.lineAst.children.push(
           h(
             "div.ch-callout",

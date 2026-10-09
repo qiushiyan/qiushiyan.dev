@@ -38,7 +38,8 @@ export default defineConfig({
       // The palette is already 4.5:1 or better; don't let EC shift it.
       minSyntaxHighlightingColorContrast: 0,
       plugins: [pluginCollapsibleSections(), pluginCodeHikeAnnotations()],
-      defaultProps: { collapseStyle: "collapsible-start" },
+      // Shell blocks get the plain code frame too, not a terminal window.
+      defaultProps: { collapseStyle: "collapsible-start", frame: "code" },
       styleOverrides: {
         borderRadius: "0.5rem",
         borderColor: "var(--color-border)",

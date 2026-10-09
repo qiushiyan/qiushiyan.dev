@@ -160,7 +160,7 @@
 .expressive-code .ch-callout {
   position: relative;
   grid-area: callout;
-  margin: 0.25rem 0 0.375rem calc(var(--ecIndent, 0ch) + var(--callout-offset));
+  margin: 0.25rem 0 0.375rem var(--callout-offset);
   border: 1px solid hsl(var(--border));
   border-radius: calc(var(--radius) - 2px);
   background: hsl(var(--muted));
@@ -168,8 +168,7 @@
   width: fit-content;
   max-width: calc(100% - var(--callout-offset));
   color: hsl(var(--foreground));
-  font-family: var(--font-sans);
-  white-space: normal;
+  white-space: break-spaces;
 
   &::before {
     position: absolute;
