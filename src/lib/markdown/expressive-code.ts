@@ -35,8 +35,7 @@ export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
       shadowColor: "transparent",
       frameBoxShadowCssValue: "none",
       editorTabBarBackground: ({ theme }) => theme.colors["editor.background"],
-      editorActiveTabBackground: ({ theme }) =>
-        theme.colors["editor.background"],
+      editorActiveTabBackground: ({ theme }) => theme.colors["editor.background"],
       editorActiveTabForeground: "var(--color-muted-foreground)",
       editorActiveTabBorderColor: "transparent",
       editorActiveTabIndicatorTopColor: "transparent",

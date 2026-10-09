@@ -64,20 +64,13 @@ const dark: Record<number, string> = {
 const resolve = (palette: Record<number, string>) => (value: string) =>
   value.replace(/var\(--code-(\d+)\)/g, (_, n: string) => palette[Number(n)]);
 
-const build = (
-  name: string,
-  type: "light" | "dark",
-  palette: Record<number, string>
-) => {
+const build = (name: string, type: "light" | "dark", palette: Record<number, string>) => {
   const color = resolve(palette);
   return {
     name,
     type,
     colors: Object.fromEntries(
-      Object.entries(tailwindCodeTheme.colors).map(([key, value]) => [
-        key,
-        color(value),
-      ])
+      Object.entries(tailwindCodeTheme.colors).map(([key, value]) => [key, color(value)]),
     ),
     tokenColors: tailwindCodeTheme.tokenColors.map((rule) => ({
       ...rule,

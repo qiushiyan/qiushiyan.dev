@@ -23,9 +23,7 @@ const META_LINE = /^#\|\s*(filename|caption):\s*(.*)$/;
 
 const codeOf = (pre: Element) => {
   const [code] = pre.children;
-  return pre.children.length === 1 &&
-    code.type === "element" &&
-    code.tagName === "code"
+  return pre.children.length === 1 && code.type === "element" && code.tagName === "code"
     ? code
     : undefined;
 };
@@ -55,9 +53,7 @@ const fixLang = (code: Element) => {
 };
 
 const langOf = (code: Element) =>
-  String(
-    (code.properties.className as string[] | undefined)?.[0] ?? ""
-  ).replace(/^language-/, "");
+  String((code.properties.className as string[] | undefined)?.[0] ?? "").replace(/^language-/, "");
 
 export const rehypeCodeMeta = () => (tree: Root) => {
   visit(tree, "element", (node, index, parent) => {
@@ -117,9 +113,9 @@ export const rehypeCodeSwitcher = () => (tree: Root) => {
               ariaSelected: i === 0 ? "true" : "false",
               tabIndex: i === 0 ? 0 : -1,
             },
-            label
-          )
-        )
+            label,
+          ),
+        ),
       ),
       ...blocks.map(({ pre }, i) =>
         h(
@@ -130,8 +126,8 @@ export const rehypeCodeSwitcher = () => (tree: Root) => {
             ariaLabelledby: `${id}-tab-${i}`,
             hidden: i !== 0,
           },
-          [pre]
-        )
+          [pre],
+        ),
       ),
     ];
     return SKIP;

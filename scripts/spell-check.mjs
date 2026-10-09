@@ -26,8 +26,7 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/;
 
 // Bare URLs and domains such as web.dev are not prose.
-const URL_LIKE =
-  /\b(?:https?:\/\/|www\.)\S+|\b[\w-]+(?:\.[a-z]{2,})+(?:\/\S*)?/g;
+const URL_LIKE = /\b(?:https?:\/\/|www\.)\S+|\b[\w-]+(?:\.[a-z]{2,})+(?:\/\S*)?/g;
 
 // Hunspell can't know acronyms (DOM, LCP) or units (768px, 16ms).
 const isAcronymOrUnit = (word) => /^[A-Z]{2,}s?$|\d/.test(word);
@@ -46,17 +45,14 @@ const processor = unified()
   .use(remarkBlankUrls)
   .use(
     remarkRetext,
-    unified()
-      .use(retextEnglish)
-      .use(retextSpell, { dictionary })
-      .use(retextIndefiniteArticle)
+    unified().use(retextEnglish).use(retextSpell, { dictionary }).use(retextIndefiniteArticle),
   );
 
 const args = process.argv.slice(2);
 const paths = args.length
   ? args.map((file) => path.resolve(file))
-  : (await Array.fromAsync(glob("content/**/*.md", { cwd: root }))).map(
-      (file) => path.join(root, file)
+  : (await Array.fromAsync(glob("content/**/*.md", { cwd: root }))).map((file) =>
+      path.join(root, file),
     );
 
 const files = await Promise.all(
@@ -64,17 +60,14 @@ const files = await Promise.all(
     const markdown = await readFile(filePath, "utf8");
     // Blank out frontmatter instead of removing it, so line numbers still
     // match the file.
-    const value = markdown.replace(FRONTMATTER, (match) =>
-      match.replace(/[^\n]/g, "")
-    );
+    const value = markdown.replace(FRONTMATTER, (match) => match.replace(/[^\n]/g, ""));
     const file = new VFile({ path: path.relative(root, filePath), value });
     await processor.run(processor.parse(file), file);
     file.messages = file.messages.filter(
-      (message) =>
-        message.source !== "retext-spell" || !isAcronymOrUnit(message.actual)
+      (message) => message.source !== "retext-spell" || !isAcronymOrUnit(message.actual),
     );
     return file;
-  })
+  }),
 );
 
 console.log(reporter(files, { quiet: true }) || "No spelling issues found.");

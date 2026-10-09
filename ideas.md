@@ -51,7 +51,7 @@ const validDateString = z.custom<string>(
   },
   {
     message: "Invalid date string provided",
-  }
+  },
 );
 ```
 
@@ -99,22 +99,21 @@ const taskSchema = z.object({
 ```ts
 // for recursive schemas, you have to define the type beforehand
 interface Category {
-	name: string;
-	subcategories?: Category[]; // Recursive reference
+  name: string;
+  subcategories?: Category[]; // Recursive reference
 }
-
-const categorySchema: z.ZodSchema<Category> = z.lazy(() =>
-	z.object({
-		name: z.string(),
-		subcategories: z.array(categorySchema).optional(), // Use lazy schema here
-	}),
-);
-
 
 const categorySchema: z.ZodSchema<Category> = z.lazy(() =>
   z.object({
     name: z.string(),
     subcategories: z.array(categorySchema).optional(), // Use lazy schema here
-  })
+  }),
+);
+
+const categorySchema: z.ZodSchema<Category> = z.lazy(() =>
+  z.object({
+    name: z.string(),
+    subcategories: z.array(categorySchema).optional(), // Use lazy schema here
+  }),
 );
 ```

@@ -49,7 +49,7 @@ export const rehypeInlineCode = () => async (tree: Root) => {
   for (const { node, lang, value } of targets) {
     const language = await shiki.loadLanguage(lang as never).then(
       () => lang,
-      () => "text"
+      () => "text",
     );
     const root = shiki.codeToHast(value, {
       lang: language,
@@ -66,7 +66,7 @@ export const rehypeInlineCode = () => async (tree: Root) => {
 /** A <p> around a single line, unwrapped: titles and captions take phrasing content. */
 const rehypeUnwrapParagraph = () => (tree: Root) => {
   const content = tree.children.filter(
-    (child) => !(child.type === "text" && child.value.trim() === "")
+    (child) => !(child.type === "text" && child.value.trim() === ""),
   );
   const [only] = content;
   if (content.length === 1 && only.type === "element" && only.tagName === "p") {

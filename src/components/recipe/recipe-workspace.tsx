@@ -67,7 +67,7 @@ const PanelHeader = ({ children }: { children: React.ReactNode }) => (
 function Workspace({ title, recipesHref, files }: Props) {
   const { runPython, stdout, stderr, isLoading, isRunning } = usePython();
   const [codes, setCodes] = useState(() =>
-    Object.fromEntries(files.map((file) => [file.name, file.source]))
+    Object.fromEntries(files.map((file) => [file.name, file.source])),
   );
   const [file] = useState(files[0].name);
   const dark = useDarkMode();
@@ -99,16 +99,10 @@ function Workspace({ title, recipesHref, files }: Props) {
           className="ml-auto inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border bg-background pr-3 pl-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-50"
         >
           {busy ? (
-            <Loader2Icon
-              aria-hidden
-              className="size-3.5 motion-safe:animate-spin"
-            />
+            <Loader2Icon aria-hidden className="size-3.5 motion-safe:animate-spin" />
           ) : (
             // The triangle's visual centre sits left of its box, so nudge it right.
-            <PlayIcon
-              aria-hidden
-              className="size-3.5 translate-x-px fill-current"
-            />
+            <PlayIcon aria-hidden className="size-3.5 translate-x-px fill-current" />
           )}
           Run
         </button>
@@ -134,9 +128,7 @@ function Workspace({ title, recipesHref, files }: Props) {
               className="h-full"
               height="100%"
               value={codes[file]}
-              onChange={(value) =>
-                setCodes((current) => ({ ...current, [file]: value }))
-              }
+              onChange={(value) => setCodes((current) => ({ ...current, [file]: value }))}
               basicSetup={{ lineNumbers: false }}
               theme={dark ? "dark" : "light"}
               extensions={extensions}

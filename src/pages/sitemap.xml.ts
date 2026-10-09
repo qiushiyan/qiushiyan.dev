@@ -15,24 +15,16 @@ import type { APIRoute } from "astro";
   content dates, so the site keeps this small endpoint instead.)
 */
 const escapeXml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const lastModified = async (entry: Article) =>
-  pipelineFrontmatter((await render(entry)).remarkPluginFrontmatter)
-    .lastModified ?? entry.data.date.toISOString();
+  pipelineFrontmatter((await render(entry)).remarkPluginFrontmatter).lastModified ??
+  entry.data.date.toISOString();
 
 const latest = (dates: string[]) => dates.toSorted().at(-1);
 
 export const GET: APIRoute = async () => {
-  const [posts, notes, recipes] = await Promise.all([
-    getPosts(),
-    getNotes(),
-    getRecipes(),
-  ]);
+  const [posts, notes, recipes] = await Promise.all([getPosts(), getNotes(), getRecipes()]);
   const postDates = await Promise.all(posts.map(lastModified));
   const noteDates = await Promise.all(notes.map(lastModified));
 
@@ -51,9 +43,7 @@ export const GET: APIRoute = async () => {
       lastmod: noteDates[i],
     })),
     ...recipes
-      .filter((recipe) =>
-        (runnableGroups as readonly string[]).includes(recipe.data.group)
-      )
+      .filter((recipe) => (runnableGroups as readonly string[]).includes(recipe.data.group))
       .map((recipe) => ({
         path: routes.recipe(recipe.data.group, recipe.data.slug),
       })),
@@ -64,7 +54,7 @@ export const GET: APIRoute = async () => {
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ...urls.map(
       ({ path, lastmod }) =>
-        `<url><loc>${escapeXml(new URL(path, siteConfig.url).href)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}</url>`
+        `<url><loc>${escapeXml(new URL(path, siteConfig.url).href)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}</url>`,
     ),
     "</urlset>",
     "",

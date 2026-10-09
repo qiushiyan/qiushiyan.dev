@@ -1,7 +1,4 @@
-import {
-  AttachedPluginData,
-  ExpressiveCodeAnnotation,
-} from "@expressive-code/core";
+import { AttachedPluginData, ExpressiveCodeAnnotation } from "@expressive-code/core";
 import { addClassName, h, selectAll } from "@expressive-code/core/hast";
 import { pluginCollapsibleSectionsData } from "@expressive-code/plugin-collapsible-sections";
 
@@ -64,8 +61,7 @@ export function pluginCodeHikeAnnotations(): ExpressiveCodePlugin {
 
         const data = blockData.getOrCreateFor(codeBlock);
         const code = lines.filter((_, index) => !matches[index]);
-        const sections =
-          pluginCollapsibleSectionsData.getOrCreateFor(codeBlock);
+        const sections = pluginCollapsibleSectionsData.getOrCreateFor(codeBlock);
 
         lines.forEach((line, index) => {
           const match = matches[index];
@@ -74,9 +70,7 @@ export function pluginCodeHikeAnnotations(): ExpressiveCodePlugin {
 
           const [, name, from, to, pattern, query] = match;
           // The first code line after the comment is line 1 of its range.
-          const anchor = code.findIndex(
-            (other) => lines.indexOf(other) > index
-          );
+          const anchor = code.findIndex((other) => lines.indexOf(other) > index);
           if (anchor === -1) return;
           const range = (start: number, end: number) =>
             code.slice(anchor + start - 1, anchor + end);
@@ -120,9 +114,7 @@ export function pluginCodeHikeAnnotations(): ExpressiveCodePlugin {
         const data = blockData.getOrCreateFor(codeBlock);
         if (data.annotationLines.length === 0) return;
         const lines = codeBlock.getLines();
-        codeBlock.deleteLines(
-          data.annotationLines.map((line) => lines.indexOf(line))
-        );
+        codeBlock.deleteLines(data.annotationLines.map((line) => lines.indexOf(line)));
       },
 
       postprocessRenderedLine: ({ codeBlock, line, renderData }) => {
@@ -139,8 +131,8 @@ export function pluginCodeHikeAnnotations(): ExpressiveCodePlugin {
               className: right ? ["right"] : [],
               style: `--callout-offset: ${offset}ch; --callout-arrow: ${column - offset}ch`,
             },
-            text
-          )
+            text,
+          ),
         );
         addClassName(renderData.lineAst, "has-callout");
       },
@@ -152,11 +144,9 @@ export function pluginCodeHikeAnnotations(): ExpressiveCodePlugin {
         const states = sectionsOpen
           .toSorted((a, b) => lines.indexOf(a.from) - lines.indexOf(b.from))
           .map((section) => section.open);
-        selectAll(".ec-section > details", renderData.blockAst).forEach(
-          (details, index) => {
-            if (states[index]) details.properties.open = true;
-          }
-        );
+        selectAll(".ec-section > details", renderData.blockAst).forEach((details, index) => {
+          if (states[index]) details.properties.open = true;
+        });
       },
     },
   };

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.34.6",
   "scripts": {
     "dev": "astro dev",
     "build": "oxfmt && astro build",
@@ -86,5 +85,6 @@
   },
   "engines": {
     "node": ">=22.13"
-  }
+  },
+  "packageManager": "pnpm@10.34.6"
 }

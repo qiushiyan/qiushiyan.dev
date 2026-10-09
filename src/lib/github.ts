@@ -11,9 +11,7 @@ export type RepoStats = {
  * `GITHUB_TOKEN` is optional; it only raises the rate limit. Pages that call
  * this are prerendered, so it runs once per build.
  */
-export async function getRepoStats(
-  fullName: string
-): Promise<RepoStats | null> {
+export async function getRepoStats(fullName: string): Promise<RepoStats | null> {
   try {
     const res = await fetch(`https://api.github.com/repos/${fullName}`, {
       headers: {

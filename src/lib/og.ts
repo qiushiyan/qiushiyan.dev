@@ -32,9 +32,9 @@ const withoutKerning = (font: Buffer) => {
 
 let fontData: Promise<Buffer> | undefined;
 const loadFont = () =>
-  (fontData ??= readFile(
-    join(process.cwd(), "public/fonts/SpaceGrotesk-SemiBold.ttf")
-  ).then(withoutKerning));
+  (fontData ??= readFile(join(process.cwd(), "public/fonts/SpaceGrotesk-SemiBold.ttf")).then(
+    withoutKerning,
+  ));
 
 const colors = {
   background: "#f8fafc",
@@ -53,7 +53,7 @@ type Node = {
 const el = (
   type: string,
   style: Record<string, unknown>,
-  children?: Node["props"]["children"]
+  children?: Node["props"]["children"],
 ): Node => ({
   type,
   props: { style, children },
@@ -94,7 +94,7 @@ export const renderOgImage = async ({
         [
           el("span", {}, isSiteCard ? "" : siteConfig.name),
           el("span", {}, new URL(siteConfig.url).host),
-        ]
+        ],
       ),
       el("div", { display: "flex", flexDirection: "column", gap: 28 }, [
         el(
@@ -106,7 +106,7 @@ export const renderOgImage = async ({
             lineHeight: 1.1,
             letterSpacing: "-0.02em",
           },
-          title
+          title,
         ),
         description
           ? el(
@@ -118,11 +118,11 @@ export const renderOgImage = async ({
                 lineHeight: 1.4,
                 color: colors.muted,
               },
-              description
+              description,
             )
           : null,
       ]),
-    ]
+    ],
   );
 
   const svg = await satori(card as never, {
@@ -136,7 +136,5 @@ export const renderOgImage = async ({
       },
     ],
   });
-  return new Resvg(svg, { fitTo: { mode: "width", value: size.width } })
-    .render()
-    .asPng();
+  return new Resvg(svg, { fitTo: { mode: "width", value: size.width } }).render().asPng();
 };

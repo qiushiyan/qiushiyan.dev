@@ -29,17 +29,14 @@ const infoIcon = () =>
       h("circle", { cx: 12, cy: 12, r: 10 }),
       h("path", { d: "M12 16v-4" }),
       h("path", { d: "M12 8h.01" }),
-    ]
+    ],
   );
 
 const staticElements: Record<string, (node: Element) => Element> = {
   /** `<my-callout title="…">`: an aside set off from the body text. */
   "my-callout": (node) =>
     h("aside.callout", [
-      h("p.callout-title", [
-        infoIcon(),
-        String(node.properties.title ?? "Note"),
-      ]),
+      h("p.callout-title", [infoIcon(), String(node.properties.title ?? "Note")]),
       ...node.children,
     ]),
   /** `<my-steps>`: each <h4> inside starts a numbered step. */
@@ -56,22 +53,14 @@ const staticElements: Record<string, (node: Element) => Element> = {
       }),
       h("figcaption", [
         h("span", caption ? String(caption) : ""),
-        src
-          ? h(
-              "a",
-              { href: src, target: "_blank", rel: "noreferrer" },
-              "Open in new tab"
-            )
-          : "",
+        src ? h("a", { href: src, target: "_blank", rel: "noreferrer" }, "Open in new tab") : "",
       ]),
     ]);
   },
   /** An image, captioned with its alt text. `.wider` images grow into the right-hand track. */
   img: (node) => {
     const alt = String(node.properties.alt ?? "");
-    const wide = (node.properties.className as string[] | undefined)?.includes(
-      "wider"
-    );
+    const wide = (node.properties.className as string[] | undefined)?.includes("wider");
     return h("figure.image", { className: wide ? ["wider"] : [] }, [
       {
         ...node,
@@ -88,8 +77,7 @@ const staticElements: Record<string, (node: Element) => Element> = {
 
 // Block-level output: Markdown wraps an element written on its own line in a
 // <p>, and a block inside <p> is invalid HTML.
-const isBlock = (name: string) =>
-  name in staticElements || isInteractiveElement(name);
+const isBlock = (name: string) => name in staticElements || isInteractiveElement(name);
 
 export const rehypeCustomElements = () => (tree: Root, file: AstroFile) => {
   const used = new Set<string>();
@@ -97,14 +85,10 @@ export const rehypeCustomElements = () => (tree: Root, file: AstroFile) => {
     if (!parent || index === undefined) return;
     if (node.tagName === "p") {
       const content = node.children.filter(
-        (child) => !(child.type === "text" && child.value.trim() === "")
+        (child) => !(child.type === "text" && child.value.trim() === ""),
       );
       const [only] = content;
-      if (
-        content.length === 1 &&
-        only.type === "element" &&
-        isBlock(only.tagName)
-      ) {
+      if (content.length === 1 && only.type === "element" && isBlock(only.tagName)) {
         parent.children[index] = only;
         return [SKIP, index];
       }
@@ -117,7 +101,7 @@ export const rehypeCustomElements = () => (tree: Root, file: AstroFile) => {
       used.add(node.tagName);
     } else if (node.tagName.includes("-")) {
       console.warn(
-        `[content] ${file.path}: <${node.tagName}> is not a known content element; it renders as an empty tag.`
+        `[content] ${file.path}: <${node.tagName}> is not a known content element; it renders as an empty tag.`,
       );
     }
   });

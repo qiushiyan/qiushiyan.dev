@@ -1,6 +1,5 @@
 # CLAUDE.md
 
-
 This is a personal website built with Astro 7 with Tailwind v4, built to static files and served by Cloudflare Workers Static Assets; one small Worker in front of them counts post views in D1. Content contains post, notes and code recipes
 
 There is no staging suite. A change is verified by `pnpm build` (it lists every page), `pnpm check`, `pnpm lint`, and `pnpm preview` for anything touching the Worker, headers or D1.
@@ -17,6 +16,7 @@ Every page is a static file. Astro builds with no adapter, so a route with `prer
 - **URLs have no trailing slash:** `build.format: "file"` writes `dist/posts/<slug>.html`, which Workers Static Assets serves at `/posts/<slug>`. Public URLs are inbound links and feed GUIDs, so they don't change.
 
 **View counts:**
+
 - `<view-count>` (`src/components/article/view-count.astro`) posts once per browser session to `/api/views/:slug`.
 - The Worker accepts a slug only if `ASSETS` has a page at `/posts/<slug>` (drafts are never built), then checks same-origin and the `VIEWS_RATE_LIMITER` binding, and upserts D1 `post_views`.
 - Schema changes are new SQL files in `migrations/`, applied with `wrangler d1 migrations`.
@@ -35,7 +35,7 @@ page  --render(entry)-->  <Content />
 - **Code blocks render with Expressive Code** (`src/lib/markdown/expressive-code.ts`), using the site's light and dark code themes. Authoring syntax:
   - Leading `#| filename:` / `#| caption:` lines become the frame title and a caption. Other `#|` lines, such as Quarto chunk options, stay visible as code.
   - Code Hike's comment annotations `!mark(a:b)`, `!collapse(a:b)` (optionally `collapsed`) and `!callout[/regex/] text` (optionally `:right`). `src/lib/markdown/code-annotations.ts` translates them, using Expressive Code internals: after upgrading Expressive Code, check posts that use each annotation.
-  - Highlighted inline code is written `` _py`code`_ ``; Shiki renders it (`src/lib/markdown/inline.ts`).
+  - Highlighted inline code is written ``_py`code`_``; Shiki renders it (`src/lib/markdown/inline.ts`).
   - `<code-switcher>` around several fenced blocks becomes tabs.
 - **Custom elements in content are static or interactive.**
   - Static ones (`<my-callout>`, `<my-steps>`, `<iframe>`, images) become plain HTML at build (`src/lib/markdown/custom-elements.ts`).

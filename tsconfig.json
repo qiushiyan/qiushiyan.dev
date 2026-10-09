@@ -2,7 +2,14 @@
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
   // The Worker has its own tsconfig: its runtime types would replace the DOM's here.
-  "exclude": ["dist", "node_modules", ".claude", "quarto-contents", "worker", "worker-configuration.d.ts"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".claude",
+    "quarto-contents",
+    "worker",
+    "worker-configuration.d.ts"
+  ],
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

@@ -18,7 +18,7 @@ export const remarkCloseCustomElements = () => (tree: Root) => {
   visit(tree, "html", (node) => {
     node.value = node.value.replace(
       SELF_CLOSING_CUSTOM_ELEMENT,
-      (_, name: string, attributes = "") => `<${name}${attributes}></${name}>`
+      (_, name: string, attributes = "") => `<${name}${attributes}></${name}>`,
     );
   });
 };
@@ -37,7 +37,7 @@ export const remarkRawImages = () => (tree: Root) => {
     const match = node.value.trim().match(RAW_IMG);
     if (!match || !parent || index === undefined) return;
     const attributes = Object.fromEntries(
-      [...match[1].matchAll(ATTRIBUTE)].map(([, name, value]) => [name, value])
+      [...match[1].matchAll(ATTRIBUTE)].map(([, name, value]) => [name, value]),
     );
     const { src, alt = "", class: className, ...rest } = attributes;
     if (!src || /^(https?:)?\/\//.test(src) || src.startsWith("/")) return;

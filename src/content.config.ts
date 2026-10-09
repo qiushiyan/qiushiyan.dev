@@ -24,8 +24,8 @@ const headings = z
         slug,
         depth,
         html: await renderInlineMarkdown(title),
-      }))
-    )
+      })),
+    ),
   );
 
 /** Fields posts and notes share. */
@@ -106,7 +106,7 @@ const recipes = defineCollection({
           id: `${group}/${recipe.slug}`,
           group,
           ...recipe,
-        }))
+        })),
       );
     },
   }),
@@ -122,11 +122,8 @@ const recipes = defineCollection({
       files: await Promise.all(
         data.files.map(async (path) => ({
           name: path.split("/").pop()!,
-          source: await readFile(
-            join(process.cwd(), "content/recipes", path),
-            "utf8"
-          ),
-        }))
+          source: await readFile(join(process.cwd(), "content/recipes", path), "utf8"),
+        })),
       ),
     })),
 });

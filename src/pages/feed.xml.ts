@@ -16,14 +16,10 @@ export const GET: APIRoute = async () => {
   const modified = await Promise.all(
     posts.map(
       async (post) =>
-        pipelineFrontmatter((await render(post)).remarkPluginFrontmatter)
-          .lastModified
-    )
+        pipelineFrontmatter((await render(post)).remarkPluginFrontmatter).lastModified,
+    ),
   );
-  const lastBuildDate = [
-    ...modified,
-    ...posts.map((post) => post.data.date.toISOString()),
-  ]
+  const lastBuildDate = [...modified, ...posts.map((post) => post.data.date.toISOString())]
     .filter((date) => date !== undefined)
     .sort()
     .at(-1);
@@ -38,8 +34,7 @@ export const GET: APIRoute = async () => {
     xmlns: { atom: "http://www.w3.org/2005/Atom" },
     customData: [
       "<language>en</language>",
-      lastBuildDate &&
-        `<lastBuildDate>${new Date(lastBuildDate).toUTCString()}</lastBuildDate>`,
+      lastBuildDate && `<lastBuildDate>${new Date(lastBuildDate).toUTCString()}</lastBuildDate>`,
       `<atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />`,
     ]
       .filter(Boolean)

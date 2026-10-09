@@ -89,11 +89,7 @@ const tokenColors = [
     settings: { foreground: "var(--code-7)" },
   },
   {
-    scope: [
-      "storage.modifier.package",
-      "storage.modifier.import",
-      "storage.type.java",
-    ],
+    scope: ["storage.modifier.package", "storage.modifier.import", "storage.type.java"],
     settings: { foreground: "var(--code-4)" },
   },
 
@@ -236,11 +232,7 @@ const tokenColors = [
 
   // ── diffs ─────────────────────────────────────────────────
   {
-    scope: [
-      "markup.deleted",
-      "meta.diff.header.from-file",
-      "punctuation.definition.deleted",
-    ],
+    scope: ["markup.deleted", "meta.diff.header.from-file", "punctuation.definition.deleted"],
     settings: { background: "var(--code-13)", foreground: "var(--code-9)" },
   },
   {
@@ -248,11 +240,7 @@ const tokenColors = [
     settings: { foreground: "var(--code-7)" },
   },
   {
-    scope: [
-      "markup.inserted",
-      "meta.diff.header.to-file",
-      "punctuation.definition.inserted",
-    ],
+    scope: ["markup.inserted", "meta.diff.header.to-file", "punctuation.definition.inserted"],
     settings: { background: "var(--code-14)", foreground: "var(--code-6)" },
   },
   {
