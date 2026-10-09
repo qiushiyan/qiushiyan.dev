@@ -1,8 +1,8 @@
 ---
 /*
   Runs before first paint: applies the saved theme (or the OS preference) as
-  a class on <html>, so the page never flashes the wrong theme. The key and
-  values match next-themes, so readers keep their choice across the move.
+  a class on <html>, so the page never flashes the wrong theme. The choice is
+  `localStorage.theme`: "light" or "dark"; anything else follows the OS.
 */
 ---
 

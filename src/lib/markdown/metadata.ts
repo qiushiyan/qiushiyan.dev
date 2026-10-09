@@ -16,7 +16,7 @@ const execFileAsync = promisify(execFile);
 export const remarkArticleMetadata =
   () => async (tree: Root, file: AstroFile) => {
     const frontmatter = ((file.data.astro ??= {}).frontmatter ??= {});
-    // Velite's formula, kept so reading times didn't change in the move: 265 words a minute.
+    // Latin words at 265 a minute, rounded, never under a minute.
     const words =
       toString(tree).match(/['’]?([a-zA-Z]+(?:['’]?[a-zA-Z]+)*)/g) ?? [];
     frontmatter.readingTime = Math.max(1, Math.round(words.length / 265));
