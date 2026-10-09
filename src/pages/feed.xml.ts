@@ -24,7 +24,7 @@ export const GET: APIRoute = async () => {
     ...modified,
     ...posts.map((post) => post.data.date.toISOString()),
   ]
-    .filter(Boolean)
+    .filter((date) => date !== undefined)
     .sort()
     .at(-1);
   const feedUrl = new URL(routes.feed, siteConfig.url).href;

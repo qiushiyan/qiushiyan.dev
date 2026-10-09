@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // Oxlint's defaults: the correctness rules, as warnings. Type-aware adds the
+  // ones that need types, such as no-floating-promises, for .ts files.
+  "options": { "typeAware": true },
+  "ignorePatterns": ["worker-configuration.d.ts"],
+  "overrides": [
+    {
+      // The recipe editor is the only React code.
+      "files": ["**/*.tsx"],
+      "plugins": ["react"],
+      "rules": {
+        "react/rules-of-hooks": "warn",
+        "react/exhaustive-deps": "warn"
+      }
+    }
+  ]
+}

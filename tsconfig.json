@@ -7,5 +7,7 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  // Lets tsc type-check .astro files (TypeScript 7.1+); `pnpm check` passes --runExternalCode.
+  "contentMappers": [{ "package": "@astrojs/ts-content-mapper", "extensions": [".astro"] }]
 }

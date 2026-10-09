@@ -4,11 +4,10 @@
 //
 //   pnpm spellcheck              all of content/
 //   pnpm spellcheck <file>...    only the given Markdown files
-import { readFile } from "node:fs/promises";
+import { glob, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import dictionary from "dictionary-en";
-import glob from "fast-glob";
 import remarkDirective from "remark-directive";
 import remarkHeadingAttrs from "remark-heading-attrs";
 import remarkParse from "remark-parse";
@@ -56,7 +55,9 @@ const processor = unified()
 const args = process.argv.slice(2);
 const paths = args.length
   ? args.map((file) => path.resolve(file))
-  : await glob("content/**/*.md", { cwd: root, absolute: true });
+  : (await Array.fromAsync(glob("content/**/*.md", { cwd: root }))).map(
+      (file) => path.join(root, file)
+    );
 
 const files = await Promise.all(
   paths.sort().map(async (filePath) => {

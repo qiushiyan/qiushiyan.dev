@@ -1,0 +1,5 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  // content/ is what readers see: Quarto's generated Markdown and the recipe sources.
+  "ignorePatterns": ["content/", "worker-configuration.d.ts"]
+}
