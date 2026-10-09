@@ -9,10 +9,6 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
-
 # production
 /build
 
@@ -28,26 +24,18 @@ yarn-error.log*
 # local env files
 .env*.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 /.quarto/
 /.luarc.json
 .env
-.velite
-# Velite copies content assets here on every build
-/public/static
 # ignore quarto cache
 quarto-contents/**/index_cache/
 quarto-contents/**/index_files/
 content/posts/dynamic-rmd-quarto/index_files/
 _freeze
 .wrangler
-.open-next
 
 
 __pycache__

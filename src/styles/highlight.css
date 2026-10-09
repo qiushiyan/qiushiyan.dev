@@ -1,5 +1,5 @@
 /*
-  Code colours come from the two themes in src/lib/content/code-themes.ts:
+  Code colours come from the two themes in src/lib/markdown/code-themes.ts:
   Expressive Code scopes the dark one to `.dark` (astro.config.ts), and
   highlighted inline code carries both, with the dark colour in --shiki-dark.
 */

@@ -1106,7 +1106,8 @@ function useIssues(repos) {
       queryKey: ['repos', repo.name, 'issues'],
       queryFn: async () => {
         const issues = await fetchIssues(repo.name)
-        // !mark(1:1) return the repo name along with the issues
+        // !mark(1:1)
+        // !callout[/repo: repo.name/] return the repo name along with the issues
         return { repo: repo.name, issues }
       }
     })) ?? []
@@ -1122,7 +1123,8 @@ function App() {
     repos.isSuccess ?
       <ul>
         {repos.data.map((repo) => {
-          // !mark(1:3) find the issue query for the repo
+          // !mark(1:3)
+          // !callout[/issues.find/] find the issue query for the repo
           const repoIssues = issues.find(
             query => query.data?.repo === repo.name
           )

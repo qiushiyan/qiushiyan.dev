@@ -1,0 +1,28 @@
+---
+import IndexListGroup from "@/components/lists/index-list-group.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import { getNotes, groupNotesByCategory } from "@/lib/content/notes";
+import { routes } from "@/lib/navigation";
+
+const description = "Notes from books, courses and docs I've worked through.";
+const groups = groupNotesByCategory(await getNotes());
+---
+
+<PageLayout
+  title="Notes"
+  description={description}
+  heading="Notes"
+  lead={description}
+>
+  {groups.map(({ category, notes }) => (
+    <IndexListGroup
+      label={category}
+      items={notes.map((note) => ({
+        href: routes.note(note.id),
+        title: note.data.title,
+        viewTransitionName: `note-${note.id}`,
+        date: note.data.date,
+      }))}
+    />
+  ))}
+</PageLayout>

@@ -9,3 +9,6 @@ export const siteConfig = {
     linkedin: "https://www.linkedin.com/in/qiushiyan/",
   },
 } as const;
+
+/** The id of each page's <main>, the target of the nav's skip link. */
+export const MAIN_CONTENT_ID = "main-content";

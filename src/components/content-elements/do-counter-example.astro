@@ -1,0 +1,232 @@
+---
+/*
+  <do-counter-example>: the live demo at the end of the Durable Objects intro
+  post. Two counters, each a Durable Object in a separate Worker
+  (counter.qiushi-yann.workers.dev), which only answers requests from
+  qiushiyan.dev (CORS), so the cards show an error on other origins.
+*/
+---
+
+<template id="do-counter-card">
+  <div class="counter-card">
+    <p class="counter-name"></p>
+    <p class="counter-value" aria-live="polite">
+      –
+    </p>
+    <p class="counter-error" hidden>
+      Couldn’t load the value.{" "}
+      <button type="button" data-action="retry">
+        Retry
+      </button>
+    </p>
+    <div class="counter-buttons">
+      <button type="button" data-action="increment" disabled>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M5 12h14M12 5v14"></path>
+        </svg>
+      </button>
+      <button type="button" data-action="decrement" disabled>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M5 12h14"></path>
+        </svg>
+      </button>
+    </div>
+    <p class="counter-notice" aria-live="polite"></p>
+  </div>
+</template>
+
+<script>
+  const API_URL = "https://counter.qiushi-yann.workers.dev";
+
+  type CounterResponse = { value?: number; retryAfter?: number };
+
+  const readJson = (response: Response): Promise<CounterResponse> =>
+    response.json().catch(() => ({}));
+
+  /** One counter card: shows the Durable Object's value and sends increment/decrement requests. */
+  const mountCard = (card: HTMLElement, name: string) => {
+    const $ = <T extends HTMLElement>(selector: string) =>
+      card.querySelector<T>(selector)!;
+    const value = $(".counter-value");
+    const error = $(".counter-error");
+    const notice = $(".counter-notice");
+    const buttons = [
+      ...card.querySelectorAll<HTMLButtonElement>(
+        "[data-action=increment], [data-action=decrement]"
+      ),
+    ];
+    $(".counter-name").textContent = name;
+    buttons[0].ariaLabel = `Increment ${name}`;
+    buttons[1].ariaLabel = `Decrement ${name}`;
+
+    const setBusy = (busy: boolean) =>
+      buttons.forEach((button) => (button.disabled = busy));
+    const show = (next: number) => {
+      value.textContent = String(next);
+      value.hidden = false;
+      error.hidden = true;
+    };
+
+    const load = async () => {
+      setBusy(true);
+      try {
+        const response = await fetch(`${API_URL}/${name}/value`);
+        const data = await readJson(response);
+        if (!response.ok || typeof data.value !== "number") throw new Error();
+        show(data.value);
+        setBusy(false);
+      } catch {
+        value.hidden = true;
+        error.hidden = false;
+      }
+    };
+
+    const change = async (action: "increment" | "decrement") => {
+      setBusy(true);
+      notice.textContent = "";
+      try {
+        const response = await fetch(`${API_URL}/${name}/${action}`, {
+          method: "POST",
+        });
+        const data = await readJson(response);
+        if (response.ok && typeof data.value === "number") show(data.value);
+        else if (data.retryAfter !== undefined)
+          notice.textContent = `Rate limited. Try again in ${data.retryAfter} seconds.`;
+        else notice.textContent = "The request failed. Try again.";
+      } catch {
+        notice.textContent = "The request failed. Try again.";
+      } finally {
+        setBusy(false);
+      }
+    };
+
+    card.addEventListener("click", (event) => {
+      const action = (event.target as Element).closest<HTMLElement>(
+        "[data-action]"
+      )?.dataset.action;
+      if (action === "retry") void load();
+      if (action === "increment" || action === "decrement") void change(action);
+    });
+    void load();
+  };
+
+  class DoCounterExample extends HTMLElement {
+    connectedCallback() {
+      const template = document.getElementById(
+        "do-counter-card"
+      ) as HTMLTemplateElement;
+      for (const name of ["counter-1", "counter-2"]) {
+        const card = (template.content.cloneNode(true) as DocumentFragment)
+          .firstElementChild as HTMLElement;
+        this.append(card);
+        mountCard(card, name);
+      }
+    }
+  }
+  customElements.define("do-counter-example", DoCounterExample);
+</script>
+
+<style is:global>
+  do-counter-example {
+    display: grid;
+    gap: 1rem;
+    margin-block: 2rem;
+    /* Reserves the cards' height before the script runs, so nothing shifts. */
+    min-height: 11rem;
+
+    @media (width >= 40rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .counter-card {
+    display: grid;
+    gap: 0.75rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    background: hsl(var(--card));
+    padding: 1.5rem;
+
+    & p {
+      margin: 0;
+    }
+
+    & button {
+      cursor: pointer;
+    }
+  }
+
+  .counter-name {
+    color: hsl(var(--muted-foreground));
+    font: 0.875rem var(--font-mono);
+  }
+
+  .counter-value {
+    font-weight: 600;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .counter-error {
+    min-height: 2.25rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+
+    & button {
+      color: hsl(var(--foreground));
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  .counter-buttons {
+    display: flex;
+    gap: 0.5rem;
+
+    & button {
+      display: grid;
+      place-items: center;
+      transition: background-color 150ms;
+      border: 1px solid hsl(var(--border));
+      border-radius: calc(var(--radius) - 2px);
+      background: hsl(var(--background));
+      width: 2.25rem;
+      height: 2.25rem;
+
+      &:hover {
+        background: hsl(var(--muted));
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+    }
+
+    & svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  .counter-notice {
+    min-height: 1.25rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+  }
+</style>

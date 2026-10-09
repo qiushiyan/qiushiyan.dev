@@ -1,0 +1,46 @@
+---
+/*
+  GitHub Discussions comments. Discussions are matched to posts by the
+  `og:title` meta tag, so a post's Open Graph title must stay the post title
+  or its existing discussion detaches. Loaded when scrolled near.
+*/
+---
+
+<div id="comments" data-giscus></div>
+
+<script>
+  const container = document.querySelector<HTMLElement>("[data-giscus]");
+  const theme = () =>
+    document.documentElement.classList.contains("dark")
+      ? "transparent_dark"
+      : "light";
+
+  if (container) {
+    const script = document.createElement("script");
+    Object.entries({
+      src: "https://giscus.app/client.js",
+      "data-repo": "qiushiyan/qiushiyan.dev",
+      "data-repo-id": "R_kgDOMqSWvg",
+      "data-category": "General",
+      "data-category-id": "DIC_kwDOMqSWvs4CiDwZ",
+      "data-mapping": "og:title",
+      "data-reactions-enabled": "1",
+      "data-input-position": "top",
+      "data-theme": theme(),
+      "data-lang": "en",
+      "data-loading": "lazy",
+      crossorigin: "anonymous",
+    }).forEach(([name, value]) => script.setAttribute(name, value));
+    script.async = true;
+    container.append(script);
+
+    window.addEventListener("themechange", () => {
+      document
+        .querySelector<HTMLIFrameElement>("iframe.giscus-frame")
+        ?.contentWindow?.postMessage(
+          { giscus: { setConfig: { theme: theme() } } },
+          "https://giscus.app"
+        );
+    });
+  }
+</script>

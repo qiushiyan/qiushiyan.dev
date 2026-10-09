@@ -1,5 +1,5 @@
 /*
-  The HTML that src/lib/content/markdown.ts makes from Quarto's custom
+  The HTML that src/lib/markdown/ makes from Quarto's custom
   elements, and the site's look for Expressive Code blocks.
 */
 
@@ -112,9 +112,9 @@
 
   & img {
     margin: 0;
-    border-radius: calc(var(--radius) - 2px);
     outline: 1px solid rgb(0 0 0 / 0.1);
     outline-offset: -1px;
+    border-radius: calc(var(--radius) - 2px);
     max-width: 100%;
     height: auto;
   }
@@ -137,7 +137,7 @@
 }
 
 /* Inside a figure or tabs, the wrapper owns the margin. */
-.article-body :is(code-tabs, .code-figure) .expressive-code {
+.article-body :is(code-switcher, .code-figure) .expressive-code {
   margin-block: 0;
 }
 
@@ -187,8 +187,8 @@
 
 /* `:right`: the note sits after the line instead of under it. */
 .expressive-code .ec-line.has-callout:has(.ch-callout.right) {
-  grid-template-areas: "gutter code callout";
   grid-template-columns: auto auto 1fr;
+  grid-template-areas: "gutter code callout";
 
   & .ch-callout {
     margin: 0 0 0 1rem;
@@ -202,8 +202,8 @@
   }
 }
 
-/* ── <code-tabs> (a <code-switcher> in the content) ── */
-code-tabs {
+/* ── <code-switcher>: tabs over several code blocks ── */
+code-switcher {
   display: block;
   margin-block: 1.5rem;
   border: 1px solid hsl(var(--border));
@@ -218,20 +218,20 @@ code-tabs {
   }
 }
 
-.code-tabs-list {
+.code-switcher-tabs {
   display: flex;
   border-bottom: 1px solid hsl(var(--border));
   overflow-x: auto;
 
   & button {
     flex-shrink: 0;
+    transition: color 150ms;
     margin-bottom: -1px;
     border-bottom: 2px solid transparent;
     padding-inline: 1rem;
     height: 2.5rem;
     color: hsl(var(--muted-foreground));
     font: 0.875rem var(--font-mono);
-    transition: color 150ms;
 
     &:hover {
       color: hsl(var(--foreground));

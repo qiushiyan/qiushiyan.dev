@@ -1,14 +1,10 @@
 node_modules
-.next
-.turbo
-.vercel
-.velite
-.open-next
+dist
+.astro
 .wrangler
 .agents
 .claude
 pnpm-lock.yaml
 content/**/*.md
-public/static
 worker-configuration.d.ts
 quarto-contents/**/*_files

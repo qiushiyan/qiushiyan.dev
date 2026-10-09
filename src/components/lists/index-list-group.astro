@@ -1,0 +1,46 @@
+---
+import { formatDate } from "@/lib/format";
+
+/* A labelled group of title rows, used by the notes and recipes indexes. */
+type Props = {
+  label: string;
+  items: {
+    href: string;
+    title: string;
+    /** Matches the title's view-transition name on the detail page. */
+    viewTransitionName: string;
+    date?: Date;
+  }[];
+};
+
+const { label, items } = Astro.props;
+const id = `group-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+---
+
+<section aria-labelledby={id} class="mt-10 first:mt-8">
+  <h2 id={id} class="text-sm font-medium text-muted-foreground">
+    {label}
+  </h2>
+  <ul class="mt-3 divide-y divide-border">
+    {items.map((item) => (
+      <li class="group relative flex items-baseline justify-between gap-4 py-3">
+        <a
+          href={item.href}
+          class="font-medium transition-colors group-hover:text-primary after:absolute after:inset-0"
+        >
+          <span style={{ viewTransitionName: item.viewTransitionName }}>
+            {item.title}
+          </span>
+        </a>
+        {item.date && (
+          <time
+            datetime={item.date.toISOString()}
+            class="shrink-0 text-sm text-muted-foreground tabular-nums"
+          >
+            {formatDate(item.date.toISOString())}
+          </time>
+        )}
+      </li>
+    ))}
+  </ul>
+</section>

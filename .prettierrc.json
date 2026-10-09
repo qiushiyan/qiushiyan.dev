@@ -5,6 +5,7 @@
   "singleQuote": false,
   "jsxSingleQuote": false,
   "plugins": [
+    "prettier-plugin-astro",
     "prettier-plugin-css-order",
     "@ianvs/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss"
@@ -12,7 +13,6 @@
   "importOrder": [
     "^(react/(.*)$)|^(react$)",
     "^(react-dom/(.*)$)|^(react-dom$)",
-    "^(next/(.*)$)|^(next$)",
     "<THIRD_PARTY_MODULES>",
     "",
     "^@/.*",
@@ -24,15 +24,24 @@
     "^(?!.*[.]css$)[./].*$",
     ".css$"
   ],
-  "tailwindFunctions": ["clsx", "cn"],
   "tailwindStylesheet": "./src/styles/globals.css",
   "proseWrap": "always",
   "printWidth": 80,
   "overrides": [
     {
-      "files": ["quarto-contents/**/*.qmd"],
+      "files": [
+        "quarto-contents/**/*.qmd"
+      ],
       "options": {
         "parser": "markdown"
+      }
+    },
+    {
+      "files": [
+        "*.astro"
+      ],
+      "options": {
+        "parser": "astro"
       }
     }
   ]

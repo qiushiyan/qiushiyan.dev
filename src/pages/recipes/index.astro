@@ -1,0 +1,28 @@
+---
+import IndexListGroup from "@/components/lists/index-list-group.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import { getRecipes, groupRecipes } from "@/lib/content/recipes";
+import { routes } from "@/lib/navigation";
+
+const description =
+  "Short code snippets in various languages. Copy and use them however you like.";
+const groups = groupRecipes(await getRecipes());
+---
+
+<PageLayout
+  title="Recipes"
+  description={description}
+  heading="Recipes"
+  lead={description}
+>
+  {groups.map(({ label, recipes }) => (
+    <IndexListGroup
+      label={label}
+      items={recipes.map((recipe) => ({
+        href: routes.recipe(recipe.data.group, recipe.data.slug),
+        title: recipe.data.title,
+        viewTransitionName: `recipe-${recipe.data.slug}`,
+      }))}
+    />
+  ))}
+</PageLayout>

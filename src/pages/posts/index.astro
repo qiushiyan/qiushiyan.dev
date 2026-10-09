@@ -1,53 +1,57 @@
 ---
-import PostListItem from "@/components/post/post-list-item.astro";
-import BaseLayout from "@/layouts/base-layout.astro";
+import PostListItem from "@/components/lists/post-list-item.astro";
+import PageLayout from "@/layouts/page-layout.astro";
 import { getAllTags, getPosts, tagSlug } from "@/lib/content/posts";
 import { routes } from "@/lib/navigation";
 
 const posts = await getPosts();
-const tags = getAllTags(posts).toSorted((a, b) => a.localeCompare(b));
-const tagHref = (tag: string | null) => (tag ? `${routes.posts}?tag=${tagSlug(tag)}` : routes.posts);
+const tags = getAllTags(posts);
+const tagHref = (tag: string | null) =>
+  tag ? `${routes.posts}?tag=${tagSlug(tag)}` : routes.posts;
 ---
 
-<BaseLayout title="Posts">
-  <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-    <main id="main-content" class="mx-auto w-full max-w-2xl py-12 sm:py-16">
-      <header>
-        <h1 class="text-2xl/8 font-semibold tracking-tight text-balance">Posts</h1>
-      </header>
-      {/* The page is static: `?tag=` filters the list on the client (script below). Without JS every post shows. */}
-      <post-tag-filter>
-        <nav aria-label="Filter by tag" class="mt-6 -ml-2.5 flex flex-wrap">
-          {
-            [null, ...tags].map((tag) => (
-              <a
-                href={tagHref(tag)}
-                data-tag={tag ? tagSlug(tag) : ""}
-                aria-current={tag === null ? "page" : undefined}
-                class="inline-flex h-10 items-center rounded-md px-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:underline aria-[current=page]:underline-offset-4"
-              >
-                {tag ?? "All"}
-              </a>
-            ))
-          }
-        </nav>
-        <p aria-live="polite" class="sr-only" data-status></p>
-        <ol class="mt-6 divide-y divide-border">
-          {posts.map((post) => <PostListItem post={post} />)}
-        </ol>
-      </post-tag-filter>
-    </main>
-  </div>
-</BaseLayout>
+<PageLayout title="Posts" heading="Posts">
+  {/* The page is static: `?tag=` filters the list on the client (script below). Without JS every post shows. */}
+  <post-tag-filter>
+    <nav aria-label="Filter by tag" class="mt-6 -ml-2.5 flex flex-wrap">
+      {[null, ...tags].map((tag) => (
+        <a
+          href={tagHref(tag)}
+          data-tag={tag ? tagSlug(tag) : ""}
+          aria-current={tag === null ? "page" : undefined}
+          class="inline-flex h-10 items-center rounded-md px-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:underline aria-[current=page]:underline-offset-4"
+        >
+          {tag ?? "All"}
+        </a>
+      ))}
+    </nav>
+    <p aria-live="polite" class="sr-only" data-status></p>
+    <ol class="mt-6 divide-y divide-border">
+      {posts.map((post) => (
+        <PostListItem post={post} />
+      ))}
+    </ol>
+  </post-tag-filter>
+</PageLayout>
 
 <script>
   class PostTagFilter extends HTMLElement {
     connectedCallback() {
       this.apply(new URL(location.href).searchParams.get("tag"));
       this.querySelector("nav")?.addEventListener("click", (event) => {
-        const link = (event.target as Element).closest<HTMLAnchorElement>("a[data-tag]");
+        const link = (event.target as Element).closest<HTMLAnchorElement>(
+          "a[data-tag]"
+        );
         const mouse = event as MouseEvent;
-        if (!link || mouse.button !== 0 || mouse.metaKey || mouse.ctrlKey || mouse.shiftKey || mouse.altKey) return;
+        if (
+          !link ||
+          mouse.button !== 0 ||
+          mouse.metaKey ||
+          mouse.ctrlKey ||
+          mouse.shiftKey ||
+          mouse.altKey
+        )
+          return;
         event.preventDefault();
         history.replaceState(null, "", link.href);
         this.apply(link.dataset.tag || null, true);
@@ -60,7 +64,8 @@ const tagHref = (tag: string | null) => (tag ? `${routes.posts}?tag=${tagSlug(ta
       const active = tag && known ? tag : "";
       for (const link of links) {
         link.toggleAttribute("aria-current", link.dataset.tag === active);
-        if (link.dataset.tag === active) link.setAttribute("aria-current", "page");
+        if (link.dataset.tag === active)
+          link.setAttribute("aria-current", "page");
       }
       let visible = 0;
       const rows = this.querySelectorAll<HTMLElement>("li[data-tags]");
@@ -70,7 +75,9 @@ const tagHref = (tag: string | null) => (tag ? `${routes.posts}?tag=${tagSlug(ta
         if (show) visible++;
       }
       if (announce) {
-        const label = [...links].find((link) => link.dataset.tag === active)?.textContent?.trim();
+        const label = [...links]
+          .find((link) => link.dataset.tag === active)
+          ?.textContent?.trim();
         this.querySelector("[data-status]")!.textContent = active
           ? `${visible} ${visible === 1 ? "post" : "posts"} tagged ${label}`
           : `All ${rows.length} posts`;

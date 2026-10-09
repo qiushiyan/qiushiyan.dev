@@ -4,7 +4,7 @@
 /* prose overrides; see the file for why they cannot move into this stylesheet */
 @config "./typography.config.mjs";
 
-/* The theme script (src/components/theme-script.astro) toggles the `dark` class on <html> */
+/* The theme script (src/components/site/theme-script.astro) toggles the `dark` class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
@@ -164,11 +164,11 @@
 
   /* Highlighted inline code outside prose (descriptions in lists and headers) keeps the chip. */
   .code-inline {
+    box-decoration-break: clone;
     border-radius: calc(var(--radius) - 4px);
     background: hsl(var(--muted));
     padding: 0.15em 0.3em;
     font-size: 0.875em;
-    box-decoration-break: clone;
   }
 }
 
@@ -207,12 +207,29 @@
 /* Nav popovers (mobile menu, contents): native [popover], pinned under the nav. */
 .nav-popover {
   position: fixed;
-  inset: calc(var(--nav-height) + 0.25rem) 1rem auto auto;
   margin: 0;
+  inset: calc(var(--nav-height) + 0.25rem) 1rem auto auto;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
   background: hsl(var(--popover));
-  color: hsl(var(--popover-foreground));
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
   max-width: calc(100vw - 2rem);
+  color: hsl(var(--popover-foreground));
+}
+
+/* Site search (Pagefind's component UI, loaded on first use) on the site's tokens. */
+:root {
+  --pf-text: hsl(var(--foreground));
+  --pf-text-secondary: hsl(var(--muted-foreground));
+  --pf-text-muted: hsl(var(--muted-foreground));
+  --pf-background: hsl(var(--popover));
+  --pf-border: hsl(var(--border));
+  --pf-border-focus: hsl(var(--ring));
+  --pf-hover: hsl(var(--muted));
+  --pf-skeleton: hsl(var(--muted));
+  --pf-skeleton-shine: hsl(var(--accent));
+  --pf-mark: hsl(var(--foreground));
+  --pf-outline-focus: hsl(var(--ring));
+  --pf-font: var(--font-sans);
+  --pf-border-radius: var(--radius);
 }

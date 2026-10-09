@@ -1,0 +1,16 @@
+---
+import ArticleLayout from "@/layouts/article-layout.astro";
+import { getNotes } from "@/lib/content/notes";
+import type { Note } from "@/lib/content/notes";
+
+export async function getStaticPaths() {
+  return (await getNotes()).map((note) => ({
+    params: { slug: note.id },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props as { note: Note };
+---
+
+<ArticleLayout entry={note} description={note.data.description} />

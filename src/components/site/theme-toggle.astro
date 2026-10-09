@@ -1,0 +1,28 @@
+---
+import Moon from "@lucide/astro/icons/moon";
+import Sun from "@lucide/astro/icons/sun";
+---
+
+<button
+  type="button"
+  aria-label="Toggle dark mode"
+  data-theme-toggle
+  class="grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11"
+>
+  {/* Both icons are in the HTML and the `dark` class picks one. */}
+  <Sun aria-hidden="true" stroke-width={1.5} class="size-5 dark:hidden" />
+  <Moon
+    aria-hidden="true"
+    stroke-width={1.5}
+    class="hidden size-5 dark:block"
+  />
+</button>
+
+<script>
+  for (const button of document.querySelectorAll("[data-theme-toggle]")) {
+    button.addEventListener("click", () => {
+      const dark = document.documentElement.classList.contains("dark");
+      window.__setTheme(dark ? "light" : "dark");
+    });
+  }
+</script>

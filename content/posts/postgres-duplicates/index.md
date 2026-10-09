@@ -10,8 +10,6 @@ knitr:
     collapse: true
     comment: '#'
 draft: true
-components:
-- quiz-table-example
 headings:
 - title: Define Duplication
   slug: define-duplication
@@ -51,7 +49,18 @@ student may submit the same quiz multiple times.
 
 ## Check Duplication {#check-duplication}
 
-<quiz-table-example></quiz-table-example>
+<table>
+<caption>The <code>quiz_submissions</code> table: a student can submit the same quiz multiple times</caption>
+<thead><tr><th>id</th><th>student_id</th><th>quiz_id</th><th>score</th><th>date</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>1</td><td>1</td><td>90</td><td>2024-10-30</td></tr>
+<tr><td>2</td><td>1</td><td>1</td><td>80</td><td>2024-10-30</td></tr>
+<tr><td>3</td><td>2</td><td>1</td><td>70</td><td>2024-10-30</td></tr>
+<tr><td>4</td><td>3</td><td>2</td><td>100</td><td>2024-10-30</td></tr>
+<tr><td>5</td><td>4</td><td>1</td><td>80</td><td>2024-11-01</td></tr>
+<tr><td>6</td><td>2</td><td>2</td><td>90</td><td>2024-11-02</td></tr>
+</tbody>
+</table>
 
 ``` sql
 CREATE TABLE quiz_submissions (

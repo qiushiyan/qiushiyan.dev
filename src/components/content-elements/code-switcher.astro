@@ -1,0 +1,39 @@
+---
+/*
+  <code-switcher>: tabs over several code blocks. The markup comes from
+  src/lib/markdown/code-blocks.ts (the WAI-ARIA tabs pattern); this script
+  switches panels and moves between tabs with the arrow keys. Without
+  JavaScript the first tab shows.
+*/
+---
+
+<script>
+  class CodeSwitcher extends HTMLElement {
+    connectedCallback() {
+      const tabs = [
+        ...this.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
+      ];
+      const select = (index: number) => {
+        tabs.forEach((tab, i) => {
+          const selected = i === index;
+          tab.setAttribute("aria-selected", String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+          document.getElementById(tab.getAttribute("aria-controls")!)!.hidden =
+            !selected;
+        });
+      };
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => select(index));
+        tab.addEventListener("keydown", (event) => {
+          const step =
+            event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+          if (!step) return;
+          const next = (index + step + tabs.length) % tabs.length;
+          select(next);
+          tabs[next].focus();
+        });
+      });
+    }
+  }
+  customElements.define("code-switcher", CodeSwitcher);
+</script>

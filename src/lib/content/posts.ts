@@ -1,18 +1,18 @@
 import { getCollection } from "astro:content";
 
+import { byDateDesc, isPublished } from "./articles";
 import type { CollectionEntry } from "astro:content";
 
 export type Post = CollectionEntry<"posts">;
 
-/** Published posts, newest first. Drafts show in development only. */
+/** Published posts, newest first. */
 export const getPosts = async () =>
-  (await getCollection("posts", (post) => import.meta.env.DEV || !post.data.draft)).sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-  );
+  (await getCollection("posts", isPublished)).sort(byDateDesc);
 
-export const getAllTags = (posts: Post[]) => [
-  ...new Set(posts.flatMap((post) => post.data.tags)),
-];
+export const getAllTags = (posts: Post[]) =>
+  [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) =>
+    a.localeCompare(b)
+  );
 
 /** Other posts that share at least one tag with `post`, newest first. */
 export const getRelatedPosts = (posts: Post[], post: Post, limit = 3) =>
