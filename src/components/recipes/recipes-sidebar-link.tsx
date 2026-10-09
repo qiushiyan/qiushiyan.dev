@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileCodeIcon } from "lucide-react";
 
+import { useSidebar } from "@/components/ui/sidebar";
 import { routes } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
 
 export function RecipesSidebarLink({
   title,
@@ -17,20 +16,17 @@ export function RecipesSidebarLink({
   group: string;
 }) {
   const pathname = usePathname();
-  const pathSlug = pathname.split("/").pop();
-
-  const isActive = pathSlug === slug;
+  const { setOpenMobile } = useSidebar();
+  const href = routes.recipe(group, slug);
 
   return (
     <Link
-      href={routes.recipe(group, slug)}
-      className={cn(
-        "flex items-start gap-2 p-2",
-        isActive && "bg-accent text-accent-foreground"
-      )}
+      href={href}
+      onClick={() => setOpenMobile(false)}
+      aria-current={pathname === href ? "page" : undefined}
+      className="block rounded-md px-2 py-1.5 text-sm text-muted-foreground -outline-offset-2 transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
     >
-      <FileCodeIcon className="mt-1 size-4 shrink-0" />
-      <span>{title}</span>
+      {title}
     </Link>
   );
 }

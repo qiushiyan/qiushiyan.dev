@@ -1,10 +1,11 @@
-import { Card } from "./card";
+import { CounterCard } from "./card";
 
+/** The live demo at the end of the Durable Objects intro post. */
 export const DoCounterExample = () => {
   return (
-    <div className="my-4 grid gap-8 lg:grid-cols-2">
-      <Card className="bg-primary/80" name="counter-1" />
-      <Card className="bg-secondary/80" name="counter-2" />
+    <div className="not-prose my-8 grid gap-4 sm:grid-cols-2">
+      <CounterCard name="counter-1" />
+      <CounterCard name="counter-2" />
     </div>
   );
 };

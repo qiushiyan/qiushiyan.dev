@@ -1,10 +1,13 @@
-import { cache } from "react";
+import "server-only";
+
 import { notes } from "#content";
 
-export const getNotes = cache(() => {
-  return [...notes].sort((a, b) => b.date.localeCompare(a.date));
-});
+import { byDateDesc, isPublished } from "./collection";
 
-export const findNote = (slug: string) => {
-  return notes.find((note) => note.slug === slug);
-};
+const publishedNotes = notes.filter(isPublished).sort(byDateDesc);
+
+/** Published notes, newest first. */
+export const getNotes = () => publishedNotes;
+
+export const getNote = (slug: string) =>
+  publishedNotes.find((note) => note.slug === slug);

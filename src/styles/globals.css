@@ -1,55 +1,62 @@
 @import "tailwindcss";
-
-@config "../../tailwind.config.ts";
+@import "tw-animate-css";
 
 @plugin "@tailwindcss/typography";
-@plugin "tailwindcss-animate";
+/* prose overrides; see the file for why they cannot move into this stylesheet */
+@config "./typography.config.mjs";
 
-@theme {
-  /*--text-2xs: clamp(0.25rem, 0.162rem + 0.3756vw, 0.5rem);
-  --text-xs: clamp(0.5rem, 0.412rem + 0.3756vw, 0.75rem);
-  --text-s: clamp(0.75rem, 0.662rem + 0.3756vw, 1rem);
-  --text-m: clamp(1rem, 0.8239rem + 0.7512vw, 1.5rem);
-  --text-l: clamp(1.5rem, 1.1479rem + 1.5023vw, 2.5rem);
-  --text-xl: clamp(2rem, 1.4718rem + 2.2535vw, 3.5rem);
-  --text-2xl: clamp(3rem, 2.2958rem + 3.0047vw, 5rem);
-  --text-3xl: clamp(4.0625rem, 2.8521rem + 5.1643vw, 7.5rem);*/
-
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman",
-    Times, serif;
-  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
-}
+/* next-themes toggles the `dark` class on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+  Design tokens. `inline` makes utilities use these values directly
+  (e.g. `bg-primary` → `hsl(var(--primary))`), so they follow the light/dark
+  HSL channel variables defined in the base layer below.
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
+  The font variables come from next/font classes on <html> (see
+  src/app/layout.tsx), so they are defined wherever these values resolve.
 */
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
+@theme inline {
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
 @layer base {
   :root {
+    --nav-height: 3.5rem;
+    --radius: 0.5rem;
     scrollbar-gutter: stable;
-    --nav-height: 4rem;
-  }
-}
 
-@layer base {
-  :root {
     --background: 210 40% 98%;
     --foreground: 217 33% 17%;
     --muted: 210 40% 96%;
@@ -68,13 +75,11 @@
     --accent-foreground: 215 28% 27%;
     --destructive: 344 100% 39%;
     --destructive-foreground: 0 0% 100%;
-    --ring: 200 98% 39%;
-    --radius: 0.5rem;
-    --chart-1: 216 100% 58%;
-    --chart-2: 160 100% 30%;
-    --chart-3: 30 100% 44%;
-    --chart-4: 275 96% 52%;
-    --chart-5: 344 100% 46%;
+    --warning: 26 90% 37%;
+    --warning-foreground: 0 0% 100%;
+    /* Focus outlines stay neutral: the foreground colour, never the accent. */
+    --ring: 217 33% 17%;
+
     --expo-out: linear(
       0 0%,
       0.1684 2.66%,
@@ -95,32 +100,29 @@
     );
   }
 
+  /* Cool low-chroma neutrals and the same sky hue as light mode. */
   .dark {
-    --background: 34 57% 0%;
-    --foreground: 34 34% 98%;
-    --muted: 34 35% 9%;
-    --muted-foreground: 34 15% 64%;
-    --popover: 34 57% 0%;
-    --popover-foreground: 34 34% 98%;
-    --card: 34 57% 0%;
-    --card-foreground: 34 34% 98%;
-    --border: 34 3% 14%;
-    --input: 34 3% 14%;
-    --primary: 34 90% 78%;
-    --primary-foreground: 34 90% 18%;
-    --secondary: 34 1% 8%;
-    --secondary-foreground: 34 1% 68%;
-    --accent: 34 11% 17%;
-    --accent-foreground: 34 11% 77%;
+    --background: 220 16% 5%;
+    --foreground: 210 20% 92%;
+    --muted: 220 12% 11%;
+    --muted-foreground: 215 12% 62%;
+    --popover: 220 14% 8%;
+    --popover-foreground: 210 20% 92%;
+    --card: 220 14% 8%;
+    --card-foreground: 210 20% 92%;
+    --border: 220 10% 17%;
+    --input: 220 10% 17%;
+    --primary: 199 95% 74%;
+    --primary-foreground: 200 80% 12%;
+    --secondary: 220 12% 11%;
+    --secondary-foreground: 215 12% 72%;
+    --accent: 220 12% 13%;
+    --accent-foreground: 210 20% 92%;
     --destructive: 1 94% 59%;
     --destructive-foreground: 0 0% 100%;
-    --ring: 34 90% 78%;
-    --radius: 0.5rem;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --warning: 43 96% 56%;
+    --warning-foreground: 26 83% 14%;
+    --ring: 210 20% 92%;
   }
 }
 
@@ -128,58 +130,37 @@
   * {
     border-color: hsl(var(--border));
   }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
 
-  strong {
-    color: hsl(var(--primary)) !important;
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 
-  .link {
-    transition-duration: 150ms;
-    transition-property: color, background-color, border-color,
-      text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    color: hsl(var(--primary));
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
 
-    &:hover {
-      color: hsl(var(--primary) / 0.8);
-      text-decoration-line: underline;
-      text-underline-offset: 4px;
-    }
+  p,
+  li,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  /* Anchored targets land below the sticky nav. */
+  [id] {
+    scroll-margin-top: calc(var(--nav-height) + 1.5rem);
   }
 
   pre,
   code {
-    font-family: var(--font-mono) !important;
-    white-space: pre !important;
-  }
-
-  .skip-link {
-    position: absolute;
-    margin: -1px;
-    padding: 0;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border-width: 0;
-    white-space: nowrap;
-  }
-  .skip-link:focus {
-    position: static;
-    margin: 0;
-    padding: 12px;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    clip: auto;
-    text-decoration: underline;
-    text-decoration-color: hsl(var(--primary));
-    text-underline-offset: 0.4em;
-    white-space: normal;
+    font-family: var(--font-mono);
   }
 }
 
@@ -188,66 +169,10 @@
     scroll-behavior: smooth;
   }
 
+  /* The list-to-article title morph (next-view-transitions). */
   ::view-transition-group(root) {
     animation-duration: 0.4s;
     animation-timing-function: var(--expo-out);
-  }
-
-  html:active-view-transition-type(switch-theme) {
-    &::view-transition-group(root) {
-      animation-duration: 0.7s;
-      animation-timing-function: var(--expo-out);
-    }
-
-    &::view-transition-new(root) {
-      animation-name: reveal-light;
-    }
-
-    &::view-transition-old(root),
-    .dark::view-transition-old(root) {
-      z-index: -1;
-      animation: none;
-    }
-
-    .dark::view-transition-new(root) {
-      animation-name: reveal-dark;
-    }
-  }
-
-  @keyframes reveal-dark {
-    from {
-      clip-path: polygon(50% -71%, -50% 71%, -50% 71%, 50% -71%);
-    }
-
-    to {
-      clip-path: polygon(50% -71%, -50% 71%, 50% 171%, 171% 50%);
-    }
-  }
-
-  @keyframes reveal-light {
-    from {
-      clip-path: polygon(171% 50%, 50% 171%, 50% 171%, 171% 50%);
-    }
-
-    to {
-      clip-path: polygon(171% 50%, 50% 171%, -50% 71%, 50% -71%);
-    }
-  }
-
-  .fade-up {
-    animation: fade-up 0.4s var(--expo-out);
-  }
-
-  @keyframes fade-up {
-    from {
-      transform: translateY(1rem);
-      opacity: 0;
-    }
-
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
   }
 }
 
@@ -256,11 +181,9 @@
     scroll-behavior: auto;
   }
 
-  ::view-transition-group(root),
-  ::view-transition-new(root),
-  ::view-transition-old(root),
-  .dark::view-transition-old(root),
-  .dark::view-transition-new(root) {
+  ::view-transition-group(*),
+  ::view-transition-new(*),
+  ::view-transition-old(*) {
     animation: none;
   }
 }

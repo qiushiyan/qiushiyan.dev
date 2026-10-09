@@ -1,93 +1,57 @@
-import { HighlightedCode, Pre } from "codehike/code";
-import { FileCodeIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
+import { codeSurfaceClasses, preClasses } from "./classes";
 import { CopyButton } from "./copy-button";
-import { FootnoteNumber } from "./footnotes";
-import { CodeHikeHandlers } from "./handlers";
+import { decodeAttribute } from "./encoding";
 
-type CodeBlockMeta = {
-  filename?: string;
-  caption?: string;
-};
-
+// Props arrive as attributes of the build-time HTML (see src/lib/content/rehype-code.ts).
 type CodeBlockProps = {
+  /** The code to copy, base64 */
   value: string;
   lang?: string;
-  customMeta?: CodeBlockMeta;
-  highlighted?: string;
+  filename?: string;
+  /** HTML rendered from the `#| caption:` line */
+  caption?: string;
+  /** The highlighted <pre>, base64; absent only if highlighting failed */
+  html?: string;
 };
 
+/** A code block: the build-time <pre> on the code surface, with a copy button. */
 export const CodeBlock = ({
   value,
-  lang,
-  customMeta,
-  highlighted: highlightedJson,
+  filename,
+  caption,
+  html,
 }: CodeBlockProps) => {
-  if (!highlightedJson) {
-    // Fallback: render code without syntax highlighting
-    return (
-      <figure className="my-2 py-2">
-        <pre className="my-0 border p-2">
-          <code>{value}</code>
-        </pre>
-      </figure>
-    );
-  }
-
-  const highlighted = JSON.parse(highlightedJson) as HighlightedCode;
-  const noteAnnotations = highlighted.annotations.filter(
-    ({ name }) => name === "ref"
-  );
-  const notes = noteAnnotations.map(({ query }) => query);
-
-  noteAnnotations.forEach((a, index) => {
-    a.data = { n: index + 1 };
-  });
-
-  const hasFilename = customMeta?.filename !== undefined;
-
+  const code = decodeAttribute(value);
   return (
-    <figure className="my-2 py-2">
-      {hasFilename && (
-        <div className="relative my-0 rounded-tl-md rounded-tr-md border px-4 py-2 font-mono text-base text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <FileCodeIcon className="size-4" />
-            <span>{customMeta.filename}</span>
+    <figure className="not-prose my-6">
+      <div className={codeSurfaceClasses}>
+        {filename ? (
+          <div className="flex h-10 items-center justify-between gap-4 border-b pr-1 pl-4 font-mono text-sm text-muted-foreground">
+            <span className="truncate">{filename}</span>
+            <CopyButton text={code} className="relative top-auto right-auto" />
           </div>
-          <CopyButton
-            text={value}
-            className="top-1/2 -translate-y-1/2 text-foreground hover:bg-background"
-          />
-        </div>
-      )}
-      <div className="relative mt-0">
-        {!hasFilename && <CopyButton text={value} />}
-        <Pre
-          code={highlighted}
-          handlers={CodeHikeHandlers}
-          style={highlighted.style}
-          className={cn("my-0 border p-2", hasFilename && "rounded-t-none")}
-        />
+        ) : (
+          <CopyButton text={code} />
+        )}
+        <CodeBody html={html && decodeAttribute(html)} code={code} />
       </div>
-      {notes.length > 0 && (
-        <ul className="my-2 list-none" role="list">
-          {notes.map((ref, index) => (
-            <li key={index} className="text-sm">
-              <FootnoteNumber n={index + 1} />
-              <span className="pl-1">{ref}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-      {customMeta?.caption && (
+      {caption && (
         <figcaption
-          className="my-1 text-center text-sm text-muted-foreground"
-          dangerouslySetInnerHTML={{
-            __html: customMeta.caption,
-          }}
+          className="mt-2 text-center text-sm text-pretty text-muted-foreground"
+          dangerouslySetInnerHTML={{ __html: caption }}
         />
       )}
     </figure>
   );
 };
+
+/** The <pre> itself (decoded HTML, or plain code), shared with CodeSwitcher. */
+export const CodeBody = ({ html, code }: { html?: string; code: string }) =>
+  html ? (
+    <div dangerouslySetInnerHTML={{ __html: html }} />
+  ) : (
+    <pre className={cn(preClasses, "px-4")}>
+      <code>{code}</code>
+    </pre>
+  );

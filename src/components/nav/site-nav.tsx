@@ -1,85 +1,16 @@
-import Link from "next/link";
-
-import { routes } from "@/lib/navigation";
-import { NavLinks } from "../config";
-import { Container } from "../container";
-import SiteSearch from "../site-search";
-import { SkipLink } from "../skip-link";
-import { ThemeToggle } from "../theme-toggle";
-import { MobileNav } from "./mobile-nav";
-import { PlusGrid, PlusGridItem, PlusGridRow } from "./plus-grid";
+import { getSearchIndex } from "@/lib/content/search";
+import { SiteNavBar } from "./site-nav-bar";
 
 export function SiteNav({
-  banner,
   additionalControls,
 }: {
-  banner?: React.ReactNode;
+  /** Page-specific icon buttons, rendered before search (e.g. a sidebar or contents trigger). */
   additionalControls?: React.ReactNode;
 }) {
   return (
-    <Container className="sticky top-0 z-40 overflow-x-hidden bg-background">
-      <SkipLink />
-      <header>
-        <PlusGrid>
-          <PlusGridRow className="relative flex justify-between">
-            <div className="relative flex gap-6">
-              <PlusGridItem className="px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={routes.home}
-                    className="text-2xl font-extrabold tracking-wide transition-colors hover:text-primary"
-                    title="Home"
-                  >
-                    qiushiyan.dev
-                  </Link>
-                </div>
-              </PlusGridItem>
-              {banner && (
-                <div className="relative hidden items-center py-3 lg:flex">
-                  {banner}
-                </div>
-              )}
-            </div>
-            <div className="flex items-center">
-              <DesktopNav />
-              <PlusGridItem className="relative flex px-4 py-3">
-                <div className="flex items-center gap-4">
-                  {additionalControls}
-                  <SiteSearch />
-                  <ThemeToggle />
-                </div>
-              </PlusGridItem>
-              <PlusGridItem className="px-4 py-3 lg:hidden">
-                <MobileNav />
-              </PlusGridItem>
-            </div>
-          </PlusGridRow>
-        </PlusGrid>
-      </header>
-    </Container>
-  );
-}
-
-function DesktopNav() {
-  return (
-    <nav className="relative hidden lg:flex" aria-label="Main navigation">
-      {NavLinks.Main.map(({ href, label, viewTransitionName }) => (
-        <PlusGridItem
-          key={href}
-          className="relative flex transition-colors hover:bg-muted"
-        >
-          <Link
-            href={href}
-            className="flex items-center px-4 py-3 text-base font-medium text-accent-foreground bg-blend-multiply"
-            title={label}
-            style={{
-              viewTransitionName,
-            }}
-          >
-            {label}
-          </Link>
-        </PlusGridItem>
-      ))}
-    </nav>
+    <SiteNavBar
+      searchEntries={getSearchIndex()}
+      additionalControls={additionalControls}
+    />
   );
 }

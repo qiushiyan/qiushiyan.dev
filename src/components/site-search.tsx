@@ -1,300 +1,168 @@
 "use client";
 
-import React, {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import Fuse, { FuseResultMatch } from "fuse.js";
-import { Search } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
-import { useDebounceValue } from "usehooks-ts";
+import { useRouter } from "next/navigation";
+import Fuse from "fuse.js";
+import { SearchIcon } from "lucide-react";
 
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { searchData, SearchData } from "@/lib/content/posts";
-import { Spinner } from "./ui/spinner";
+import type { SearchEntry } from "@/lib/content/search";
+import type { FuseResultMatch } from "fuse.js";
 
-type SearchResult = {
-  title: string;
-  matches: FuseResultMatch[];
-  href: string;
-};
+const MIN_QUERY_LENGTH = 2;
+const MAX_SCORE = 0.75;
 
-type SearchContextType = {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  results: SearchResult[];
-  search: (query: string) => void;
-  pending: boolean;
-};
-
-const SearchContext = createContext<SearchContextType>({} as SearchContextType);
-const useSearch = () => useContext(SearchContext);
-
-const SearchProvider: React.FC<{
-  children: React.ReactNode;
-}> = ({ children }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [results, _setResults] = useState<SearchResult[]>([]);
-  const [pending, startTransition] = useTransition();
-  const fuse = useRef<Fuse<SearchData>>(null);
-
-  const search = useCallback(async (query: string) => {
-    const domPurity = (await import("dompurify")).default;
-    if (!fuse.current) {
-      const Fuse = (await import("fuse.js")).default;
-      fuse.current = new Fuse(searchData, {
-        keys: [
-          { name: "title", weight: 1 },
-          { name: "description", weight: 1 },
-          { name: "raw", weight: 0.75 },
-        ],
-        includeMatches: true,
-        shouldSort: true,
-        minMatchCharLength: 3,
-        threshold: 0.5,
-      });
-    }
-
-    const sanitizedQuery = domPurity.sanitize(query);
-
-    setSearchQuery(sanitizedQuery);
-    setResults(
-      fuse.current?.search(sanitizedQuery).map((result) => {
-        return {
-          title: result.item.title,
-          matches: result.matches,
-          href: result.item.href,
-        };
-      }) as SearchResult[]
-    );
-  }, []);
-
-  const setResults = (results: SearchResult[]) => {
-    startTransition(() => {
-      _setResults(results);
-    });
-  };
+export function SiteSearch({ entries }: { entries: SearchEntry[] }) {
+  const [open, setOpen] = useState(false);
 
   return (
-    <SearchContext.Provider
-      value={{ searchQuery, setSearchQuery, search, results, pending }}
-    >
-      {children}
-    </SearchContext.Provider>
-  );
-};
-
-export function SiteSearch() {
-  const isMobile = useIsMobile();
-
-  return (
-    <SearchProvider>
-      {isMobile ? <SiteSearchMobile /> : <SearchDesktop />}
-    </SearchProvider>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        aria-label="Search"
+        className="grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11"
+      >
+        <SearchIcon aria-hidden strokeWidth={1.5} className="size-5" />
+      </PopoverTrigger>
+      <PopoverContent
+        align="end"
+        collisionPadding={16}
+        className="w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-lg p-0"
+      >
+        <SearchPanel entries={entries} onNavigate={() => setOpen(false)} />
+      </PopoverContent>
+    </Popover>
   );
 }
 
-const SiteSearchMobile: React.FC = () => (
-  <Drawer>
-    <DrawerTrigger className="rounded-md p-2 transition-colors hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-      <span className="sr-only">search</span>
-      <Search className="size-6 shrink-0" />
-    </DrawerTrigger>
-    <DrawerContent>
-      <SearchForm />
-      <SearchResults />
-      <SearchFeedback />
-    </DrawerContent>
-  </Drawer>
-);
-
-const SearchDesktop: React.FC = () => (
-  <Popover>
-    <PopoverTrigger className="rounded-md p-2 transition-colors hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-      <span className="sr-only">search</span>
-      <Search className="size-6 shrink-0" />
-    </PopoverTrigger>
-    <PopoverContent
-      side="bottom"
-      align="start"
-      sideOffset={4}
-      className="w-96 p-0"
-    >
-      <SearchForm />
-      <SearchResults />
-      <SearchFeedback />
-    </PopoverContent>
-  </Popover>
-);
-
-const SearchResults: React.FC = () => {
-  const { results, pending } = useSearch();
-  const shouldReduceMotion = useReducedMotion();
-
-  if (pending) return <Spinner />;
-
-  return (
-    <div className="grid gap-1 p-1.5 text-sm">
-      {results.map((result, index) => {
-        const contentMatches = result.matches?.find(
-          (match) => match.key === "raw"
-        );
-        const titleMatches = result.matches?.find(
-          (match) => match.key === "title"
-        );
-        const descriptionMatches = result.matches?.find(
-          (match) => match.key === "description"
-        );
-
-        return (
-          <motion.div
-            key={result.title}
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.1,
-              delay: index * 0.03,
-              ease: [0.25, 0.46, 0.45, 0.94] as const,
-            }}
-          >
-            <Link
-              href={result.href}
-              className="block rounded-md p-2.5 outline-hidden ring-ring hover:bg-accent hover:text-accent-foreground focus-visible:ring-2"
-            >
-              <div className="text-base font-medium">
-                {titleMatches ? (
-                  <HighlightedText
-                    text={titleMatches.value as string}
-                    match={titleMatches}
-                  />
-                ) : (
-                  result.title
-                )}
-              </div>
-              {descriptionMatches && (
-                <HighlightedText
-                  text={descriptionMatches.value as string}
-                  match={descriptionMatches}
-                />
-              )}
-
-              {contentMatches?.value && (
-                <p className="text-sm text-muted-foreground">
-                  <HighlightedText
-                    text={contentMatches.value.slice(0, 150) + "..."}
-                    match={contentMatches}
-                  />
-                </p>
-              )}
-            </Link>
-          </motion.div>
-        );
-      })}
-    </div>
+function SearchPanel({
+  entries,
+  onNavigate,
+}: {
+  entries: SearchEntry[];
+  onNavigate: () => void;
+}) {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const fuse = useMemo(
+    () =>
+      new Fuse(entries, {
+        keys: [{ name: "title", weight: 2 }, "description"],
+        includeMatches: true,
+        includeScore: true,
+        ignoreLocation: true,
+        threshold: 0.2,
+        minMatchCharLength: MIN_QUERY_LENGTH,
+      }),
+    [entries]
   );
-};
 
-const SearchFeedback: React.FC = () => {
-  const { searchQuery } = useSearch();
+  const q = query.trim();
+  // The index is a few dozen short records, so searching on every keystroke is instant.
+  const results = useMemo(
+    () =>
+      q.length < MIN_QUERY_LENGTH
+        ? []
+        : fuse
+            .search(q, { limit: 8 })
+            // A high combined score means a weak fuzzy hit in one field, e.g. "react" in "practical".
+            .filter((result) => (result.score ?? 0) < MAX_SCORE),
+    [fuse, q]
+  );
 
   return (
     <>
-      <p className="my-1.5 rounded-md px-2.5 py-1 text-sm text-muted-foreground outline-hidden ring-ring hover:text-foreground focus-visible:ring-2">
-        {searchQuery.length < 3
-          ? "Search all pages (at least 3 characters)"
-          : null}
-      </p>
+      <form
+        role="search"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const first = results[0];
+          if (first) {
+            onNavigate();
+            router.push(first.item.href);
+          }
+        }}
+      >
+        <input
+          type="search"
+          autoFocus
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search posts and notes"
+          aria-label="Search posts and notes"
+          className="h-11 w-full border-b border-border bg-transparent px-3 text-base outline-hidden placeholder:text-muted-foreground md:text-sm"
+        />
+      </form>
+      {q.length >= MIN_QUERY_LENGTH && (
+        <div className="max-h-[min(24rem,60dvh)] overflow-y-auto p-1">
+          {results.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-muted-foreground">
+              No results for “{q}”
+            </p>
+          ) : (
+            <ul>
+              {results.map(({ item, matches }) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={onNavigate}
+                    className="block rounded-sm px-3 py-2 -outline-offset-2 transition-colors hover:bg-muted"
+                  >
+                    <span className="block text-sm font-medium">
+                      <Highlight
+                        text={item.title}
+                        match={findMatch(matches, "title")}
+                      />
+                    </span>
+                    <span className="mt-0.5 line-clamp-2 block text-sm text-muted-foreground">
+                      {item.kind === "note" && "Note · "}
+                      <Highlight
+                        text={item.description}
+                        match={findMatch(matches, "description")}
+                      />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </>
   );
-};
+}
 
-const SearchForm: React.FC = () => {
-  const { searchQuery, setSearchQuery, search } = useSearch();
-  const formRef = useRef<HTMLFormElement>(null);
+const findMatch = (
+  matches: readonly FuseResultMatch[] | undefined,
+  key: string
+) => matches?.find((match) => match.key === key);
 
-  const [debouncedSearchQuery] = useDebounceValue(searchQuery, 500);
-  useEffect(() => {
-    if (formRef.current && debouncedSearchQuery.length >= 3) {
-      formRef.current.requestSubmit();
-    }
-  }, [debouncedSearchQuery]);
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const query = formData.get("search") as string;
-    search(query);
-  };
-
-  return (
-    <form onSubmit={onSubmit} ref={formRef}>
-      <div className="border-b p-2.5">
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="h-8 rounded-xs shadow-none focus-visible:ring-1 focus-visible:ring-ring"
-          name="search"
-          aria-label="Search posts"
-          minLength={3}
-          maxLength={50}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-    </form>
-  );
-};
-
-const HighlightedText: React.FC<{
+function Highlight({
+  text,
+  match,
+}: {
   text: string;
   match: FuseResultMatch | undefined;
-}> = ({ text, match }) => {
-  if (!match) {
-    return <span>{text}</span>;
-  }
+}) {
+  if (!match) return text;
 
-  const parts = match.indices.reduce((acc, [start, end], index) => {
-    if (index === 0 && start > 0) {
-      acc.push(<span key={`before-${start}`}>{text.slice(0, start)}</span>);
-    }
-
-    acc.push(
-      <span
-        key={`highlight-${start}`}
-        className="bg-accent font-bold text-accent-foreground"
-      >
-        {text.slice(start, end + 1)}
-      </span>
+  const parts: React.ReactNode[] = [];
+  let cursor = 0;
+  for (const [start, end] of match.indices) {
+    if (end < cursor) continue;
+    if (start > cursor) parts.push(text.slice(cursor, start));
+    parts.push(
+      <mark key={start} className="rounded-xs bg-primary/15 text-inherit">
+        {text.slice(Math.max(start, cursor), end + 1)}
+      </mark>
     );
+    cursor = end + 1;
+  }
+  parts.push(text.slice(cursor));
 
-    if (index < match.indices.length - 1) {
-      const nextStart = match.indices[index + 1][0];
-      acc.push(
-        <span key={`between-${end}-${nextStart}`}>
-          {text.slice(end + 1, nextStart)}
-        </span>
-      );
-    } else if (end < text.length - 1) {
-      acc.push(<span key={`after-${end}`}>{text.slice(end + 1)}</span>);
-    }
-
-    return acc;
-  }, [] as ReactNode[]);
-
-  return <>{parts}</>;
-};
-
-export default SiteSearch;
+  return parts;
+}

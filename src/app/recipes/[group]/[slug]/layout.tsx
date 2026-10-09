@@ -1,76 +1,60 @@
 import { notFound } from "next/navigation";
-import { recipes } from "#content";
 
-import { RecipesHeader } from "@/components/recipes/recipes-header";
+import { SiteNav } from "@/components/nav/site-nav";
 import { RecipesSidebar } from "@/components/recipes/recipes-sidebar";
-import { SidebarLayout } from "@/components/ui/sidebar";
-import { findRecipe } from "@/lib/content/recipes";
+import {
+  SidebarInset,
+  SidebarLayout,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { MAIN_CONTENT_ID } from "@/constants";
+import { getRecipe, getRecipeGroups } from "@/lib/content/recipes";
+import type { Metadata } from "next";
 
-export const generateStaticParams = () => {
-  const allRecipes = Object.entries(recipes).flatMap(([group, recipes]) =>
-    recipes.map((recipe) => ({
-      slug: recipe.slug,
-      group,
-    }))
+type Params = { group: string; slug: string };
+
+export const generateStaticParams = (): Params[] =>
+  Object.entries(getRecipeGroups()).flatMap(([group, recipes]) =>
+    recipes.map((recipe) => ({ group, slug: recipe.slug }))
   );
-  return allRecipes;
-};
 
-export const generateMetadata = async (
-  props: {
-    params: Promise<{ group: string; slug: string }>;
-  }
-) => {
-  const params = await props.params;
-  const recipe = findRecipe(params.group, params.slug);
-  if (!recipe) {
-    return {};
-  }
+export const generateMetadata = async (props: {
+  params: Promise<Params>;
+}): Promise<Metadata> => {
+  const { group, slug } = await props.params;
+  const recipe = getRecipe(group, slug);
+  if (!recipe) return {};
+
   const title = recipe.title;
-  const description = `A code snippet`;
+  const description = "A code snippet";
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: [
-        {
-          url: `/api/og?title=${title}&description=${description}`,
-        },
-      ],
-    },
+    openGraph: { title, description },
   };
 };
 
-export default async function Layout(
-  props: {
-    children: React.ReactNode;
-    params: Promise<{ group: string; slug: string }>;
-  }
-) {
-  const params = await props.params;
+export default async function Layout(props: {
+  children: React.ReactNode;
+  params: Promise<Params>;
+}) {
+  const { group, slug } = await props.params;
+  if (!getRecipe(group, slug)) notFound();
 
-  const {
-    children
-  } = props;
-
-  const recipe = findRecipe(params.group, params.slug);
-  if (!recipe) {
-    return notFound();
-  }
-
+  // A full-height tool page: the nav, then the sidebar beside a workspace that
+  // fills the rest of the viewport without scrolling the page.
   return (
-    <SidebarLayout defaultOpen={true} className="flex-col">
+    <SidebarLayout defaultOpen className="h-dvh flex-col">
+      <SiteNav additionalControls={<SidebarTrigger />} />
       <RecipesSidebar />
-      <RecipesHeader
-        title={recipe.title}
-        slug={recipe.slug}
-        group={params.group}
-      />
-      <main className="flex max-h-[calc(100vh-var(--nav-height))] flex-1 flex-col gap-2 px-2">
-        {children}
-      </main>
+      <SidebarInset className="min-h-0">
+        <main
+          id={MAIN_CONTENT_ID}
+          className="flex min-h-0 flex-1 flex-col px-4 pb-4"
+        >
+          {props.children}
+        </main>
+      </SidebarInset>
     </SidebarLayout>
   );
 }

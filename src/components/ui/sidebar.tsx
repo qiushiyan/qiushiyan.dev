@@ -1,30 +1,32 @@
 "use client";
 
 import * as React from "react";
-import { PanelLeft } from "lucide-react";
+import { PanelLeftIcon } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-/**
- * cookie name for sidebar state
- *
- * @example
- * cookies().get(SIDEBAR_STATE_COOKIE)?.value === "true"
- */
-export const SIDEBAR_STATE_COOKIE = "sidebar:state";
-
 type SidebarContext = {
   state: "open" | "closed";
+  /** Desktop aside. */
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  setOpen: (open: boolean) => void;
+  /** Mobile sheet. Separate from `open` so a desktop preference never opens a modal on a phone. */
+  openMobile: boolean;
+  setOpenMobile: (open: boolean) => void;
+  isMobile: boolean;
+  toggle: () => void;
 };
 
 const SidebarContext = React.createContext<SidebarContext>({
   state: "open",
   open: true,
-  onOpenChange: () => {},
+  setOpen: () => {},
+  openMobile: false,
+  setOpenMobile: () => {},
+  isMobile: false,
+  toggle: () => {},
 });
 
 function useSidebar() {
@@ -36,32 +38,35 @@ const SidebarLayout = React.forwardRef<
   React.ComponentProps<"div"> & {
     defaultOpen?: boolean;
   }
->(({ defaultOpen, className, ...props }, ref) => {
+>(({ defaultOpen, className, style, ...props }, ref) => {
   const [open, setOpen] = React.useState(defaultOpen ?? false);
+  const [openMobile, setOpenMobile] = React.useState(false);
+  const isMobile = useIsMobile();
 
-  const onOpenChange = React.useCallback((open: boolean) => {
-    setOpen(open);
-    document.cookie = `${SIDEBAR_STATE_COOKIE}=${open}; path=/; max-age=${
-      60 * 60 * 24 * 7
-    }`;
-  }, []);
+  const toggle = React.useCallback(() => {
+    if (isMobile) setOpenMobile((value) => !value);
+    else setOpen((value) => !value);
+  }, [isMobile]);
 
   const state = open ? "open" : "closed";
 
   return (
-    <SidebarContext.Provider value={{ state, open, onOpenChange }}>
+    <SidebarContext.Provider
+      value={{
+        state,
+        open,
+        setOpen,
+        openMobile,
+        setOpenMobile,
+        isMobile,
+        toggle,
+      }}
+    >
       <div
         ref={ref}
         data-sidebar={state}
-        style={
-          {
-            "--sidebar-width": "16rem",
-          } as React.CSSProperties
-        }
-        className={cn(
-          "flex min-h-dvh pl-0 motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out data-[sidebar=closed]:pl-0 sm:pl-(--sidebar-width)",
-          className
-        )}
+        style={{ "--sidebar-width": "16rem", ...style } as React.CSSProperties}
+        className={cn("flex min-h-dvh", className)}
         {...props}
       />
     </SidebarContext.Provider>
@@ -69,90 +74,93 @@ const SidebarLayout = React.forwardRef<
 });
 SidebarLayout.displayName = "SidebarLayout";
 
+/** The content beside the desktop aside; it makes room for the aside while it is open. */
+const SidebarInset = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "flex min-w-0 flex-1 flex-col md:pl-(--sidebar-width) md:in-data-[sidebar=closed]:pl-0",
+      className
+    )}
+    {...props}
+  />
+));
+SidebarInset.displayName = "SidebarInset";
+
 const SidebarTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<"button">
 >(({ className, ...props }, ref) => {
-  const { open, onOpenChange } = useSidebar();
+  const { open, openMobile, isMobile, toggle } = useSidebar();
 
   return (
     <button
       ref={ref}
-      id="sidebar-trigger"
+      type="button"
+      aria-label="Toggle sidebar"
+      aria-expanded={isMobile ? openMobile : open}
       className={cn(
-        "flex size-10 items-center justify-center rounded-md transition-all hover:text-primary/80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11",
         className
       )}
-      onClick={() => onOpenChange(!open)}
+      onClick={toggle}
       {...props}
     >
-      <PanelLeft className="size-5" />
-      <span className="sr-only">Toggle Sidebar</span>
+      <PanelLeftIcon aria-hidden strokeWidth={1.5} className="size-5" />
     </button>
   );
 });
 SidebarTrigger.displayName = "SidebarTrigger";
 
-const Sidebar = ({ children, className }: React.ComponentProps<"div">) => {
-  const isMobile = useIsMobile();
-  const { open, onOpenChange } = useSidebar();
+const Sidebar = ({
+  children,
+  className,
+  label = "Sidebar",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /** Accessible name for the aside and the mobile sheet. */
+  label?: string;
+}) => {
+  const { isMobile, openMobile, setOpenMobile } = useSidebar();
 
   if (isMobile) {
     return (
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent
-          className="w-[260px] p-0 md:w-(--sidebar-width)"
-          side="left"
-        >
-          <SheetTitle className="sr-only">Sidebar</SheetTitle>
-          <SidebarInner>{children}</SidebarInner>
+      <Sheet open={openMobile} onOpenChange={setOpenMobile}>
+        <SheetContent className="w-65 p-0" side="left">
+          <SheetTitle className="sr-only">{label}</SheetTitle>
+          <SidebarInner className={className}>{children}</SidebarInner>
         </SheetContent>
       </Sheet>
     );
   }
 
+  // Sits below the sticky nav. While closed it slides out and becomes
+  // `invisible`, so its links leave the tab order once the slide finishes.
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-(--sidebar-width) motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-in-out md:block in-data-[sidebar=closed]:left-[calc(var(--sidebar-width)*-1)]">
-      <SidebarInner>{children}</SidebarInner>
+    <aside
+      aria-label={label}
+      className="fixed top-(--nav-height) bottom-0 left-0 z-30 hidden w-(--sidebar-width) transition-[translate,visibility] duration-200 ease-out in-data-[sidebar=closed]:invisible in-data-[sidebar=closed]:-translate-x-full motion-reduce:transition-none md:block"
+    >
+      <SidebarInner className={className}>{children}</SidebarInner>
     </aside>
   );
 };
 
-const SidebarInner = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex h-full flex-col border-r bg-background">
-      {children}
-    </div>
-  );
-};
-
-const SidebarHeader = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      className={cn("flex items-center border-b px-2.5 py-2", className)}
-      {...props}
-    />
-  );
-});
-SidebarHeader.displayName = "SidebarHeader";
-
-const SidebarFooter = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      className={cn("flex items-center border-t px-2.5 py-2", className)}
-      {...props}
-    />
-  );
-});
-SidebarFooter.displayName = "SidebarFooter";
+const SidebarInner = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div className={cn("flex h-full flex-col border-r bg-background", className)}>
+    {children}
+  </div>
+);
 
 const SidebarContent = React.forwardRef<
   HTMLDivElement,
@@ -161,7 +169,7 @@ const SidebarContent = React.forwardRef<
   return (
     <div
       ref={ref}
-      className={cn("flex flex-1 flex-col gap-5 overflow-auto py-4", className)}
+      className={cn("flex flex-1 flex-col gap-6 overflow-auto py-4", className)}
       {...props}
     />
   );
@@ -173,20 +181,20 @@ const SidebarItem = React.forwardRef<
   React.ComponentProps<"div">
 >(({ className, ...props }, ref) => {
   return (
-    <div ref={ref} className={cn("grid gap-2 px-2.5", className)} {...props} />
+    <div ref={ref} className={cn("grid gap-2 px-2", className)} {...props} />
   );
 });
 SidebarItem.displayName = "SidebarItem";
 
 const SidebarLabel = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
+  HTMLHeadingElement,
+  React.ComponentProps<"h2">
 >(({ className, ...props }, ref) => {
   return (
-    <div
+    <h2
       ref={ref}
       className={cn(
-        "px-1.5 text-xs font-medium text-muted-foreground",
+        "px-2 text-xs font-medium text-muted-foreground",
         className
       )}
       {...props}
@@ -198,8 +206,7 @@ SidebarLabel.displayName = "SidebarLabel";
 export {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
+  SidebarInset,
   SidebarItem,
   SidebarLabel,
   SidebarLayout,

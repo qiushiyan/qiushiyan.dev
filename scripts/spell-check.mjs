@@ -1,80 +1,80 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import dictionary from "dictionary-en"; // Add this import
+// Spell-checks the prose of every post, note and the about page.
+// Markdown is parsed first, so code, HTML, link targets and frontmatter are
+// skipped; only text nodes reach the spell checker.
+//
+//   pnpm spellcheck              all of content/
+//   pnpm spellcheck <file>...    only the given Markdown files
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import dictionary from "dictionary-en";
 import glob from "fast-glob";
+import remarkDirective from "remark-directive";
+import remarkHeadingAttrs from "remark-heading-attrs";
+import remarkParse from "remark-parse";
+import remarkRetext from "remark-retext";
 import retextEnglish from "retext-english";
 import retextIndefiniteArticle from "retext-indefinite-article";
-import retextSpell from "retext-spell"; // Add this import
-import retextStringify from "retext-stringify";
-import { table } from "table";
+import retextSpell from "retext-spell";
 import { unified } from "unified";
+import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
-import reporter from "vfile-reporter";
+import { reporter } from "vfile-reporter";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+// Velite reads frontmatter itself; remark would otherwise parse it as prose.
+const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/;
+
+// Bare URLs and domains such as web.dev are not prose.
+const URL_LIKE =
+  /\b(?:https?:\/\/|www\.)\S+|\b[\w-]+(?:\.[a-z]{2,})+(?:\/\S*)?/g;
+
+// Hunspell can't know acronyms (DOM, LCP) or units (768px, 16ms).
+const isAcronymOrUnit = (word) => /^[A-Z]{2,}s?$|\d/.test(word);
+
+/** Blanks out URLs in text nodes, keeping their length so positions hold. */
+const remarkBlankUrls = () => (tree) => {
+  visit(tree, "text", (node) => {
+    node.value = node.value.replace(URL_LIKE, (url) => " ".repeat(url.length));
+  });
+};
 
 const processor = unified()
-  .use(retextEnglish)
-  .use(retextIndefiniteArticle)
-  .use(retextSpell, dictionary) // Add this line
-  .use(retextStringify);
-const postsDirectory = path.join(__dirname, "..", "content", "posts");
-
-async function checkFiles() {
-  const files = await glob(path.join(postsDirectory, "**/*.md"));
-  const results = [];
-  let totalErrorCount = 0;
-
-  for (const filePath of files) {
-    const content = fs.readFileSync(filePath, "utf-8");
-    const file = path.relative(postsDirectory, filePath);
-    const vfile = new VFile({ path: file, contents: content });
-
-    try {
-      const result = await processor.process(vfile);
-      const errorCount = result.messages.length; // Change this line
-      totalErrorCount += errorCount;
-      const wordCount = content.split(/\s+/).length;
-
-      results.push([
-        file,
-        wordCount,
-        errorCount,
-        reporter(result, { quiet: true }), // Change this line
-      ]);
-    } catch (error) {
-      console.error(`Error processing file ${file}:`, error);
-    }
-  }
-
-  const tableData = [
-    ["File", "Word Count", "Error Count", "Errors"],
-    ...results.map(([file, wordCount, errorCount, errors]) => [
-      file,
-      wordCount.toString(),
-      errorCount.toString(),
-      errors,
-    ]),
-  ];
-
-  console.log(
-    table(tableData, {
-      columns: {
-        3: { width: 50, wrapWord: true },
-      },
-    })
+  .use(remarkParse)
+  .use(remarkDirective)
+  .use(remarkHeadingAttrs)
+  .use(remarkBlankUrls)
+  .use(
+    remarkRetext,
+    unified()
+      .use(retextEnglish)
+      .use(retextSpell, { dictionary })
+      .use(retextIndefiniteArticle)
   );
 
-  return totalErrorCount > 0 ? 1 : 0;
-}
+const args = process.argv.slice(2);
+const paths = args.length
+  ? args.map((file) => path.resolve(file))
+  : await glob("content/**/*.md", { cwd: root, absolute: true });
 
-checkFiles()
-  .then((exitCode) => {
-    process.exit(exitCode);
+const files = await Promise.all(
+  paths.sort().map(async (filePath) => {
+    const markdown = await readFile(filePath, "utf8");
+    // Blank out frontmatter instead of removing it, so line numbers still
+    // match the file.
+    const value = markdown.replace(FRONTMATTER, (match) =>
+      match.replace(/[^\n]/g, "")
+    );
+    const file = new VFile({ path: path.relative(root, filePath), value });
+    await processor.run(processor.parse(file), file);
+    file.messages = file.messages.filter(
+      (message) =>
+        message.source !== "retext-spell" || !isAcronymOrUnit(message.actual)
+    );
+    return file;
   })
-  .catch((error) => {
-    console.error("An error occurred:", error);
-    process.exit(1);
-  });
+);
+
+console.log(reporter(files, { quiet: true }) || "No spelling issues found.");
+process.exitCode = files.some((file) => file.messages.length) ? 1 : 0;

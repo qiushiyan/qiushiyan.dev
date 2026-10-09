@@ -1,7 +1,7 @@
-import { InlineCode } from "../codehike/inline-code";
+import { InlineCode, PlainInlineCode } from "../codehike/inline-code";
 import { HtmlRenderer } from "../html-renderer";
-import { BasicProse } from "../prose-wrapper";
 
+/** A post's Markdown description (build-time HTML), with code on the inline-code chip. */
 export const PostDescription = ({
   description,
   className,
@@ -10,27 +10,11 @@ export const PostDescription = ({
   className?: string;
 }) => {
   return (
-    <BasicProse className={className}>
+    <div className={className}>
       <HtmlRenderer
         content={description}
-        components={{
-          "code-inline": ({
-            value,
-            lang,
-            highlighted,
-          }: {
-            value: string;
-            lang: string;
-            highlighted?: string;
-          }) => (
-            <InlineCode
-              value={value}
-              lang={lang}
-              highlighted={highlighted}
-            />
-          ),
-        }}
+        components={{ "code-inline": InlineCode, code: PlainInlineCode }}
       />
-    </BasicProse>
+    </div>
   );
 };

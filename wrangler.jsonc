@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
   "name": "qiushiyan",
-  "compatibility_date": "2024-12-30",
+  "compatibility_date": "2026-10-06",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
     "directory": ".open-next/assets",
@@ -19,6 +19,15 @@
       "binding": "DB",
       "database_name": "personal-website",
       "database_id": "327bba3d-2bc5-434a-86a7-67c78582f0fa",
+    },
+  ],
+  // Limits view-count increments to one per visitor IP and post per minute
+  // (src/app/api/views/[slug]/route.ts). `period` must be 10 or 60.
+  "ratelimits": [
+    {
+      "name": "VIEWS_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 1, "period": 60 },
     },
   ],
   "images": {

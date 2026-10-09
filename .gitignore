@@ -39,6 +39,8 @@ next-env.d.ts
 /.luarc.json
 .env
 .velite
+# Velite copies content assets here on every build
+/public/static
 # ignore quarto cache
 quarto-contents/**/index_cache/
 quarto-contents/**/index_files/

@@ -1,0 +1,13 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
+  # napi postinstall fallbacks; pnpm already installs the platform binaries
+  unrs-resolver: false
+  "@parcel/watcher": false
+
+patchedDependencies:
+  # adds a `workerd` export condition so the Workers bundle picks the worker build
+  "@code-hike/lighter@1.0.1": patches/@code-hike__lighter@1.0.1.patch
+  # resolve the browser build to the same HTML-string parser used on the server
+  htmr@1.1.1: patches/htmr@1.1.1.patch

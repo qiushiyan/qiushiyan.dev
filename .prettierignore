@@ -3,4 +3,12 @@ node_modules
 .turbo
 .vercel
 .velite
-contents/**/*.md
+.open-next
+.wrangler
+.agents
+.claude
+pnpm-lock.yaml
+content/**/*.md
+public/static
+worker-configuration.d.ts
+quarto-contents/**/*_files

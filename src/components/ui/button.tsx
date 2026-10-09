@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import type { VariantProps } from "class-variance-authority";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-[color,background-color,border-color,scale] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -27,26 +27,38 @@ const buttonVariants = cva(
         lg: "h-10 rounded-md px-8",
         icon: "size-9",
       },
+      /** `static` drops the press scale where motion would distract. */
+      static: {
+        true: "",
+        false: "active:not-disabled:scale-[0.96]",
+      },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      static: false,
     },
   }
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    { className, variant, size, static: isStatic, asChild = false, ...props },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant, size, static: isStatic, className })
+        )}
         ref={ref}
         {...props}
       />

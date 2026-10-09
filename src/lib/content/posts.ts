@@ -1,40 +1,38 @@
-import { cache } from "react";
+import "server-only";
+
 import { posts } from "#content";
 
-import { isProduction } from "@/constants";
+import { byDateDesc, isPublished } from "./collection";
+import type { Post } from "#content";
 
-export const getPosts = () => {
-  const allPosts = isProduction ? posts.filter((post) => !post.draft) : posts;
-  return [...allPosts].sort((postA, postB) =>
-    postB.date.localeCompare(postA.date)
-  );
+// Velite output is static, so the published list is computed once.
+const publishedPosts = posts.filter(isPublished).sort(byDateDesc);
+
+/** Published posts, newest first. */
+export const getPosts = () => publishedPosts;
+
+export const getPost = (slug: string) =>
+  publishedPosts.find((post) => post.slug === slug);
+
+export const getAllTags = () => [
+  ...new Set(publishedPosts.flatMap((post) => post.tags)),
+];
+
+/** Other posts that share at least one tag with `post`, newest first. */
+export const getRelatedPosts = (post: Post, limit = 3) =>
+  publishedPosts
+    .filter(
+      (other) =>
+        other.slug !== post.slug &&
+        other.tags.some((tag) => post.tags.includes(tag))
+    )
+    .slice(0, limit);
+
+/** The neighbours of `slug` in date order. */
+export const getAdjacentPosts = (slug: string) => {
+  const index = publishedPosts.findIndex((post) => post.slug === slug);
+  return {
+    older: index === -1 ? undefined : publishedPosts[index + 1],
+    newer: index > 0 ? publishedPosts[index - 1] : undefined,
+  };
 };
-
-export const getPostsByTags = cache((tags: string[]) => {
-  return getPosts().filter((post) =>
-    tags.some((tag) => post.tags.includes(tag))
-  );
-});
-
-export const findPost = (slug: string) => {
-  return posts.find((post) => post.slug === slug);
-};
-
-export const getAllTags = cache(() => {
-  const posts = getPosts();
-  const tags = posts.reduce((acc, post) => {
-    post.tags.forEach((tag) => {
-      acc.set(tag, true);
-    });
-    return acc;
-  }, new Map<string, boolean>());
-  return Array.from(tags.keys());
-});
-
-export const searchData = getPosts().map((post) => ({
-  title: post.title,
-  description: post.description,
-  href: post.href,
-}));
-
-export type SearchData = (typeof searchData)[number];

@@ -2,6 +2,7 @@ import {
   Table,
   TableBody,
   TableCaption,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -52,43 +53,36 @@ const data = [
   },
 ];
 
+const columns = ["id", "student_id", "quiz_id", "score", "date"] as const;
+
+/** The example table in the Postgres duplicates post (static data, so no row hover). */
 export function QuizTable() {
   return (
-    <Table>
-      <TableCaption>
-        The <code>quiz_submissions</code> table, a student can submit the same
-        quiz multiple times
-      </TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead>
-            <code>id</code>
-          </TableHead>
-          <TableHead>
-            <code>student_id</code>
-          </TableHead>
-          <TableHead>
-            <code>quiz_id</code>
-          </TableHead>
-          <TableHead>
-            <code>score</code>
-          </TableHead>
-          <TableHead>
-            <code>date</code>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((row) => (
-          <TableRow key={row.id}>
-            <td>{row.id}</td>
-            <td>{row.student_id}</td>
-            <td>{row.quiz_id}</td>
-            <td>{row.score}</td>
-            <td>{row.date}</td>
+    <div className="not-prose my-8">
+      <Table className="tabular-nums">
+        <TableCaption>
+          The <code>quiz_submissions</code> table, a student can submit the same
+          quiz multiple times
+        </TableCaption>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            {columns.map((column) => (
+              <TableHead key={column} className="font-mono">
+                {column}
+              </TableHead>
+            ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {data.map((row) => (
+            <TableRow key={row.id} className="hover:bg-transparent">
+              {columns.map((column) => (
+                <TableCell key={column}>{row[column]}</TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
