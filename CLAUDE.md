@@ -19,6 +19,8 @@ pnpm spellcheck          # prose spell check over content/
 
 There is no test suite. A change is verified by `pnpm build` (check the route table), `tsc`, `lint`, and `pnpm preview` for anything touching the Worker, caching or D1.
 
+Deploys run on Cloudflare Workers Builds; its settings live in the dashboard, not in this repo. Every command there goes through OpenNext: `opennextjs-cloudflare build` builds, `opennextjs-cloudflare deploy` deploys `main`, and `opennextjs-cloudflare upload` uploads versions for other branches. Plain `wrangler deploy` or `wrangler versions upload` skips copying prerendered pages into static assets, so every cached page misses.
+
 ## Rendering model
 
 Every page is prerendered at build time, and OpenNext serves it from Workers Static Assets through a read-only incremental cache (`open-next.config.ts`). Nothing revalidates; content changes on deploy. The only dynamic route is `src/app/api/views/[slug]`.
