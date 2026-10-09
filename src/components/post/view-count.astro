@@ -25,8 +25,8 @@ const { slug } = Astro.props;
         // Storage unavailable (private mode, blocked): count once per page load.
       }
       fetch(`/api/views/${encodeURIComponent(slug)}`, { method: counted ? "GET" : "POST" })
-        .then((response) => (response.ok ? response.json() : undefined))
-        .then((data: { views?: unknown } | undefined) => {
+        .then((response) => (response.ok ? (response.json() as Promise<{ views?: unknown }>) : undefined))
+        .then((data) => {
           const views = data?.views;
           if (typeof views !== "number") return;
           this.innerHTML = `<span aria-hidden="true">·</span><span>${formatter.format(views)} ${views === 1 ? "view" : "views"}</span>`;

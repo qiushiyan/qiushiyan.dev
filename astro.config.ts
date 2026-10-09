@@ -1,4 +1,3 @@
-import cloudflare from "@astrojs/cloudflare";
 import { unified } from "@astrojs/markdown-remark";
 import react from "@astrojs/react";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
@@ -25,9 +24,8 @@ export default defineConfig({
   site: "https://qiushiyan.dev",
   trailingSlash: "never",
   build: { format: "file" },
-  // The view-count endpoint is the only route rendered on request.
-  adapter: cloudflare({ imageService: "compile" }),
-  session: false,
+  // Every page is static. The view-count API is a plain Worker in front of
+  // the static assets (worker/index.ts, wrangler.jsonc), not an Astro route.
   devToolbar: { enabled: false },
   prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   integrations: [

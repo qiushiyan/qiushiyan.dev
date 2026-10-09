@@ -1,8 +1,7 @@
-/_next/static/*
+# Fingerprinted build output (scripts, styles, optimized images, fonts)
+/_astro/*
   Cache-Control: public,max-age=31536000,immutable
 
-# Worker responses get these from headers() in next.config.mjs; static assets
-# skip the Worker, so they need their own copy.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
