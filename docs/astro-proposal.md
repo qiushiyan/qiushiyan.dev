@@ -2,7 +2,7 @@
 
 Branch `trial/astro`, 2026-10-09. This proposal comes from a working trial, not from reading docs. Everything measured below was measured on this machine against `main` at `211d074`.
 
-**Status:** accepted. The whole site is migrated on this branch (commit "Migrate the whole site to Astro"). See [Answers to the open questions](#answers-to-the-open-questions) to the open questions, and [Before merge](#before-merge) for what's left.
+**Status:** accepted. The whole site is migrated on this branch (commit "Migrate the whole site to Astro"). See [Answers to the open questions](#answers-to-the-open-questions), and [Before merge](#before-merge) for what's left.
 
 ## Verdict: go
 
