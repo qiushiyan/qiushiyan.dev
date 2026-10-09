@@ -2,7 +2,7 @@
 
 This is a personal website built with Astro 7 with Tailwind v4, built to static files and served by Cloudflare Workers Static Assets; one small Worker in front of them counts post views in D1. Content contains post, notes and code recipes
 
-There is no staging suite. A change is verified by `pnpm build` (it lists every page), `pnpm check`, `pnpm lint`, and `pnpm preview` for anything touching the Worker, headers or D1.
+There is no staging suite. A change is verified by `pnpm build` (it lists every page), `pnpm check`, `pnpm lint`, and `pnpm preview` for anything touching the Worker, headers or D1. `typescript` is a 7.1 nightly on purpose: `tsc` checks `.astro` files through `@astrojs/ts-content-mapper`, which needs 7.1, and `astro check` doesn't run on TypeScript 7.
 
 `astro dev` detaches into the background when it detects a coding agent; `ASTRO_DEV_BACKGROUND=0` keeps it in the foreground, and `astro dev stop` ends a detached one.
 
