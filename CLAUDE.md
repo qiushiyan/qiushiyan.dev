@@ -1,23 +1,9 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Qiushi Yan's personal site: posts, notes and code recipes. Astro 7 with Tailwind v4, built to static files and served by Cloudflare Workers Static Assets; one small Worker in front of them counts post views in D1.
+This is a personal website built with Astro 7 with Tailwind v4, built to static files and served by Cloudflare Workers Static Assets; one small Worker in front of them counts post views in D1. Content contains post, notes and code recipes
 
-## Commands
-
-```bash
-pnpm dev                 # Astro dev server, in Node; view counts stay empty (the Worker isn't running)
-pnpm build               # astro build → dist/: pages, OG cards and the Pagefind search index
-pnpm preview             # build, then wrangler dev: the production site with the Worker and local D1
-pnpm check               # astro check, plus tsc for the Worker
-pnpm lint                # eslint .
-pnpm db:migrate:local    # apply migrations/ to local D1 (needed for view counts in preview)
-pnpm cf-typegen          # regenerate worker-configuration.d.ts after editing wrangler.jsonc bindings
-pnpm spellcheck          # prose spell check over content/
-```
-
-There is no test suite. A change is verified by `pnpm build` (it lists every page), `pnpm check`, `pnpm lint`, and `pnpm preview` for anything touching the Worker, headers or D1.
+There is no staging suite. A change is verified by `pnpm build` (it lists every page), `pnpm check`, `pnpm lint`, and `pnpm preview` for anything touching the Worker, headers or D1.
 
 `astro dev` detaches into the background when it detects a coding agent; `ASTRO_DEV_BACKGROUND=0` keeps it in the foreground, and `astro dev stop` ends a detached one.
 
@@ -95,13 +81,8 @@ page  --render(entry)-->  <Content />
   - One accent hue in both themes.
   - Motion only in response to input, never on content entrance. Page-to-page title morphs are native cross-document view transitions (`@view-transition` in `globals.css`), with no client router.
 
-## Version pins
-
-- **Expressive Code 0.44.2:** the annotation plugin depends on its internals.
-- **TypeScript 6:** typescript-eslint supports TypeScript below 6.1.
-- **ESLint 10:** `eslint-plugin-astro` requires it.
-- **pnpm build-script approvals** live in `pnpm-workspace.yaml`.
-
 ## Conventions
+
+Commit on main without prs directly unless asked otherwise, push is left with the user.
 
 Named exports, lowercase-dash file names, `.astro` components by default, and comments only where they explain why.
