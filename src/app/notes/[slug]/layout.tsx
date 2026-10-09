@@ -1,29 +1,49 @@
+import { notFound } from "next/navigation";
+
+import { TocPopover } from "@/components/article/toc-popover";
 import { SiteNav } from "@/components/nav/site-nav";
-import { getNotes } from "@/lib/content/notes";
+import { getNote } from "@/lib/content/notes";
+import { siteConfig } from "@/lib/site";
+import type { Metadata } from "next";
 
-export const generateMetadata = async (props: {
-  params: Promise<{ slug: string }>;
-}) => {
-  const params = await props.params;
-  const page = getNotes().find((page) => page.slug === params.slug);
-  if (!page) {
-    return {
-      title: "Not Found",
-    };
-  }
+import "@/styles/article.css";
 
-  const title = page.title;
+export async function generateMetadata({
+  params,
+}: LayoutProps<"/notes/[slug]">): Promise<Metadata> {
+  const note = getNote((await params).slug);
+  if (!note) return {};
 
   return {
-    title,
-    description: "A personal note",
+    title: note.title,
+    description: note.description,
+    alternates: { canonical: note.href },
+    openGraph: {
+      type: "article",
+      siteName: siteConfig.name,
+      title: note.title,
+      description: note.description,
+      url: note.href,
+      publishedTime: note.date,
+      modifiedTime: note.lastModified,
+    },
   };
-};
+}
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function NoteLayout({
+  children,
+  params,
+}: LayoutProps<"/notes/[slug]">) {
+  const note = getNote((await params).slug);
+  if (!note) notFound();
+
   return (
     <>
-      <SiteNav />
+      <SiteNav
+        additionalControls={
+          <TocPopover headings={note.headings} className="xl:hidden" />
+        }
+      />
       {children}
     </>
   );

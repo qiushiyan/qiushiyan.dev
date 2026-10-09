@@ -1,76 +1,69 @@
-import Link from "next/link";
-import { GitForkIcon, StarIcon } from "lucide-react";
+import { StarIcon } from "lucide-react";
 
-import { getProject } from "@/actions/projects";
-import { Skeleton } from "@/components/ui/skeleton";
+import { getRepoStats } from "@/lib/server/github";
 
 const featured = [
   {
     name: "tidymodels/agua",
     href: "https://tidymodels.github.io/agua",
+    description: "Create and evaluate models using tidymodels and h2o",
   },
   {
     name: "qiushiyan/js-notebook",
     href: "https://javascript-notebook.netlify.app",
+    description: "An interactive notebook for JavaScript and TypeScript",
   },
   {
     name: "qiushiyan/linux-command-line-cheatsheet",
     href: "https://github.com/qiushiyan/linux-command-line-cheatsheet",
-  },
-  {
-    name: "qiushiyan/qlang",
-    href: "https://qlang.qiushiyan.dev/",
+    description: "A cheatsheet of common Linux commands",
   },
 ];
 
-export const FeaturedProjects = async () => {
-  const repos = await Promise.all(
-    featured.map(async ({ name, href }) => ({
-      name,
-      href,
-      data: await getProject(name),
-    }))
+const capitalize = (text: string) =>
+  text.charAt(0).toUpperCase() + text.slice(1);
+
+/** Featured repositories. GitHub data is fetched at build time; the written description covers a failed request. */
+export async function FeaturedProjects() {
+  const projects = await Promise.all(
+    featured.map(async (project) => {
+      const stats = await getRepoStats(project.name);
+      return {
+        ...project,
+        description: capitalize(stats?.description || project.description),
+        stars: stats?.stars ?? 0,
+      };
+    })
   );
 
   return (
-    <div className="grid gap-4">
-      {repos.map((repo) => (
-        <Link
-          className="flex flex-col gap-3 rounded-md p-4 transition-all hover:bg-muted hover:text-muted-foreground"
-          key={repo.name}
-          href={repo.href as string}
-          target={repo.href.startsWith("http") ? "_blank" : undefined}
-          rel={repo.href.startsWith("http") ? "noreferrer noopener" : undefined}
-        >
-          <h3 className="font-mono text-sm">{repo.name}</h3>
-          <p className="line-clamp-2 text-sm">{repo.data.data.description}</p>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <StarIcon className="size-4" />
-              <span className="text-sm text-muted-foreground">
-                {repo.data.data.stargazers_count}
+    <ul className="mt-4 divide-y divide-border">
+      {projects.map((project) => (
+        <li key={project.name} className="group relative py-4 first:pt-0">
+          <div className="flex items-baseline justify-between gap-4">
+            <h3 className="min-w-0 font-mono text-sm font-medium break-words">
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors group-hover:text-primary after:absolute after:inset-0"
+              >
+                {project.name}
+              </a>
+            </h3>
+            {project.stars > 0 && (
+              <span className="flex shrink-0 items-center gap-1 text-sm text-muted-foreground tabular-nums">
+                <StarIcon aria-hidden strokeWidth={1.5} className="size-3.5" />
+                {project.stars}
+                <span className="sr-only">stars</span>
               </span>
-            </div>
-            <div className="flex items-center gap-1">
-              <GitForkIcon className="size-4" />
-              <span className="text-sm text-muted-foreground">
-                {repo.data.data.forks_count}
-              </span>
-            </div>
+            )}
           </div>
-        </Link>
+          <p className="mt-1 text-sm/6 text-pretty text-muted-foreground">
+            {project.description}
+          </p>
+        </li>
       ))}
-    </div>
+    </ul>
   );
-};
-
-FeaturedProjects.Skeleton = () => {
-  return (
-    <div className="grid gap-4 p-4">
-      <Skeleton className="h-32 w-full" />
-      <Skeleton className="h-32 w-full" />
-      <Skeleton className="h-32 w-full" />
-      <Skeleton className="h-32 w-full" />
-    </div>
-  );
-};
+}

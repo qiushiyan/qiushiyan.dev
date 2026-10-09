@@ -1,156 +1,77 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { SiGithub, SiLinkedin, SiX } from "@icons-pack/react-simple-icons";
 
-import { Container } from "@/components/container";
-import { PostGrid } from "@/components/post/post-grid";
-import { PostTags } from "@/components/post/post-tags";
+import { PageShell } from "@/components/page-shell";
+import { PostList } from "@/components/post/post-list";
 import { FeaturedProjects } from "@/components/projects/featured-projects";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { HOME_SECTIONS, MAIN_CONTENT_ID } from "@/constants";
-import { getAllTags } from "@/lib/content/posts";
-import { SectionIndicator } from "./section-indicator";
+import { getPosts } from "@/lib/content/posts";
+import { routes } from "@/lib/navigation";
+import { siteConfig } from "@/lib/site";
 
-export default async function Home(props: {
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const searchParams = await props.searchParams;
-  const tags = searchParams?.tags
-    ? (() => {
-        try {
-          return JSON.parse(searchParams.tags as string) as string[];
-        } catch (error) {
-          return getAllTags();
-        }
-      })()
-    : getAllTags();
+const social = [
+  { href: siteConfig.links.github, label: "GitHub", Icon: SiGithub },
+  { href: siteConfig.links.x, label: "X", Icon: SiX },
+  { href: siteConfig.links.linkedin, label: "LinkedIn", Icon: SiLinkedin },
+];
+
+export default function Home() {
+  const posts = getPosts().slice(0, 5);
 
   return (
-    <>
-      <Container>
-        <div
-          className={"grid grid-cols-1 items-start gap-8 py-8 lg:grid-cols-3"}
-          id={MAIN_CONTENT_ID}
-        >
-          <aside className="col-span-1 flex flex-col gap-8 lg:sticky lg:top-4">
-            <h1 className="text-3xl font-medium underline underline-offset-8 dark:text-primary">
-              Qiushi Yan
-            </h1>
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <p className="text-foreground/90">Software Engineer</p>
-                <ThemeToggle />
-              </div>
-              <p className="text-balance leading-loose text-muted-foreground">
-                I create full-stack applications that are{" "}
-                <span className="font-medium text-primary/80">intuitive</span>,{" "}
-                <span className="font-medium text-primary/80">accessible</span>{" "}
-                and <span className="font-medium text-primary/80">fast</span>. I
-                am an open source enthusiast and here I share my technical notes
-                on various programming topics.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <SiteLink
-                title="Github"
-                href="https://github.com/qiushiyan"
-                icon={<SiGithub className="size-6" />}
-              />
-              <SiteLink
-                title="Twitter"
-                href="https://x.com/qiushizzzz"
-                icon={<SiX className="size-6" />}
-              />
-              <SiteLink
-                title="LinkedIn"
-                href="https://www.linkedin.com/in/qiushiyan/"
-                icon={<SiLinkedin className="size-6" />}
-              />
-            </div>
-            <SectionIndicator />
-          </aside>
+    <PageShell>
+      <header>
+        <h1 className="text-2xl/8 font-semibold tracking-tight">
+          {siteConfig.name}
+        </h1>
+        <p className="mt-3 text-base/7 text-pretty text-muted-foreground">
+          I&apos;m a full-stack engineer working on LLM-related products. I
+          write about web development, data tooling and programming languages.
+        </p>
+        {/* -ml-3 keeps the first glyph on the column edge despite the 44px hit area. */}
+        <ul aria-label="Elsewhere" className="mt-4 -ml-3 flex">
+          {social.map(({ href, label, Icon }) => (
+            <li key={href}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid size-11 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Icon aria-hidden className="size-5" />
+                <span className="sr-only">{label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </header>
 
-          {/* <Heading className="mb-0" id="projects-heading">
-            Personal Projects
-          </Heading>
-          <section aria-labelledby="projects-heading" className="full-width">
-            <Suspense fallback={<FeaturedProjects.Skeleton />}>
-              <FeaturedProjects />
-            </Suspense>
-          </section> */}
-
-          <main
-            id={MAIN_CONTENT_ID}
-            className="col-span-1 space-y-8 md:col-span-2"
+      <section aria-labelledby="home-posts" className="mt-12">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2
+            id="home-posts"
+            className="text-sm font-medium text-muted-foreground"
           >
-            <section
-              className="flex flex-col gap-2"
-              aria-labelledby={HOME_SECTIONS.blogs.id}
-            >
-              <div className="flex items-center gap-1">
-                <h2 className="text-xl font-medium" id={HOME_SECTIONS.blogs.id}>
-                  {HOME_SECTIONS.blogs.label}
-                </h2>
-                <PostTags selectedTags={tags} />
-              </div>
-
-              <PostGrid selectedTags={tags} />
-            </section>
-            <section
-              className="flex flex-col gap-2"
-              aria-labelledby={HOME_SECTIONS.projects.id}
-            >
-              <h2
-                className="text-xl font-medium"
-                id={HOME_SECTIONS.projects.id}
-              >
-                {HOME_SECTIONS.projects.label}
-              </h2>
-              <Suspense fallback={<FeaturedProjects.Skeleton />}>
-                <FeaturedProjects />
-              </Suspense>
-            </section>
-
-            <section className="flex flex-col gap-2" aria-label="Others">
-              <Link
-                href={"/notes"}
-                className="font-medium underline underline-offset-4"
-              >
-                Notes
-              </Link>
-              <Link
-                href={"/recipes"}
-                className="font-medium underline underline-offset-4"
-              >
-                Snippets
-              </Link>
-            </section>
-          </main>
+            Posts
+          </h2>
+          <Link
+            href={routes.posts}
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            All posts
+          </Link>
         </div>
-      </Container>
-    </>
-  );
-}
+        <PostList posts={posts} headingLevel={3} className="mt-4" />
+      </section>
 
-function SiteLink({
-  title,
-  icon,
-  href,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="transition-all hover:text-primary/80"
-      title={title}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {icon}
-      <span className="sr-only">{title}</span>
-    </Link>
+      <section aria-labelledby="home-projects" className="mt-12">
+        <h2
+          id="home-projects"
+          className="text-sm font-medium text-muted-foreground"
+        >
+          Projects
+        </h2>
+        <FeaturedProjects />
+      </section>
+    </PageShell>
   );
 }

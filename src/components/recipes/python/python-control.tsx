@@ -1,38 +1,36 @@
 "use client";
 
-import { Loader2, TriangleIcon } from "lucide-react";
+import { Loader2Icon, PlayIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usePython } from "./python-provider";
 
 export const PythonControl = () => {
   const { run, isRunning, isLoading } = usePython();
+  const busy = isRunning || isLoading;
 
   return (
-    <div className="flex items-center gap-3">
-      <Button
-        variant={"outline"}
-        className="items-center gap-2"
-        onClick={() => run()}
-        disabled={isRunning || isLoading}
-      >
-        {isRunning || isLoading ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : (
-          <TriangleIcon className="size-4 rotate-90" />
-        )}
-        <span>Run</span>
-      </Button>
-      {/* <Button
-        variant={"outline"}
-        className="items-center gap-2"
-        onClick={() => setInput(initialCode)}
-      >
-        <RotateCcwIcon className="size-4" />
-        <span>Reset</span>
-      </Button> */}
-      <SidebarTrigger />
-    </div>
+    <Button
+      variant="outline"
+      size="sm"
+      className="gap-1.5 pr-3 pl-2.5"
+      onClick={run}
+      disabled={busy}
+      title="Run (⌘/Ctrl + Enter)"
+    >
+      {busy ? (
+        <Loader2Icon
+          aria-hidden
+          className="size-3.5 motion-safe:animate-spin"
+        />
+      ) : (
+        // The triangle's visual centre sits left of its box, so nudge it right.
+        <PlayIcon
+          aria-hidden
+          className="size-3.5 translate-x-px fill-current"
+        />
+      )}
+      Run
+    </Button>
   );
 };

@@ -16,11 +16,11 @@ components:
 
 ## Define Duplication
 
-In the context of relational databases, data duplication usually means the existence of multiple records that have the same values in all columns. It is implied that they are considered an anomaly and we want to special case how we handle the duplicated records, such as adding a flag, giving them less weights, or keeping only one row group.
+In relational databases, data duplication usually means multiple records that have the same values in all columns. They are considered an anomaly, and we want to handle the duplicated records specially, such as adding a flag, giving them less weight, or keeping only one row per group.
 
-However, the definition of duplication can vary depending on the domain. If you are running an online survey, while a participant (identified by IP addresses) can fill out the form multiple times, we might only want to take into account their last submission. Then, all the previous submissions should be considered as duplicates regardless of if the answers are different.
+However, the definition of duplication varies by domain. If you are running an online survey, a participant (identified by IP address) can fill out the form multiple times, but we might only want to count their last submission. Then all previous submissions are duplicates, regardless of whether the answers differ.
 
-In this post, we will consider a table for storing the quiz submissions of students in a university class. Each row represents a submission record for a student in a quiz, alongside with the score and the submission date. A student may submit the same quiz multiple times.
+In this post, we will consider a table for storing the quiz submissions of students in a university class. Each row represents a student's submission for a quiz, along with the score and the submission date. A student may submit the same quiz multiple times.
 
 
 ## Check Duplication
@@ -84,11 +84,11 @@ VALUES
 
 ### The Limitations of `SELECT DISTINCT`
 
-`SELECT DISTINCT` is a query modifier that exists in most relational databases which allows reducing rows if all columns are identical to the columns of another row. Say we are running a university class and have a table for storing the quiz submissions for each student.
+`SELECT DISTINCT` is a query modifier, available in most relational databases, that removes rows whose columns are all identical to those of another row.
 
 
 
-If we want to know the unique student list that has submitted a quiz, we write the following query:
+To get the unique list of students who have submitted a quiz, we write the following query:
 
 ```{sql}
 SELECT DISTINCT student_id
@@ -102,13 +102,13 @@ SELECT DISTINCT student_id, score
 FROM quiz_submissions;
 ```
 
-Things get more complicated when we are de-duplicating rows within a subset, instead of the entire table. For example, we want to get the latest score of each student in each quiz. You will find it impossible to fit this requirement into a single `SELECT DISTINCT` based statement. Once you all 3 columns in `SELECT DISTINCT`, you will get all the rows back.
+Things get more complicated when we deduplicate rows within a subset instead of the entire table. For example, say we want the latest score of each student in each quiz. This is impossible with a single `SELECT DISTINCT` statement: once you put all 3 columns in `SELECT DISTINCT`, you get all the rows back.
 
-This leads to a major downside of `SELECT DISTINCT` is that you must use the same set of columns for both duplication checks and column selection. So you can't Get unique rows based on specific columns while getting the associated data from other columns. For example,
+This leads to a major downside of `SELECT DISTINCT`: you must use the same set of columns for both duplication checks and column selection. So you can't get unique rows based on specific columns while getting the associated data from other columns. For example,
 
 
 Another problem of `SELECT DISTINCT` is that you are limited to using the same column set to do both duplication checks and column selection. For example, if we are asking the question ""
 
-Postgres offers an additional `Distinct ON` clause that gives you more flexibility.
+Postgres offers an additional `DISTINCT ON` clause that gives you more flexibility.
 
 ### `DISTINCT ON` Clause

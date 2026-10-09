@@ -21,12 +21,12 @@ headings:
 ---
 
 A common scenario in my day-to-day data analysis is that I have many
-objects that are typically data frames, and for each of them I want to
-create a new section in my Quarto/R Markdown document with their
-respective summary statistics. The set of operations to apply are
-usually the same, just the data is different. A manual way of doing this
-would be copy-pasting the same chunk of code for generating the
-summaries, and only change the variable name. For instance:
+objects, typically data frames, and for each of them I want to create a
+new section in my Quarto/R Markdown document with its summary
+statistics. The operations are usually the same; only the data is
+different. The manual way is to copy and paste the same chunk of code
+for generating the summaries and change only the variable name. For
+instance:
 
 ```` default
 
@@ -51,30 +51,29 @@ summary_fn(data_b)
 ...
 ````
 
-This becomes a pain when they are just so many objects and I have to
-change the name one by one. This post introduces a programmatic way of
-automating this task using `knit_child` from the `knitr` rendering
-engine.
+This becomes a pain when there are many objects and I have to change the
+names one by one. This post shows how to automate this task with
+`knit_child` from the `knitr` rendering engine.
 
 ## Using the `knitr` Engine {#using-the-knitr-engine}
 
-The `knitr` engine has built-in supports for dynamic, parameterized
+The `knitr` engine has built-in support for dynamic, parameterized
 documents. For R Markdown, you can pass data to the document using the
-`params` argument in `rmarkdown::render()`, learn more at
-<https://bookdown.org/yihui/rmarkdown/parameterized-reports.html>. This
+`params` argument in `rmarkdown::render()` (learn more at
+<https://bookdown.org/yihui/rmarkdown/parameterized-reports.html>). This
 is intended for rendering one big parameterized `.Rmd` document.
 
-When it comes to inserting sub-contents into either `.qmd` or `.Rmd`
-files, `knitr:::knit_child` is the function you need. Similar to
-`params` in `rmarkdown::render`, you can pass a environment object to
-`knitr:::knit_child` using the `envir` argument. The returned value of
-`knit_child` is simply the character string that can be directly
-embedded into a document, it’s also used in conjunction with the chunk
-option `output = 'asis'` (Quarto) or `results = 'asis'` (R Markdown),
+To insert sub-contents into either `.qmd` or `.Rmd` files,
+`knitr::knit_child` is the function you need. Similar to `params` in
+`rmarkdown::render`, you can pass an environment object to
+`knitr::knit_child` using the `envir` argument. `knit_child` returns a
+character string that can be embedded directly into a document, so it’s
+used together with the chunk option `output = 'asis'` (Quarto) or
+`results = 'asis'` (R Markdown).
 
-`knit_child` accepts both an inline string `text` or a file path `file`.
-Below we use the inline string to generate a summary of the `iris` data
-frame.
+`knit_child` accepts either an inline string `text` or a file path
+`file`. Below we use the inline string to generate a summary of the
+`iris` data frame.
 
 ```` markdown
 ```{r}
@@ -100,11 +99,11 @@ summary(data)
 #>  Max.   :7.90   Max.   :4.40   Max.   :6.90   Max.   :2.5
 ```
 
-All these combined, we could divide the job into a main document
+Putting it all together, we can divide the job into a main document
 `main.Rmd` and a template document `_template.Rmd`. In the main
 document, we collect all the data, loop through them and insert them
-into the template document using `knitr:::knit_child`. Then we can use
-the `asis` output option to include the template document into the main
+into the template document using `knitr::knit_child`. Then we can use
+the `asis` output option to include the template document in the main
 document.
 
 <div class="column-margin">
@@ -197,14 +196,14 @@ plot(data)
 </div>
 
 I’ve defined a wrapper function `render_child()` that uses
-`knit_child()` under the hood. The key is you can pass arbitrary values
-using the `envir` argument. Whatever you need in the template document,
-you can pass them in as a named list and convert them into an
-environment object using `rlang::env()`.
+`knit_child()` under the hood. The key is that you can pass arbitrary
+values using the `envir` argument: pass whatever the template document
+needs as a named list and convert it into an environment object with
+`rlang::env()`.
 
-When you run the main document, it will generate a list of random data
-frames, generate a child document for each using the template document,
-and inserts the result back to the main document. The result is shown
+When you run the main document, it generates a list of random data
+frames, generates a child document for each using the template document,
+and inserts the results back into the main document. The result is shown
 below:
 
 <div class="column-body-outset">
@@ -218,9 +217,8 @@ below:
 
 [R Markdown
 Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/knit-expand.html)
-also introduces a function called `knitr::knit_expand()` that can be
-used to insert contents into a template content. An example is shown
-below:
+also introduces `knitr::knit_expand()`, which inserts contents into a
+template. For example:
 
 ``` r
 knitr::knit_expand(
@@ -231,8 +229,8 @@ knitr::knit_expand(
 ```
 
 Since you can also pass a `file` argument to `knit_expand`, I was
-tempted to use this function with `knit_child` when I started to write
-this post. For example
+tempted to use this function with `knit_child` when I started writing
+this post. For example:
 
 ``` r
 res <- knitr::knit_expand(
@@ -241,7 +239,7 @@ res <- knitr::knit_expand(
 )
 ```
 
-Then you can access `iris` in the template document like so
+Then you can access `iris` in the template document like so:
 
 ```` default
 ---
@@ -254,11 +252,11 @@ title: template document
 ````
 
 But this will not work. `knitr::knit_expand` simply finds all the
-placeholders marked by `{ }`, interpolates them and then pass the text
-to the knitting functions. This mechanism works fine you only need to
-insert simple primitives, such as strings and numbers, but not if you
-want to pass data.frames or other complex objects in general. Then the
-knitting functions will see a code chunk like this
+placeholders marked by `{ }`, interpolates them and then passes the text
+to the knitting functions. This works fine if you only need to insert
+simple primitives, such as strings and numbers, but not if you want to
+pass data.frames or other complex objects. The knitting functions will
+then see a code chunk like this:
 
 ```` default
 ```{r}
@@ -274,10 +272,10 @@ which is not valid R syntax.
 
 ## Without `knitr` {#without-knitr}
 
-It you are using Quarto with a different engine than `knitr`, I found no
-similar construct as `knitr::knit_child`. Although Quarto offers a
+If you are using Quarto with an engine other than `knitr`, I found no
+construct similar to `knitr::knit_child`. Although Quarto offers a
 native [variables](https://quarto.org/docs/authoring/variables.html)
 mechanism for reading values from configuration files, it’s intended for
-static data that should be shared across multiple documents. It also
-suffers the same problem as `knitr::knit_expand` that you are limited to
-whatever data structure that is supported by YAML.
+static data that should be shared across multiple documents. It also has
+the same problem as `knitr::knit_expand`: you are limited to the data
+structures YAML supports.

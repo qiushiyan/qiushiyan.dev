@@ -1,289 +1,106 @@
-// @ts-nocheck
-import { Element, Root } from "hast";
+import { readFile } from "node:fs/promises";
 import { h } from "hastscript";
-import { Root as MdastRoot } from "mdast";
 import { SKIP, visit } from "unist-util-visit";
+import { assets, getImageMetadata } from "velite";
 
-import { htmlProcessor } from "./processor";
-import { tailwindCodeTheme } from "./tailwind-code-theme";
+import type { Root } from "hast";
+import type { Root as MdastRoot } from "mdast";
 
-// Lazy-loaded highlight function (only used at Velite build time in Node.js)
-let _highlight: any = null;
-async function getHighlight() {
-  if (!_highlight) {
-    const mod = await import("codehike/code");
-    _highlight = mod.highlight;
-  }
-  return _highlight;
-}
+/*
+  Structural Markdown plugins. Code highlighting lives in ./rehype-code.ts.
+*/
 
-export const rehypeCode = () => {
-  return async (tree: Root) => {
-    // Phase 1: Transform tree structure (synchronous, same as before)
-    visit(tree, "element", (node, index, parent) => {
-      if (node.tagName === "code-switcher") {
-        const pres = node.children
-          .filter(
-            (child) => child.type === "element" && child.tagName === "pre"
-          )
-          .map((child) => child.type === "element" && child.children[0]);
-
-        const nodes = pres.map((pre) =>
-          transformCode(
-            pre.children[0] as Text,
-            getLangFromClass(pre.properties.className)
-          )
-        );
-        node.properties.data = JSON.stringify(
-          nodes.map((node) => ({
-            lang: node.properties.lang,
-            code: node.properties.value,
-            filename: node.properties.filename,
-          }))
-        );
-        return;
-      }
-
-      if (
-        node.tagName === "pre" &&
-        node.children.length === 1 &&
-        (node.children[0] as Element).tagName === "code"
-      ) {
-        const codeElement = node.children[0] as Element;
-
-        const codeChildren = codeElement.children[0];
-        if (!(codeChildren.type === "text")) {
-          return;
-        }
-
-        const codeNode = transformCode(
-          codeChildren,
-          getLangFromClass(codeElement.properties.className)
-        );
-        if (parent && typeof index === "number") {
-          parent.children.splice(index, 1, codeNode);
-        }
-      }
-
-      // Handle inline code
-      if (node.tagName === "em") {
-        const lang = node.children[0].value;
-        const code = node.children[1]?.children[0].value;
-        if (lang && code) {
-          const inlineCodeNode = {
-            type: "element",
-            tagName: "code-inline",
-            properties: {
-              value: code,
-              lang,
-            },
-          };
-          parent.children.splice(index, 1, inlineCodeNode);
-        }
-      }
-    });
-
-    // Phase 2: Pre-highlight all code elements at build time
-    // This runs in Node.js (Velite build) where WASM is supported,
-    // so components don't need to call highlight() at runtime on Cloudflare Workers
-    const highlight = await getHighlight();
-    const tasks: Promise<void>[] = [];
-
-    visit(tree, "element", (node) => {
-      if (node.tagName === "code-block" || node.tagName === "code-inline") {
-        tasks.push(
-          highlight(
-            {
-              value: String(node.properties.value || ""),
-              lang: String(node.properties.lang || ""),
-              meta: "",
-            },
-            tailwindCodeTheme
-          )
-            .then((result) => {
-              node.properties.highlighted = JSON.stringify(result);
-            })
-            .catch((e) => {
-              console.warn(
-                `Pre-highlight failed for ${node.tagName}:`,
-                e.message
-              );
-            })
-        );
-      }
-
-      if (node.tagName === "code-switcher" && node.properties.data) {
-        tasks.push(
-          (async () => {
-            const entries = JSON.parse(String(node.properties.data));
-            const highlightedEntries = await Promise.all(
-              entries.map(async (entry) => {
-                try {
-                  const result = await highlight(
-                    {
-                      value: entry.code,
-                      lang: entry.lang || "",
-                      meta: "",
-                    },
-                    tailwindCodeTheme
-                  );
-                  return { ...entry, highlighted: result };
-                } catch (e) {
-                  console.warn(
-                    "Pre-highlight switcher entry failed:",
-                    e.message
-                  );
-                  return entry;
-                }
-              })
-            );
-            node.properties.data = JSON.stringify(highlightedEntries);
-          })()
-        );
-      }
-    });
-
-    await Promise.all(tasks);
-  };
-};
-
-export const rehypeCodeInline = () => {
-  return async (tree: Root) => {
-    // Phase 1: Transform em to code-inline (synchronous)
-    visit(tree, "element", (node, index, parent) => {
-      if (node.tagName === "em") {
-        const lang = node.children[0].value;
-        const code = node.children[1]?.children[0].value;
-        if (lang && code) {
-          const inlineCodeNode = {
-            type: "element",
-            tagName: "code-inline",
-            properties: {
-              value: code,
-              lang,
-            },
-          };
-          parent.children.splice(index, 1, inlineCodeNode);
-        }
-      }
-    });
-
-    // Phase 2: Pre-highlight inline code at build time
-    const highlight = await getHighlight();
-    const tasks: Promise<void>[] = [];
-
-    visit(tree, "element", (node) => {
-      if (node.tagName === "code-inline") {
-        tasks.push(
-          highlight(
-            {
-              value: String(node.properties.value || ""),
-              lang: String(node.properties.lang || ""),
-              meta: "",
-            },
-            tailwindCodeTheme
-          )
-            .then((result) => {
-              node.properties.highlighted = JSON.stringify(result);
-            })
-            .catch((e) => {
-              console.warn("Pre-highlight inline code failed:", e.message);
-            })
-        );
-      }
-    });
-
-    await Promise.all(tasks);
-  };
-};
-
-const langMap: Record<string, string> = {
-  default: "markdown",
-};
-
-const getLangFromClass = (className: string[] | string | undefined | null) => {
-  if (!className) {
-    return undefined;
-  }
-  if (typeof className === "string") {
-    const lang = className?.split("-")[1];
-    return langMap[lang] || lang;
-  }
-  const lang = className?.[0].split("-")[1];
-  return lang ? langMap[lang] || lang : undefined;
-};
-
-const transformCode = (node: Text, lang: string) => {
-  const value = node.value;
-  const lines = value.split("\n");
-
-  let meta: Record<string, string> | undefined = undefined;
-
-  const codeLines: string[] = [];
-  const metaLines: string[] = [];
-  for (const line of lines) {
-    if (line.startsWith("#|")) {
-      metaLines.push(line);
-    } else {
-      codeLines.push(line);
+/** Renders `:::name{attrs}` directives as `<name attrs>` elements for the component registry. */
+export const remarkUseDirective = () => (tree: MdastRoot) => {
+  visit(tree, (node) => {
+    if (
+      node.type === "containerDirective" ||
+      node.type === "leafDirective" ||
+      node.type === "textDirective"
+    ) {
+      const data = (node.data ??= {});
+      const hast = h(node.name, node.attributes ?? {});
+      data.hName = hast.tagName;
+      data.hProperties = hast.properties;
     }
-  }
+  });
+};
 
-  if (metaLines.length > 0) {
-    meta = metaLines.reduce(
-      (acc, line) => {
-        const [key, value] = line.replace("#|", "").trim().split(":");
-        acc[key] = value;
-        return acc;
-      },
-      {} as Record<string, string>
+/*
+  HTML has no self-closing custom elements: the parser reads
+  `<do-counter-example />` as an open tag, and everything after it becomes
+  its children, which the component then drops. Rewrite them as explicit
+  open and close tags before rehype-raw parses the HTML.
+*/
+const SELF_CLOSING_CUSTOM_ELEMENT = /<([a-z][\w]*-[\w-]*)(\s[^<>]*?)?\s*\/>/g;
+
+export const remarkCloseCustomElements = () => (tree: MdastRoot) => {
+  visit(tree, "html", (node) => {
+    node.value = node.value.replace(
+      SELF_CLOSING_CUSTOM_ELEMENT,
+      (_, name: string, attributes = "") => `<${name}${attributes}></${name}>`
     );
-  }
-  const code = codeLines.join("\n");
-  const codeNode = {
-    type: "element",
-    tagName: "code-block",
-    properties: {
-      id: meta?.ref,
-      value: code,
-      lang,
-      filename: meta?.filename,
-      caption: meta?.caption
-        ? htmlProcessor.processSync(meta.caption).value
-        : undefined,
-    },
-  };
-
-  return codeNode;
+  });
 };
 
-export const rehypeUnwrapImages = () => {
-  return (tree: Root) => {
-    visit(tree, "element", (node, index, parent) => {
-      if (node.tagName === "p" && typeof index === "number" && parent) {
-        const child = node.children[0];
-        if (child.type === "element" && child.tagName === "img") {
-          parent.children.splice(index, 1, child);
-          return [SKIP, index];
-        }
-      }
-    });
-  };
+/*
+  Elements the registry renders as blocks (<figure>, <div>, <table>). Markdown
+  wraps an element written on its own line, or inline with text, in <p>,
+  and a block inside <p> is invalid HTML that React fails to hydrate.
+*/
+const BLOCK_TAGS = new Set([
+  "img",
+  "iframe",
+  "my-callout",
+  "my-steps",
+  "code-switcher",
+  "do-counter-example",
+  "quiz-table-example",
+]);
+
+/** Replaces a `<p>` whose only content is a block element with that element. */
+export const rehypeUnwrapBlocks = () => (tree: Root) => {
+  visit(tree, "element", (node, index, parent) => {
+    if (node.tagName !== "p" || !parent || index === undefined) return;
+    const content = node.children.filter(
+      (child) => !(child.type === "text" && child.value.trim() === "")
+    );
+    const [only] = content;
+    if (
+      content.length === 1 &&
+      only.type === "element" &&
+      BLOCK_TAGS.has(only.tagName)
+    ) {
+      parent.children.splice(index, 1, only);
+      return [SKIP, index];
+    }
+  });
 };
 
-export const remarkUseDirective = () => {
-  return (tree: MdastRoot) => {
-    visit(tree, (node) => {
-      if (
-        node.type === "containerDirective" ||
-        node.type === "leafDirective" ||
-        node.type === "textDirective"
-      ) {
-        const data = node.data || (node.data = {});
-        const hast = h(node.name, node.attributes || {});
-        data.hName = hast.tagName;
-        data.hProperties = hast.properties;
-      }
-    });
-  };
+/*
+  Intrinsic size for local images, so the page reserves the right space
+  before they load. Velite's copy step runs first and rewrites `src` to
+  `/static/<name>`; its `assets` map points each name back to the source file.
+  An image that already has both dimensions (Quarto's `{width= height=}`)
+  keeps them: they are the display size the author chose.
+*/
+export const rehypeImageSize = () => async (tree: Root) => {
+  const tasks: Promise<void>[] = [];
+  visit(tree, "element", (node) => {
+    const { src, width, height } = node.properties;
+    if (node.tagName !== "img" || typeof src !== "string") return;
+    if (width !== undefined && height !== undefined) return;
+    const file = assets.get(src.replace(/^\/static\//, ""));
+    if (!src.startsWith("/static/") || !file) return;
+    tasks.push(
+      readFile(file)
+        .then((buffer) => getImageMetadata(buffer))
+        .then((metadata) => {
+          if (!metadata) return;
+          node.properties.width = metadata.width;
+          node.properties.height = metadata.height;
+        })
+    );
+  });
+  await Promise.all(tasks);
 };

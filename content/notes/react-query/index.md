@@ -114,7 +114,7 @@ Suppose we have the following keys
     ["todos", "detail2", 2] // match
     ["todos", "list"] // not affected
 
-- For a specific query set the options directly in `useQuery`
+- For a specific query, set the options directly in `useQuery`
 
 Additionally, all options in `useQuery` (except for `queryKey`) can have
 a default value, even the query function.
@@ -154,15 +154,15 @@ useQuery({
 })
 ```
 
-The benefit of using `zod`
+The benefits of using `zod`:
 
-- Saves memory in the cache by stripping un-specified fields
+- Saves memory in the cache by stripping unspecified fields
 
 - Throws errors when data doesn’t match
 
 ## Pre-filling with `initialData` {#pre-filling-with-initialdata}
 
-We can use `initialData` to pre-fill the query cache in two ways
+We can use `initialData` to pre-fill the query cache in two ways:
 
 - pass results from server components to client components to save the
   first fetch
@@ -218,26 +218,25 @@ const result = useQuery({
 
 [source](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query#differences)
 
-`initialData` works on cache level, while `placeholderData` works on
-observer level.
+`initialData` works on the cache level, while `placeholderData` works on
+the observer level.
 
 - caches are identified by query keys, while observers are subscriptions
   created by `useQuery` calls. Example settings that affect the cache
   entry are `queryFn` and `gcTime`, while settings that affect the
-  observer are `select` and `refetchInternal`.
+  observer are `select` and `refetchInterval`.
 
-- `initialData` is persisted to the cache. `placeholderData` on the
-  other hand is never persisted to the cache. I like to see it as
-  “fake-it-till-you-make-it” data. It’s “not real”.
+- `initialData` is persisted to the cache, while `placeholderData` never
+  is. I like to see it as “fake-it-till-you-make-it” data. It’s “not
+  real”.
 
-- refetch is triggered immediately regardless of presence of
-  placeholderData, because it’s not “real”. But, if you provide
-  `initialData`, react query will wait after `staleTime` before
-  refetching.
+- refetch is triggered immediately regardless of `placeholderData`,
+  because it’s not “real”. But if you provide `initialData`, React Query
+  waits for `staleTime` before refetching.
 
 ### Conditional `initialData` {#conditional-initialdata}
 
-Only set initial data if the data available is updated recently.
+Only set initial data if the available data was updated recently.
 
 ``` tsx
 const result = useQuery({
@@ -273,12 +272,12 @@ const { data } = useQuery({
 
 ## Seeding with Pushing or Pulling {#seeding-with-pushing-or-pulling}
 
-Setting `initialData` is a form of seeding, this is often used when we
-need a query to fetch a list of items as well as queries to fetch
-individual items. Here are two common patterns
+Setting `initialData` is a form of seeding, often used when we have a
+query that fetches a list of items as well as queries that fetch
+individual items. There are two common patterns:
 
-- **Pulling**: when `initialData` is needed for the single item, search
-  the item in the list, if not found, fetch it from the server
+- **Pulling**: when `initialData` is needed for a single item, search
+  for it in the list; if it’s not found, fetch it from the server
 
 ``` tsx
 useQuery({
@@ -297,12 +296,12 @@ useQuery({
 });
 ```
 
-Pulling is the **recommended** approach because it seeds “just in time”,
-the only downside is that you need an extra `initialDataUpdatedAt` to
-make sure react query respects the stale time.
+Pulling is the **recommended** approach because it seeds “just in time”.
+The only downside is that you need an extra `initialDataUpdatedAt` to
+make sure React Query respects the stale time.
 
-- **Pushing**: when the list query is resolved, seed each entry to their
-  individual queries with `queryClient.setQueryData()`
+- **Pushing**: when the list query resolves, seed each entry into its
+  individual query with `queryClient.setQueryData()`
 
 ``` tsx
 const useTodos = () => {
@@ -321,7 +320,7 @@ const useTodos = () => {
 };
 ```
 
-With pushing `staleTime` is automatically respected, because the seed
+With pushing, `staleTime` is automatically respected because the seed
 happens at the same time as the list fetch. But this might create
 unnecessary cache entries and the pushed data might be garbage collected
 too early.
@@ -330,10 +329,10 @@ too early.
 
 [source](https://tanstack.com/query/latest/docs/framework/react/guides/prefetching)
 
-Seeding is useful when you have the exact data that is needed for future
-queries. When working with relational data, e.g. a feed and its
-comments, we don’t get the comments when you fetch the feed, but we can
-prefetch the comments when we fetch the feed in parallel.
+Seeding is useful when you already have the exact data future queries
+need. With relational data, e.g. a feed and its comments, fetching the
+feed doesn’t return the comments, but we can prefetch the comments in
+parallel with the feed.
 
 ``` tsx
 #| caption: Prefetching comments for an article
@@ -377,10 +376,9 @@ function Comments({ id }) {
 }
 ```
 
-Another way is to prefetch inside of the query function. This makes
-sense if you know that every time an article is fetched it’s very likely
-comments will also be needed. For this, we’ll use
-`queryClient.prefetchQuery`:
+Another way is to prefetch inside the query function. This makes sense
+if comments are very likely to be needed every time an article is
+fetched. For this, we’ll use `queryClient.prefetchQuery`:
 
 ``` tsx
 const queryClient = useQueryClient();
@@ -398,11 +396,11 @@ const { data: articleData, isPending } = useQuery({
 });
 ```
 
-If the primary query is a suspense query, you should not put the
-prefetch query inside the same component, because that component is
-unmounted before the suspense query resolves, and the prefetch query
-will only kick off until the suspsense query resolves. You can prefetch
-“one level up” in the parent component.
+If the primary query is a suspense query, don’t put the prefetch query
+inside the same component: that component is unmounted before the
+suspense query resolves, so the prefetch query only kicks off after the
+suspense query resolves. Instead, prefetch “one level up” in the parent
+component.
 
 ``` tsx
 #| caption: Prefetch outside the suspense query
@@ -442,13 +440,12 @@ function Articles() {
 
 [source](https://tkdodo.eu/blog/practical-react-query#keep-server-and-client-state-separate)
 
-Use a query to pre-fill some user inputs, if the input is not touched,
-keep the query running, if the input is touched, stop the query and use
-the user input.
+Use a query to pre-fill some user inputs. If the input is not touched,
+keep the query running; if it is, stop the query and use the user input.
 
-In the following example, input is bind to `value` , which can be either
-the `draft` state or the query data, as long as the user starts typing
-the draft state takes precedence and enabled is will be `false`.
+In the following example, the input is bound to `value`, which is either
+the `draft` state or the query data. As soon as the user starts typing,
+the draft state takes precedence and `enabled` becomes `false`.
 
 ``` tsx
 const useRandomValue = () => {
@@ -520,7 +517,7 @@ A component using the `useTodoCount` custom hook will only re-render if
 the length of the `todos` changes. It will not re-render if e.g. the
 name of a todo has changed.
 
-In contrast to transforming the data directory after `useTodo`, which
+In contrast to transforming the data directly after `useTodo`, which
 runs during every re-render or when the query data changes, the `select`
 option is a more efficient way to transform data.
 
@@ -587,9 +584,9 @@ const todos = useQuery({
 throwOnError: (error) => error.response?.status >= 500,
 ```
 
-It’s possible to have more granular control over error handling by
-passing a function to `throwOnError` such that only when the function
-return `true`, the error will be thrown
+For more granular control over error handling, pass a function to
+`throwOnError`. The error is only thrown when the function returns
+`true`:
 
 ``` tsx
 useQuery({
@@ -647,8 +644,7 @@ const queryClient = new QueryClient({
 Query errors can be reset with the `QueryErrorResetBoundary` component
 or with the `useQueryErrorResetBoundary` hook.
 
-When using the component it will reset any query errors within the
-boundaries of the component:
+The component resets any query errors within its boundaries:
 
 ``` tsx
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
@@ -735,10 +731,10 @@ function Todos() {
   mutation.
 
 - `mutationKey` is not required for `useMutation` and has nothing to do
-  with query keys. Set it to the same as a query key does not revalidate
-  that query, use `queryClient.invalidateQueries` instead.
+  with query keys. Setting it to the same value as a query key does not
+  revalidate that query; use `queryClient.invalidateQueries` instead.
 
-- When you need to share states of a mutation across components, set
+- When you need to share the state of a mutation across components, set
   `mutationKey` and use `useMutationState` to access the state.
 
 ``` tsx
@@ -790,18 +786,18 @@ const latest = data[data.length - 1]
 [source](https://tkdodo.eu/blog/mastering-mutations-in-react-query#some-callbacks-might-not-fire)
 
 Callbacks such as `onSuccess`, `onError` and `onSettled` can be set on
-`useMutation` as well as on `mutate` itself. One difference is that the
-callbacks on `useMutation` fire before the callbacks on `mutate`.
-Further, the callbacks on `mutate` might not fire at all if the
-component un-mounts before the mutation has finished.
+`useMutation` as well as on `mutate` itself. The callbacks on
+`useMutation` fire before those on `mutate`, and the callbacks on
+`mutate` might not fire at all if the component unmounts before the
+mutation finishes.
 
-Rule of thumbs to separate concerns between callbacks in `useMutation`
-and `mutate`:
+Rules of thumb for separating concerns between callbacks in
+`useMutation` and `mutate`:
 
-- do absolutely necessary logic (such as query invalidation) in
+- Do absolutely necessary logic (such as query invalidation) in
   `useMutation` callbacks
 
-- Do UI related things like redirects or showing toast notifications in
+- Do UI-related things like redirects or showing toast notifications in
   mutate callbacks. If the user navigated away from the current screen
   before the mutation finished, those will purposefully not fire.
 
@@ -847,7 +843,7 @@ useMutation({
 
 To make things more declarative, we can set a global `onSuccess`
 callback on `MutationCache` to search for a `meta` property in the
-finished mutation, if a query matches the meta property, invalidate it.
+finished mutation and invalidate any query that matches it.
 
 ``` tsx
 import { matchQuery } from "@tanstack/react-query";
@@ -891,11 +887,11 @@ declare module "@tanstack/react-query" {
 
 [source](https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates)
 
-Optimistic updates can be implemented in 2 ways
+Optimistic updates can be implemented in two ways:
 
 - after `mutationFn` is called, display `variables` (the input supplied
-  to `mutationFn`) from `useMutation` or `useMutationState`, this is
-  directly manipulating the UI
+  to `mutationFn`) from `useMutation` or `useMutationState`. This
+  manipulates the UI directly
 
 ``` tsx
 const addTodoMutation = useMutation({
@@ -922,23 +918,22 @@ Because we are awaiting `invalidateQueries`, `isPending` will only be
 `false` when the invalidation is finished. So when the opacity item is
 removed, we will see the most up-to-date data.
 
-This approach can be problematic we if you click on multiple checkboxes
-in a row, there is a going to be a gap between the several
-`invalidateQueries`. For example, if the second todo we clicked on is
-originally checked, it is now unchecked, if the first invalidation
-finishes now, it will try to update the second todo to be checked again,
-because that’s what the server state is now. It will fix itself after
-the last mutation has succeeded and the queries have been invalidated,
-but it’s not a great experience for the user.
+This approach can be problematic if you click on multiple checkboxes in
+a row, because there is going to be a gap between the
+`invalidateQueries` calls. For example, if the second todo we clicked
+was originally checked, it is now unchecked. If the first invalidation
+finishes now, it will set the second todo back to checked, because
+that’s the server state at that point. It fixes itself after the last
+mutation succeeds and the queries are invalidated, but it’s not a great
+experience for the user.
 
-The root of this problem is that we are only not changing the cache
-until the mutation is finished. We can fix this by updating the cache
-immediately after the mutation is called, and then revert the cache if
-the mutation fails.
+The root of this problem is that we don’t change the cache until the
+mutation finishes. We can fix this by updating the cache as soon as the
+mutation is called and reverting it if the mutation fails.
 
-- Second method: use the `onMutate` callback to manipulate the cache,
-  the gist is that we `setQueryData` with the new data, and if the
-  mutation fails, we revert the cache to the previous state. The value
+- Second method: use the `onMutate` callback to manipulate the cache.
+  The gist is that we call `setQueryData` with the new data and, if the
+  mutation fails, revert the cache to its previous state. The value
   returned by `onMutate` can be accessed via the `context` argument in
   `onError` and `onSettled`.
 
@@ -977,7 +972,7 @@ useMutation({
 });
 ```
 
-You can also return a function from `onMutate` to serve as a rollback
+You can also return a function from `onMutate` to serve as a rollback:
 
 ``` tsx
 useMutation({
@@ -1001,11 +996,11 @@ useMutation({
 Queries can be canceled manually with
 `queryClient.cancelQueries({queryKey})`.
 
-As an alternative, if your `queryFn` understands the signal from
-`AbortController`, `queryFn` are given a `signal` parameter, which comes
-from an `AbortController` object react query creates under the hood.
-Imagine you are making queries based on a search input, it is helpful to
-cancel previous queries except for the latest one.
+Alternatively, each `queryFn` is given a `signal` parameter, which comes
+from an `AbortController` that React Query creates under the hood, so
+queries can be cancelled if your `queryFn` understands that signal. For
+example, when making queries based on a search input, it helps to cancel
+all previous queries except the latest one.
 
 ``` ts
 useQuery({
@@ -1024,7 +1019,7 @@ Cancellation **does not** work when working with Suspense hooks:
 ## Typed Query Options {#typed-query-options}
 
 While the `useQuery` generic is automatically typed by `queryFn`,
-methods such as `queryClient.getQueryData({ queryKey })` does not have
+methods such as `queryClient.getQueryData({ queryKey })` do not have
 access to the query function type. To solve this, we can co-locate the
 `queryKey` and `queryFn` using the `queryOptions` helper and use it in
 both `useQuery` and `getQueryData`.
@@ -1067,7 +1062,7 @@ useQuery({
 
 But there are cases where the queries are dynamic and can’t be laid out
 statically. In such cases, we can use `useQueries` to dynamically
-generate multiple query options object:
+generate multiple query options objects:
 
 ``` tsx
 function App({ users }) {
@@ -1150,10 +1145,9 @@ function App() {
 ```
 
 An alternative to dynamic `useQueries` is creating a separate component
-for each item and use `useQuery` inside it. A downside of this approach
-is that it’s hard to derive values based on all the queries, e.g. to get
-the total number of issues. If we are using `useQueries`, we can just
-loop through the queries array.
+for each item and using `useQuery` inside it. The downside is that it’s
+hard to derive values from all the queries, e.g. the total number of
+issues. With `useQueries`, we can just loop through the queries array.
 
 ``` ts
 const repos = useRepos();
@@ -1164,8 +1158,8 @@ const totalIssues = issues
   .reduce((a, b) => a + b, 0);
 ```
 
-`useQueries` provides a `combine` argument for this use case, what is
-returned from `combine` will be the result of the `useQueries` hook.
+`useQueries` provides a `combine` argument for this use case: whatever
+`combine` returns becomes the result of the `useQueries` hook.
 
 ``` tsx
 function useIssues(repos) {
@@ -1235,8 +1229,8 @@ const { repo, issues, isPending, isError } = useRepoAndIssues({ name });
 - use `isPlaceholderData` to provide loading feedback and disable
   pagination buttons
 
-- set up an `useEffect` to prefetch the data for the next page whenever
-  page changes
+- set up a `useEffect` to prefetch the data for the next page whenever
+  the page changes
 
 ``` tsx
 function useRepos(sort, page) {
@@ -1297,7 +1291,7 @@ function RepoList({ sort, page, setPage }) {
 
 ## Infinite Queries {#infinite-queries}
 
-`getProjects` is a mock api that returns an object
+`getProjects` is a mock API that returns an object
 
 ``` ts
 // nextId and previousId are cursors to fetch the next and previous page
@@ -1373,9 +1367,9 @@ export default function Infinite() {
 }
 ```
 
-- Infinite queries are about changing a cursor and provide it to the
-  fetch function. `useInfiniteQuery` returns `data` as an 2D array of
-  all pages
+- Infinite queries are about changing a cursor and passing it to the
+  fetch function. `useInfiniteQuery` returns `data` as a 2D array of all
+  pages
 
 ``` ts
 [
@@ -1387,19 +1381,20 @@ export default function Infinite() {
 
 - set `initialPageParam` to give the fetcher a starting point, and use
   `getNextPageParam` to provide the next cursor. How you get the next
-  cursor depends, but you get access to the all the current data in the
-  `getNextPageParam` function.
+  cursor varies, but `getNextPageParam` has access to all the current
+  data.
 
-- `fetchNextPage` triggers the fetcher with the next cursor, when you
-  call `fetchNextPage` is up to you, e.g., using a interaction observer
+- `fetchNextPage` triggers the fetcher with the next cursor. When to
+  call `fetchNextPage` is up to you, e.g., using an intersection
+  observer
 
-- if `getNextPageParam` returns undefined or null. `hasNextPage` will be
-  set to false and you can conditionally hide the trigger
+- if `getNextPageParam` returns undefined or null, `hasNextPage` is set
+  to false and you can conditionally hide the trigger
 
-- infinite queries can be bidrectional (e.g. chat messages),
+- infinite queries can be bidirectional (e.g. chat messages);
   `getPreviousPageParam` can be used to fetch the previous page. If the
-  API does return a cursor, e.g., it’s built for pagination, we can
-  create cursor ourselves
+  API doesn’t return a cursor, e.g., it’s built for pagination, we can
+  create the cursor ourselves
 
 ``` tsx
 return useInfiniteQuery({
@@ -1423,9 +1418,9 @@ return useInfiniteQuery({
 })
 ```
 
-- we use a single query key for all pages, this means that all pages are
-  treated as a single cache entry and will be revalidated altogether.
-  This can become a problem
+- we use a single query key for all pages, so all pages are treated as a
+  single cache entry and revalidated together. This can become a
+  problem:
 
   - the cache entry can become very large
 
@@ -1434,7 +1429,7 @@ return useInfiniteQuery({
     the only way to ensure we have the most up-to-date data for all
     pages.
 
-Set `maxPages` to limit the amount of pages that are kept in the cache.
+Set `maxPages` to limit the number of pages that are kept in the cache.
 
 ``` ts
 useInfiniteQuery({
@@ -1451,15 +1446,14 @@ useInfiniteQuery({
 
 ## Offline Support with `networkMode` {#offline-support-with-networkmode}
 
-Both `useQuery` and `useMutation` have a `networkMode` option that has 3
-values
+Both `useQuery` and `useMutation` have a `networkMode` option with three
+values:
 
-- `networkMode = 'online'`: the **default** mode. This means that the
-  query and mutation rely on the network to do stuff. If we go offline,
-  the query and mutation goes into paused state automatically. A related
-  note of this is that you should not use the `isLoading` (and should
-  use `isPending`) to show a loading spinner, because `isLoading=false`
-  when the query is paused.
+- `networkMode = 'online'`: the **default** mode. Queries and mutations
+  rely on the network. If we go offline, they go into the paused state
+  automatically. A related note: use `isPending` rather than `isLoading`
+  to show a loading spinner, because `isLoading=false` when the query is
+  paused.
 
 ``` tsx
 const { status, fetchStatus } = useProjects()
@@ -1473,7 +1467,7 @@ if (isLoading) {
 ```
 
 - `networkMode = 'always'`: this mode means that your queries and
-  mutations does not need network and access.
+  mutations don’t need network access.
 
   ``` ts
   useQuery({
@@ -1497,7 +1491,7 @@ if (isLoading) {
   (possibly without network connection), and if that fails, retries will
   be paused. This mode is useful if you’re using an additional caching
   layer like the browser cache on top of React Query. For example, the
-  Github API sets the browser cache as
+  GitHub API sets the browser cache as
 
 <!-- -->
 
@@ -1506,17 +1500,16 @@ if (isLoading) {
 which means that for the next 60 seconds, if you request that resource
 again, the response will come from the browser cache.
 
-In this case, we would want to activate react query even if we are
-offline, because chances are that the browser cache has the data we
-need. And if you have a cache miss, you’ll likely get a network error,
-after which React Query will pause the retries, which will put your
-query into the paused state. It’s the best of both worlds.
+In this case, we want React Query to run even when we are offline,
+because chances are the browser cache has the data we need. If there’s a
+cache miss, you’ll likely get a network error, after which React Query
+pauses the retries and puts your query into the paused state. It’s the
+best of both worlds.
 
 ### Offline Mutations {#offline-mutations}
 
-All things mentioned around `networkMode` apply to mutation equally. One
-additional thing to note is that we often invalidate the cache in the
-`onSettled` callback of a mutation.
+Everything about `networkMode` applies to mutations as well. Note that
+we often invalidate the cache in the `onSettled` callback of a mutation.
 
 ``` tsx
 useMutation({
@@ -1527,16 +1520,15 @@ useMutation({
 ```
 
 When we go offline in the middle of a mutation, the mutation is paused,
-and `onSettled` will be invoked after we go back online again and the
-mutation is finished. In contrast, `onMutate` fires before the mutation
-function so that our optimistic updates in there can be seen regardless
-of the network status.
+and `onSettled` will be invoked after we go back online and the mutation
+finishes. In contrast, `onMutate` fires before the mutation function so
+that our optimistic updates in there can be seen regardless of the
+network status.
 
-One problem is, if we have multiple ongoing mutations that are brought
-back after we go online. We will be running multiple invalidations,
-which might cause the UI to update multiple times. To avoid this, we can
-check of the number of ongoing mutations and only invalidate the cache
-if it’s the last one.
+One problem is that if multiple paused mutations resume after we go back
+online, we run multiple invalidations, which might cause the UI to
+update multiple times. To avoid this, we can check the number of ongoing
+mutations and only invalidate the cache if it’s the last one.
 
 ``` tsx
 {
@@ -1625,15 +1617,15 @@ useQuery({
 Notes for the code above:
 
 - `defaultShouldDehydrateQuery` is a helper function that only persists
-  successful queries and respects other react query’s default persist
-  logic, the same as `defaultShouldDehydrateMutation`
+  successful queries and respects React Query’s other default persist
+  logic; `defaultShouldDehydrateMutation` does the same for mutations
 
-- set `gcTime` as equal or greater than `maxAge` to avoid queries being
+- set `gcTime` equal to or greater than `maxAge` to avoid queries being
   garbage collected and removed from the storage too early
 
-- mutations and their input can be saved to storage as well, we also set
-  the default mutation function for the mutation key so that when
-  restoring mutations by key, react query doesn’t need a look up for the
+- mutations and their inputs can be saved to storage as well. We also
+  set the default mutation function for the mutation key, so when
+  restoring mutations by key, React Query doesn’t need to look up the
   mutation function
 
 As an experimental feature, we can now set `persist` per query

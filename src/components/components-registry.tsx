@@ -1,61 +1,56 @@
-import { ComponentType, Suspense } from "react";
-
 import { Steps } from "@/components/ui/steps";
 import { Callout } from "./callout";
 import { CodeBlock } from "./codehike/code-block";
 import { Image } from "./codehike/image";
 import { InlineCode } from "./codehike/inline-code";
-import { BlogLink } from "./codehike/link";
-import {
-  WiderContent,
-  WiderContentAside,
-  WiderContentMain,
-} from "./wider-content";
+import type { ComponentProps, ComponentType } from "react";
 
-export const sharedComponents = {
+/**
+ * Tag name → component, for HtmlRenderer. Content props arrive as HTML
+ * attribute strings, so each component declares its own props.
+ */
+export type ContentComponents = Record<string, ComponentType<never>>;
+
+/** Components every rendered Markdown page can use. */
+export const sharedComponents: ContentComponents = {
+  img: Image,
   "my-callout": Callout,
-
-  img: (props: ImageProps) => {
-    return (
-      <Image
-        src={props.src}
-        alt={props.alt}
-        className={props.className}
-        width={props.width}
-        height={props.height}
-      />
-    );
-  },
-  a: BlogLink,
-  "code-block": ({
-    value,
-    lang,
-    filename,
-    caption,
-    highlighted,
-  }: CodeBlockProps) => {
-    return (
-      <CodeBlock
-        value={value}
-        lang={lang}
-        customMeta={{ filename, caption }}
-        highlighted={highlighted}
-      />
-    );
-  },
-  "code-inline": ({ value, lang, highlighted }: CodeInlineProps) => {
-    return <InlineCode value={value} lang={lang} highlighted={highlighted} />;
-  },
   "my-steps": Steps,
-  "wider-content": WiderContent,
-  "wider-content-main": WiderContentMain,
-  "wider-content-aside": WiderContentAside,
+  "code-block": CodeBlock,
+  "code-inline": InlineCode,
 };
 
-const registry: Record<string, any> = {
+/** A section heading that links to itself, so readers can copy a link to it. */
+const sectionHeading = (Tag: "h2" | "h3") =>
+  function SectionHeading({ id, children, ...props }: ComponentProps<"h2">) {
+    return (
+      <Tag id={id} {...props}>
+        {id ? (
+          <a href={`#${id}`} className="heading-anchor">
+            {children}
+          </a>
+        ) : (
+          children
+        )}
+      </Tag>
+    );
+  };
+
+const articleComponents: ContentComponents = {
+  ...sharedComponents,
+  h2: sectionHeading("h2"),
+  h3: sectionHeading("h3"),
+};
+
+/*
+  Components only some posts use, named in their frontmatter `components`
+  list. Loading them on demand keeps their client code (tabs, the counter
+  demo) off pages that don't render them.
+*/
+const lazyComponents: Record<string, () => Promise<ComponentType<never>>> = {
   "code-switcher": () =>
     import("./codehike/code-switcher").then((mod) => mod.CodeSwitcher),
-  iframe: () => import("./iframe").then((mod) => mod.MyIframe),
+  iframe: () => import("./iframe").then((mod) => mod.Iframe),
   "do-counter-example": () =>
     import("./post-example/do-counter").then((mod) => mod.DoCounterExample),
   "quiz-table-example": () =>
@@ -64,47 +59,14 @@ const registry: Record<string, any> = {
     ),
 };
 
-export const getComponents = async (components?: string[]) => {
-  if (!components) {
-    return sharedComponents;
-  }
-
-  const otherComponents: Record<string, ComponentType<any>> = {};
-  for (const name of components) {
-    if (registry[name]) {
-      const Component = await registry[name]();
-      otherComponents[name] = (props: any) => (
-        <Suspense>
-          <Component {...props} />
-        </Suspense>
-      );
-    }
-  }
-
-  return {
-    ...sharedComponents,
-    ...otherComponents,
-  };
-};
-
-type ImageProps = {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  className: string;
-};
-
-type CodeBlockProps = {
-  value: string;
-  lang: string;
-  filename?: string;
-  caption?: string;
-  highlighted?: string;
-};
-
-type CodeInlineProps = {
-  value: string;
-  lang: string;
-  highlighted?: string;
+/** The components for a post or note body: the shared set, heading links, and its lazy extras. */
+export const getComponents = async (
+  names: string[] = []
+): Promise<ContentComponents> => {
+  const extras = await Promise.all(
+    names
+      .filter((name) => name in lazyComponents)
+      .map(async (name) => [name, await lazyComponents[name]()] as const)
+  );
+  return { ...articleComponents, ...Object.fromEntries(extras) };
 };

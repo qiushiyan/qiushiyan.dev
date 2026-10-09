@@ -25,6 +25,7 @@
     ".css$"
   ],
   "tailwindFunctions": ["clsx", "cn"],
+  "tailwindStylesheet": "./src/styles/globals.css",
   "proseWrap": "always",
   "printWidth": 80,
   "overrides": [

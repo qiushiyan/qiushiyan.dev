@@ -3,32 +3,51 @@
 import { ComponentProps } from "react";
 import { useTheme } from "next-themes";
 
-import { Badge } from "@/components/ui/badge";
 import { CodeMirror } from "./codemirror";
 import { baseExtensions } from "./codemirror-config";
+import { useEditor } from "./editor-provider";
+import { PanelHeader } from "./recipes-layout";
 
 interface Props extends ComponentProps<typeof CodeMirror> {
   code: string;
+  /** Called on ⌘/Ctrl+Enter. */
+  onRun?: () => void;
 }
 
-export const CodeEditor = ({ code, extensions, ...rest }: Props) => {
-  const { theme } = useTheme();
+export const CodeEditor = ({ code, extensions, onRun, ...rest }: Props) => {
+  const { resolvedTheme } = useTheme();
+  const { file } = useEditor();
 
   return (
-    <div className="relative h-full">
-      <Badge className="absolute right-2 top-2 z-50 bg-accent text-accent-foreground">
-        Editor
-      </Badge>
-      <CodeMirror
-        className="h-full w-full"
-        value={code}
-        basicSetup={{
-          lineNumbers: false,
+    <>
+      <PanelHeader>{file.split("/").pop()}</PanelHeader>
+      {/* Capture phase, so the shortcut wins over CodeMirror's own Mod-Enter (insert blank line). */}
+      <div
+        className="min-h-0 flex-1"
+        onKeyDownCapture={(event) => {
+          if (
+            onRun &&
+            event.key === "Enter" &&
+            (event.metaKey || event.ctrlKey)
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+            onRun();
+          }
         }}
-        theme={theme === "dark" ? "dark" : "light"}
-        extensions={[...baseExtensions, ...(extensions ?? [])]}
-        {...rest}
-      />
-    </div>
+      >
+        <CodeMirror
+          className="h-full"
+          height="100%"
+          value={code}
+          basicSetup={{
+            lineNumbers: false,
+          }}
+          theme={resolvedTheme === "dark" ? "dark" : "light"}
+          extensions={[...baseExtensions, ...(extensions ?? [])]}
+          {...rest}
+        />
+      </div>
+    </>
   );
 };

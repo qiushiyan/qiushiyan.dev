@@ -24,13 +24,13 @@ headings:
   depth: 3
 ---
 
-This article demonstrates a modeling example using the
-[`tidymodels`](https://www.tidymodels.org/) framework for text
-classification. Data are downloaded via the
-[`gutenbergr`](https://docs.ropensci.org/gutenbergr/) package, including
-5 books written by either Emily Brontë or Charlotte Brontë. The goal is
-to predict the author given words in a line, that is the probability of
-line being written by one sister instead of another.
+This article demonstrates text classification using the
+[`tidymodels`](https://www.tidymodels.org/) framework. Data are
+downloaded via the [`gutenbergr`](https://docs.ropensci.org/gutenbergr/)
+package and include 5 books written by either Emily Brontë or Charlotte
+Brontë. The goal is to predict the author from the words in a line, that
+is, the probability of a line being written by one sister rather than
+the other.
 
 ``` r
 library(dplyr)
@@ -83,16 +83,15 @@ books
 #> # ℹ 59,273 more rows
 ```
 
-To obtain tidy text structure illustrated in [Text Mining with
-R](https://www.tidytextmining.com/), I use `unnest_tokens()` to perform
-tokenization and remove all the stop words. I also removed characters
-like `'`, `'s`, `'` and whitespace to return valid column names after
-widening. But it turns out this served as some sort of stemming too!
-(heathcliff’s becomes heathcliff). Then low frequency words (whose
-frequency is less than 0.05% of an author’s total word counts) are
-removed. The cutoff may be a little too high if you plot that histogram,
-but I really need this to save computation efforts on my laptop
-:sweat_smile:.
+To obtain the tidy text structure illustrated in [Text Mining with
+R](https://www.tidytextmining.com/), I use `unnest_tokens()` to tokenize
+the text and remove all the stop words. I also removed characters like
+`'`, `'s`, `'` and whitespace to get valid column names after widening.
+It turns out this also served as a sort of stemming (heathcliff’s
+becomes heathcliff)! Then low-frequency words (less than 0.05% of an
+author’s total word count) are removed. The cutoff may be a little too
+high if you plot the histogram, but I really need it to save computing
+effort on my laptop :sweat_smile:.
 
 ``` r
 clean_books <- books %>%
@@ -115,10 +114,10 @@ tidy_books <- clean_books %>%
 
 ## Comparing Word Frequency {#comparing-word-frequency}
 
-Before building an actual predictive model, let’s do some EDA to see
-different tendency to use a particular word! This will also shed light
-on what we would expect from the text classification. Now, we will
-compare word frequency (proportion) between the two sisters.
+Before building a predictive model, let’s do some EDA to see how
+differently the sisters use particular words. This also sheds light on
+what to expect from the text classification. We will compare word
+frequency (proportion) between the two sisters.
 
 ``` r
 tidy_books %>%
@@ -159,18 +158,17 @@ words positioned far from the line indicate a preference by one author
 over the other. For instance, “heathcliff”, “linton”, and “catherine”
 appear more frequently in one sister’s works compared to the other’s.
 
-What does this plot tell us? Judged only by word frequency, it looks
-that there are a number of words that are quite characteristic of Emily
-Brontë (upper left corner). Charlotte, on the other hand, has few
-representative words (bottom right corner). We will investigate this
-further in the model.
+What does this plot tell us? Judged only by word frequency, there are a
+number of words that are quite characteristic of Emily Brontë (upper
+left corner). Charlotte, on the other hand, has few representative words
+(bottom right corner). We will investigate this further in the model.
 
 ## Modeling {#modeling}
 
 ### Data Preprocessing {#data-preprocessing}
 
-There are 430 and features (words) and 32029 observations in total.
-Approximately 18% of the response are 1 (Emily Brontë).
+There are 430 features (words) and 32029 observations in total.
+Approximately 18% of the responses are 1 (Emily Brontë).
 
 ``` r
 tidy_books %>%
@@ -183,9 +181,9 @@ tidy_books %>%
 #> 2 Emily Brontë     15310 0.276
 ```
 
-Now it’s time to widen our data to reach an appropriate model structure,
-this similar to a document-term matrix, with rows being a line and
-column word count.
+Now it’s time to widen the data into a structure suitable for modeling,
+similar to a document-term matrix, with each row being a line and each
+column a word count.
 
 ``` r
 library(tidymodels)
@@ -243,7 +241,7 @@ model_df
 
 ### Train a Penalized Logistic Regression Model {#train-a-penalized-logistic-regression-model}
 
-Split the data into training set and testing set.
+Split the data into a training set and a testing set.
 
 ``` r
 book_split <- initial_split(model_df)
@@ -251,8 +249,8 @@ book_train <- training(book_split)
 book_test <- testing(book_split)
 ```
 
-Specify a L1 penalized logistic model, center and scale all predictors
-and combine them in to a `workflow` object.
+Specify an L1-penalized logistic model, center and scale all predictors,
+and combine them into a `workflow` object.
 
 ``` r
 logistic_spec <- logistic_reg(penalty = 0.05, mixture = 1) %>%
@@ -272,8 +270,8 @@ initial_fit <- book_wf %>%
 ```
 
 `initial_fit` is a simple fitted regression model without any
-hyper-parameters. By default `glmnet` calls for 100 values of lambda
-even if I specify lambda = 0.05. So the extracted result aren’t that
+hyper-parameters. By default, `glmnet` calls for 100 values of lambda
+even if I specify lambda = 0.05, so the extracted results aren’t that
 helpful.
 
 ``` r
@@ -343,13 +341,12 @@ initial_predict %>%
 
 Nearly 84% of all predictions are right. This isn’t a very satisfactory
 result since “Charlotte Brontë” accounts for 81% of `author`, making our
-model only slightly better than a classifier that would assign all
-`author` with “Charlotte Brontë” anyway.
+model only slightly better than a classifier that assigns “Charlotte
+Brontë” to every line.
 
 ### Tuning lambda {#tuning-lambda}
 
-We can figure out an appropriate penalty using resampling and tune the
-model.
+We can find an appropriate penalty by tuning the model with resampling.
 
 ``` r
 logistic_wf_tune <- book_wf %>%
@@ -359,9 +356,9 @@ lambda_grid <- grid_regular(penalty(), levels = 100)
 book_folds <- vfold_cv(book_train, v = 10)
 ```
 
-Here we build a set of 10 cross validations resamples, and set
-`levels = 100` to try 100 choices of lambda ranging from 0 to 1. The
-lambda grid can be then tuned with the resamples.
+Here we build a set of 10 cross-validation resamples and set
+`levels = 100` to try 100 choices of lambda ranging from 0 to 1. Then we
+tune the lambda grid with the resamples.
 
 ``` r
 logistic_results <- logistic_wf_tune %>%
@@ -389,15 +386,14 @@ logistic_results %>%
 ![Classification metrics across strength of L1
 regularization](index_files/figure-commonmark/unnamed-chunk-15-1.png)
 
-Ok, the two metrics both display a monotone decrease as lambda
-increases, but does not exhibit much change once lambda is greater than
-0.1, which is essentially random guess according to the author’s
-respective proportion of appearance in the data. This plot shows that
-the model is generally better at small penalty, suggesting that the
-majority of the predictors are fairly important to the model. We may
-lean towards larger penalty with slightly worse performance, because
-they lead to simpler models. It follows that we may want to choose
-lambda in top rows in the following data frame.
+OK, both metrics decrease monotonically as lambda increases, but change
+little once lambda is greater than 0.1, which is essentially random
+guessing based on each author’s share of the data. The model is
+generally better with a small penalty, suggesting that most predictors
+are fairly important to the model. We may still lean towards a larger
+penalty with slightly worse performance, because it leads to a simpler
+model. So we may want to choose lambda from the top rows of the
+following data frame.
 
 ``` r
 top_models <- logistic_results %>%
@@ -423,10 +419,10 @@ top_models
 #> # ℹ 69 more rows
 ```
 
-`select_best()` with return the 9th row with lambda = 0.000586 for its
-highest performance on `roc_auc`. But I’ll stick to the parsimonious
-principle and pick $\lambda \approx 0.00376$ at the cost of a fall in
-`roc_auc` by 0.005 and in `accuracy` by 0.001.
+`select_best()` would return the 9th row, with lambda = 0.000586, for
+its highest performance on `roc_auc`. But I’ll stick to the principle of
+parsimony and pick $\lambda \approx 0.00376$ at the cost of a 0.005 drop
+in `roc_auc` and a 0.001 drop in `accuracy`.
 
 ``` r
 logistic_results %>%
@@ -456,8 +452,8 @@ book_wf_final %>% extract_spec_parsnip()
 #> Computational engine: glmnet
 ```
 
-The next thing is to fit the best model with the training set, and
-evaluate against the test set.
+Next, fit the best model on the training set and evaluate it against the
+test set.
 
 ``` r
 logistic_final <- last_fit(book_wf_final, split = book_split)
@@ -482,14 +478,14 @@ logistic_final %>%
 
 ![](index_files/figure-commonmark/unnamed-chunk-20-1.png)
 
-The accuracy of our logistic model rises by a rough 9% to 93.8%, with
-`roc_auc` being nearly 0.904. This is pretty good!
+The accuracy of our logistic model rises by roughly 9% to 93.8%, with
+`roc_auc` at nearly 0.904. This is pretty good!
 
-There is also the confusion matrix to check. The model did well in
+We can also check the confusion matrix. The model did well at
 identifying Charlotte Brontë (low false positive rate, high
-sensitivity), yet suffers relatively high false negative rate
-(mistakenly identify 39% of Emily Brontë as Charlotte Brontë, aka low
-specificity). In part, this is due to class imbalance (four out of five
+sensitivity), yet suffers a relatively high false negative rate (it
+mistakenly identifies 39% of Emily Brontë as Charlotte Brontë, aka low
+specificity). This is partly due to class imbalance (four of the five
 books were written by Charlotte).
 
 ``` r
@@ -502,12 +498,12 @@ logistic_final %>%
 #>   Emily Brontë                    2         1144
 ```
 
-To examine the effect of predictors, We again use `fit` and
-`pull_workflow` to extract model fit. Variable importance plots
+To examine the effect of predictors, we again use `fit` and
+`pull_workflow` to extract the model fit. Variable importance plots
 implemented in the [vip](https://koalaverse.github.io/vip/index.html)
-package provides an intuitive way to visualize importance of predictors
-in this scenario, using the absolute value of the t-statistic as a
-measure of VI.
+package provide an intuitive way to visualize the importance of
+predictors, using the absolute value of the t-statistic as a measure of
+VI.
 
 ``` r
 library(vip)
@@ -555,10 +551,9 @@ logistic_vi %>%
 height="1000"
 alt="Variable importance plot for penalized logistic regression" />
 
-Is it cheating to use names of a character to classify authors? Perhaps
-I should consider include more books and remove names for text
-classification next time.
+Is it cheating to use character names to classify authors? Next time, I
+should consider including more books and removing names.
 
 Note that variable importance in the left panel is generally smaller
-than the right, this corresponds to what we find in the word frequency
-plot that Emily Brontë has more and stronger characteristic words.
+than in the right one, which matches the word frequency plot: Emily
+Brontë has more and stronger characteristic words.

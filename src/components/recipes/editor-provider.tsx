@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState } from "react";
-import { Recipe } from "#content";
+
+import type { Recipe } from "#content";
 
 type EditorContext = {
   setInput: (input: string) => void;

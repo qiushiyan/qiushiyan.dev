@@ -1,21 +1,15 @@
 import { callout } from "./callout";
-import { className } from "./classname";
 import { collapse, collapseContent, collapseTrigger } from "./collapsible";
-import { focus } from "./focus";
-import { footnotes } from "./footnotes";
-import { hover } from "./hover";
 import { mark } from "./mark";
-import { tokenTransitions } from "./token-transitions";
 
+// The annotations the content uses (`!collapse`, `!mark`, `!callout`).
+// Order matters: earlier handlers wrap later ones. The collapse toggle has to
+// be the outermost wrapper of its line (a <summary> directly inside
+// <details>), and the collapse gutter then sits outside a mark's border.
 export const CodeHikeHandlers = [
-  callout,
-  mark,
-  hover,
   collapse,
   collapseContent,
   collapseTrigger,
-  className,
-  footnotes,
-  focus,
-  tokenTransitions,
+  mark,
+  callout,
 ];

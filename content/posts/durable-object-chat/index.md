@@ -3,7 +3,7 @@ title: Building a WebSockets Server with Cloudflare Durable Objects
 slug: durable-object-chat
 date: '2024-09-15'
 description: |
-  An example of how to use Cloudflare Durable Objects to implement a real-time chat application.
+  Building a real-time chat application with Cloudflare Durable Objects.
 tags:
 - Cloudflare
 components:
@@ -24,21 +24,21 @@ headings:
   depth: 2
 ---
 
-In my previous post of [Introduction to Durable
-Objects](https://qiushiyan.dev/posts/intro-durable-object) , I covered
+In my previous post, [Introduction to Durable
+Objects](https://qiushiyan.dev/posts/intro-durable-object), I covered
 the basics of using the `storage` API to persist state in Cloudflare
-Workers. In this post, we’ll explore another key API provided by Durable
-Objects: the [WebSocket
+Workers. In this post, we’ll explore another key Durable Objects API:
+the [WebSocket
 API](https://developers.cloudflare.com/durable-objects/api/websockets/),
-which enables us to easily create real-time, collaborative applications.
+which makes it easy to build real-time, collaborative applications.
 
 ## WebSockets Basics {#websockets-basics}
 
 Let’s first recap the general idea of WebSockets outside of Cloudflare.
 WebSockets are a standard protocol that maintains bidirectional,
 long-lasting connections between clients and servers. A server can send
-and receive messages from a client and vice versa. A simple WebSocket in
-node.js looks like this:
+and receive messages from a client and vice versa. A simple WebSocket
+server in Node.js looks like this:
 
 ``` js
 #| filename: server.js
@@ -107,12 +107,11 @@ function encodeMessage(message) {
 server.listen(8080, () => {});
 ```
 
-Note that we need do a bit of housekeeping when establishing the
-WebSocket connection (highlighted in the code). We verify that we
-receive the correct request headers and respond with the appropriate
-headers. While the implementation details aren’t crucial here, it’s
-important to note that this health check is necessary for WebSocket
-connections and will be needed in the Workers runtime as well.
+Note that we need to do a bit of housekeeping when establishing the
+WebSocket connection (highlighted in the code). We verify the request
+headers and respond with the appropriate headers. The implementation
+details aren’t crucial here, but this health check is necessary for
+WebSocket connections and will be needed in the Workers runtime as well.
 
 Once the connection is established, we can send messages to the client
 using `socket.write()`, and react to incoming messages using the
@@ -132,11 +131,10 @@ socket.onopen = () => {
 };
 ```
 
-WebSockets enables real-time multiplayer apps because the server can
-send messages to all connected clients through the long-lived
-connection. In the chat app we are building, we want to broadcast
-message from one client to all other connected users. This is only a
-couple of lines for the server:
+WebSockets enable real-time multiplayer apps because the server can send
+messages to all connected clients through the long-lived connection. In
+our chat app, we want to broadcast a message from one client to all
+other connected users. This takes only a couple of lines on the server:
 
 ``` js
 #| filename: server.js
@@ -181,13 +179,12 @@ a chat room or a game match. Workers send requests to the DO instance
 (the server), which then broadcasts messages to all other connected
 clients.
 
-Let’s explore how we can migrate the Node.js example to the Edge using
-Durable Objects and Workers. Our goal is to build a chat app with
-multiple rooms. Users can send messages that are broadcast to all other
-users in the same room, with messages persisted and isolated at the room
-level. Browse the finished version
-[here](https://durable-object-chat.qiushiyan.dev/) and code on
-[Github](https://github.com/qiushiyan/durable-object-chat).
+Let’s migrate the Node.js example to the Edge using Durable Objects and
+Workers. Our goal is to build a chat app with multiple rooms. Users can
+send messages that are broadcast to all other users in the same room,
+with messages persisted and isolated at the room level. Browse the
+finished version [here](https://durable-object-chat.qiushiyan.dev/) and
+the code on [GitHub](https://github.com/qiushiyan/durable-object-chat).
 
 ![screenshot of the finished chat
 app](https://github.com/qiushiyan/durable-object-chat/blob/main/image.png?raw=true)
@@ -289,8 +286,8 @@ Let’s break this down:
 
 *js`app.get("/rooms/:name/ws", handler)`* defines a handler that will be
 called when a GET request is sent to `/rooms/<name>/ws`, where `<name>`
-dynamic route parameter. We derive the DO instance ID from the name and
-pass on the request.
+is a dynamic route parameter. We derive the DO instance ID from the name
+and pass on the request.
 
 #### Accept Connection
 
@@ -305,18 +302,18 @@ pass on the request.
 
 where the first is the client socket and second the server socket. We
 can then call `this.ctx.acceptWebSocket(server)` to upgrade the
-connection and also returns the client socket in the response. This is
+connection and return the client socket in the response. This is
 equivalent to returning the convoluted response header in the Node.js
 example.
 
-Note that `WebSocketPair` is a Cloudflare Workers runtime only API, and
+Note that `WebSocketPair` is a Cloudflare Workers runtime-only API and
 is not available in standard Node.js.
 
 #### Handle Message Events
 
 `webSocketMessage` and `webSocketClose` are conventional methods for
-handling message events, and will be automatically invoked when a
-message from client is received, or the client disconnects.
+handling message events, and are invoked automatically when a message
+from the client is received or the client disconnects.
 
 </my-steps>
 
@@ -338,26 +335,24 @@ Even better, `ctx.acceptWebSocket()` already sets up hibernation for us.
 If you establish a connection this way, the DO instance will be
 automatically put into hibernation when it’s inactive.
 
-It seems we can move forward with our chat app without any extra work to
-accommodate hibernation. Let’s continue by working on our session
-handling logic. Here’s the flow of how a user joins a chat room and
-sends a message:
+It seems we can move forward without any extra work to accommodate
+hibernation. Let’s continue with the session handling logic. Here’s how
+a user joins a chat room and sends a message:
 
-1.  User enters a room and requests a WebSockets connection via
-    `new WebSocket()` to our server.
+1.  The user enters a room and requests a WebSocket connection to our
+    server via `new WebSocket()`.
 
 2.  When the connection is established, we request that the user
     immediately send us a message of type `"join"` with their username,
     which is used to identify the user in the chat room. After the
-    server finished processing the join event, it will broadcast to all
+    server finishes processing the join event, it broadcasts to all
     other users in the room that a new user has joined.
 
 3.  The user can now broadcast messages to other users in the room.
 
-Based on these requirements, it is clear that we need to store all live
-connections. We can model this with a `Map`, where the key is the
-established socket, and the value is an object containing the registered
-username.
+Based on these requirements, we need to store all live connections. We
+can model this with a `Map`, where the key is the established socket and
+the value is an object containing the registered username.
 
 ``` ts
 type Session = {
@@ -456,11 +451,11 @@ a chat message is received, we loop through `this.sessions` and send it
 to other clients.
 
 However, there’s one caveat: any instance properties are reset when the
-instance wakes up from hibernation. This means that `this.sessions` will
-be become an empty map and we lose track of all usernames. We also can’t
+instance wakes up from hibernation. This means that `this.sessions`
+becomes an empty map and we lose track of all usernames. We also can’t
 use the storage API to store usernames, as they need to be tied to their
-respective sockets, which are not serializable. Luckily there are other
-APIs that can help use restore the state:
+respective sockets, which are not serializable. Luckily, other APIs can
+help us restore the state:
 
 - `ws.serializeAttachment(value)` keeps an arbitrary value in memory to
   survive hibernation.
@@ -471,7 +466,7 @@ APIs that can help use restore the state:
   not affected by hibernation and will always return the latest list of
   server sockets.
 
-With these tools, we can serialize the session data in advance, and
+With these tools, we can serialize the session data in advance and
 prepare for hibernation by always reconstructing `this.sessions` in the
 constructor.
 
@@ -521,20 +516,19 @@ async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer) {
 The first time the DO is created, nothing is different in the
 constructor because we haven’t serialized anything yet. But when a user
 joins the chat, we put the updated session data in memory to survive
-hibernation. When the DO wakes up, the constructor is called it will be
-populate all sessions with the latest data.
+hibernation. When the DO wakes up, the constructor is called and
+populates all sessions with the latest data.
 
 ## Displaying Previous Messages {#displaying-previous-messages}
 
-A final requirement is that when a user connects, they should see a list
-of all previous messages in the room. How we store the messages can
-vary. It could be an external database accessed via a RESTful API. But
-since we are using durable objects already, we can simply use the
-`storage` API.
+A final requirement is that when a user connects, they should see all
+previous messages in the room. The messages could be stored in an
+external database accessed via a RESTful API, but since we are already
+using Durable Objects, we can simply use the `storage` API.
 
-One gotcha is that we want to only display historical messages when the
-user is registered with a username. For this we will add another field
-to `Session` called `blockedMessages`.
+One gotcha is that we only want to display historical messages once the
+user has registered a username. For this, we add another field to
+`Session` called `blockedMessages`.
 
 ``` ts
 type Session = {
@@ -543,10 +537,10 @@ type Session = {
 };
 ```
 
-Think `blockedMessages` as a queue that will be populated upon
-connection, we will dequeue the messages when the user is registered.
+Think of `blockedMessages` as a queue that is populated upon connection
+and dequeued when the user registers.
 
-Let’s refactor the relevant handlers to the following:
+Let’s refactor the relevant handlers:
 
 ``` ts
 constructor(ctx: DurableObjectState, env: Env) {
@@ -638,6 +632,6 @@ to clean up historical messages periodically.
 </div>
 
 This wraps up our chat application. The complete code is available on
-[Github](https://github.com/qiushiyan/durable-object-chat/blob/main/api/src/room.ts)
+[GitHub](https://github.com/qiushiyan/durable-object-chat/blob/main/api/src/room.ts)
 with two additional features: a rate limiter and enhanced message types.
 A demo is available at https://durable-object-chat.qiushiyan.dev/.

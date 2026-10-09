@@ -1,42 +1,15 @@
 import { readFile } from "fs/promises";
 import path from "path";
-import { slug } from "github-slugger";
-import rehypeRaw from "rehype-raw";
-import rehypeStringify from "rehype-stringify";
-import remarkDirective from "remark-directive";
+import { slug as slugify } from "github-slugger";
 import remarkHeadingAttrs from "remark-heading-attrs";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import remarkUnwrapImages from "remark-unwrap-images";
-import { unified } from "unified";
 import { defineCollection, defineConfig, s } from "velite";
 
-import { htmlProcessor } from "@/lib/content/processor";
-import { timestamp } from "@/lib/content/schema";
+import { createHtmlProcessor } from "@/lib/content/processor";
+import { rehypeCodeInline } from "@/lib/content/rehype-code";
+import { articleContent, headings, timestamp } from "@/lib/content/schema";
 import { routes } from "@/lib/navigation";
-import {
-  rehypeCode,
-  rehypeCodeInline,
-  rehypeUnwrapImages,
-  remarkUseDirective,
-} from "./src/lib/content/plugins";
 
-const descriptionProcessor = unified().use([
-  remarkParse,
-  remarkRehype,
-  rehypeRaw,
-  rehypeCodeInline,
-  rehypeStringify,
-]);
-
-// const home = defineCollection({
-//   name: "home",
-//   pattern: "home.md",
-//   single: true,
-//   schema: s.object({
-//     content: s.markdown(),
-//   }),
-// });
+const descriptionProcessor = createHtmlProcessor([rehypeCodeInline]);
 
 const about = defineCollection({
   name: "about",
@@ -47,118 +20,97 @@ const about = defineCollection({
   }),
 });
 
+/** Fields shared by posts and notes. */
+const articleFields = {
+  title: s.string(),
+  date: s.isodate(),
+  slug: s.string().optional(),
+  lastModified: timestamp(),
+  draft: s.boolean().optional().default(false),
+  headings: headings(),
+  /** Lazily loaded registry components the content uses (see components-registry.tsx). */
+  components: s.array(s.string()).optional(),
+  content: articleContent(),
+};
+
 const posts = defineCollection({
   name: "Post",
   pattern: "./posts/**/*.md",
   schema: s
     .object({
-      title: s.string(),
-      date: s.isodate(),
-      slug: s.string().optional(),
+      ...articleFields,
       tags: s.array(s.string()).optional().default(["other"]),
       description: s.string(),
       metadata: s.metadata(),
-      lastModified: timestamp(),
-      draft: s.boolean().optional().default(false),
-      headings: s
-        .array(
-          s.object({
-            title: s.string(),
-            slug: s.string(),
-            depth: s.number(),
-          })
-        )
-        .default([])
-        .transform((headings) =>
-          headings.map((heading) => ({
-            html: htmlProcessor.processSync(heading.title).toString(),
-            slug: heading.slug,
-            depth: heading.depth,
-          }))
-        ),
-      components: s.array(s.string()).optional(),
-      content: s.markdown({
-        remarkPlugins: [
-          remarkDirective,
-          remarkUseDirective,
-          remarkUnwrapImages,
-        ],
-        rehypePlugins: [rehypeCode, rehypeUnwrapImages],
-      }),
     })
     .transform(async (data) => {
-      const postSlug = data.slug || slug(data.title);
+      const slug = data.slug || slugify(data.title);
       return {
         ...data,
-        descriptionHtml: (
+        slug,
+        href: routes.post(slug),
+        descriptionHtml: String(
           await descriptionProcessor.process(data.description)
-        ).toString(),
-        slug: postSlug,
-        href: routes.post(postSlug),
+        ),
       };
     }),
 });
+
+const plainText = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+
+/** Notes have no summary of their own; list the topics they cover. */
+const describeNote = (noteHeadings: { html: string; depth: number }[]) => {
+  const topics = noteHeadings
+    .filter((heading) => heading.depth === 2)
+    .map((heading) => plainText(heading.html));
+  // Topics such as "Resource Hints: Preconnect, Prefetch, and Preload" have
+  // commas of their own, so the list falls back to semicolons.
+  const separator = topics.some((topic) => topic.includes(",")) ? "; " : ", ";
+  const listed = topics.slice(0, 3);
+  const rest = topics.length - listed.length;
+  return rest > 0
+    ? `Notes on ${listed.join(separator)}${separator}and ${rest} more topics.`
+    : `Notes on ${new Intl.ListFormat("en").format(listed)}.`;
+};
 
 const notes = defineCollection({
   name: "Note",
   pattern: "./notes/**/*.md",
   schema: s
     .object({
-      title: s.string(),
-      date: s.isodate(),
+      ...articleFields,
       category: s.string(),
-      slug: s.string().optional(),
-      lastModified: timestamp(),
-      draft: s.boolean().optional().default(false),
-      headings: s
-        .array(
-          s.object({
-            title: s.string(),
-            slug: s.string(),
-            depth: s.number(),
-          })
-        )
-        .default([])
-        .transform((headings) =>
-          headings.map((heading) => ({
-            html: htmlProcessor.processSync(heading.title).toString(),
-            slug: heading.slug,
-            depth: heading.depth,
-          }))
-        ),
-      components: s.array(s.string()).optional(),
-      content: s.markdown({
-        remarkPlugins: [
-          remarkDirective,
-          remarkUseDirective,
-          remarkUnwrapImages,
-        ],
-        rehypePlugins: [rehypeCode, rehypeUnwrapImages],
-      }),
+      description: s.string().optional(),
     })
     .transform((data) => {
-      const noteSlug = data.slug || slug(data.title);
+      const slug = data.slug || slugify(data.title);
       return {
         ...data,
-        slug: noteSlug,
-        href: routes.note(noteSlug),
+        slug,
+        href: routes.note(slug),
+        description: data.description ?? describeNote(data.headings),
       };
     }),
 });
 
-const RecipeSchema = s.object({
+const recipeSchema = s.object({
   title: s.string(),
   slug: s.string(),
   description: s.string().optional(),
   files: s.array(s.string()),
-  codes: s
-    .array(
-      s.object({
-        filename: s.string(),
-        content: s.string(),
-      })
-    )
-    .optional(),
+});
+
+const readRecipeFile = async (file: string) => ({
+  filename: path.basename(file),
+  content: await readFile(
+    path.join(process.cwd(), "content", "recipes", file),
+    "utf8"
+  ),
 });
 
 export const recipes = defineCollection({
@@ -166,29 +118,25 @@ export const recipes = defineCollection({
   pattern: "./recipes/index.yaml",
   single: true,
   schema: s
-    .record(s.string(), s.array(RecipeSchema))
-    .transform(async (data) => {
-      for (const [group, langRecipes] of Object.entries(data)) {
-        const newRecipes = [];
-        for (const recipe of langRecipes) {
-          const codes = recipe.files.map(async (p) => {
-            const file = await readFile(
-              path.join(process.cwd(), "content", "recipes", p)
-            );
-            return {
-              filename: path.basename(p),
-              content: file.toString(),
-            };
-          });
-          recipe.codes = await Promise.all(codes);
-          newRecipes.push(recipe);
-        }
-        // @ts-ignore
-        data[group] = newRecipes;
-      }
-
-      return data;
-    }),
+    .record(s.string(), s.array(recipeSchema))
+    .transform(async (groups) =>
+      Object.fromEntries(
+        await Promise.all(
+          Object.entries(groups).map(
+            async ([group, list]) =>
+              [
+                group,
+                await Promise.all(
+                  list.map(async (recipe) => ({
+                    ...recipe,
+                    codes: await Promise.all(recipe.files.map(readRecipeFile)),
+                  }))
+                ),
+              ] as const
+          )
+        )
+      )
+    ),
 });
 
 export default defineConfig({

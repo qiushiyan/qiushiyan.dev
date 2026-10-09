@@ -1,36 +1,56 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { type Post } from "#content";
 
-export const useActiveHeading = ({
-  headings,
-}: {
-  headings: Post["headings"];
-}) => {
-  const [activeHeading, setActiveHeading] = useState<string | null>(
-    headings[0]?.slug
-  );
+// Reading room below the sticky nav: a heading counts as current once it
+// scrolls within this distance of its anchor position.
+const READING_ROOM = 32;
+
+/**
+ * The slug of the section the reader is in: the last heading whose top has
+ * passed the nav, or the last heading once the page is scrolled to the end.
+ * Reading positions on every scroll (not an IntersectionObserver band) keeps
+ * it right after jumps, deep links and scrolling up.
+ */
+export function useActiveHeading(slugs: string[]) {
+  const [active, setActive] = useState<string | null>(slugs[0] ?? null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveHeading(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: "40px 0px -80% 0px" }
-    );
+    const elements = slugs
+      .map((slug) => document.getElementById(slug))
+      .filter((element): element is HTMLElement => element !== null);
+    if (elements.length === 0) return;
 
-    headings.forEach((heading) => {
-      const element = document.getElementById(heading.slug);
-      if (element) observer.observe(element);
-    });
+    // The headings' scroll-margin-top is where an anchor jump puts them.
+    const offset =
+      parseFloat(getComputedStyle(elements[0]).scrollMarginTop) + READING_ROOM;
 
-    return () => observer.disconnect();
-  }, [headings]);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2;
+      let current = elements[0];
+      for (const element of elements) {
+        if (element.getBoundingClientRect().top - offset > 0) break;
+        current = element;
+      }
+      setActive(atBottom ? elements[elements.length - 1].id : current.id);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
 
-  return activeHeading;
-};
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      cancelAnimationFrame(frame);
+    };
+  }, [slugs]);
+
+  return active;
+}

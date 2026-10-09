@@ -1,69 +1,55 @@
-import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 
+import { TocPopover } from "@/components/article/toc-popover";
 import { SiteNav } from "@/components/nav/site-nav";
-import { PostActiveHeading } from "@/components/post/post-active-heading";
-import { SidebarLayout, SidebarTrigger } from "@/components/ui/sidebar";
-import { host } from "@/constants";
-import { findPost, getPosts } from "@/lib/content/posts";
-import { PostSidebar } from "./post-sidebar";
+import { getPost } from "@/lib/content/posts";
+import { markdownToPlainText } from "@/lib/plain-text";
+import { siteConfig } from "@/lib/site";
+import type { Metadata } from "next";
 
-export const generateMetadata = async (props: {
-  params: Promise<{ slug: string }>;
-}) => {
-  const params = await props.params;
-  const page = getPosts().find((page) => page.slug === params.slug);
-  if (!page) {
-    return {
-      title: "Not Found",
-    };
-  }
+import "@/styles/article.css";
 
-  const title = page.title;
-  const description = page.description;
+export async function generateMetadata({
+  params,
+}: LayoutProps<"/posts/[slug]">): Promise<Metadata> {
+  const post = getPost((await params).slug);
+  if (!post) return {};
 
+  const description = markdownToPlainText(post.description);
   return {
-    title,
+    title: post.title,
     description,
+    alternates: { canonical: post.href },
     openGraph: {
-      title,
-      description,
       type: "article",
-      url: new URL(page.href, host),
-      images: [
-        {
-          url: `/api/og?title=${title}&description=${description}`,
-        },
-      ],
+      siteName: siteConfig.name,
+      // Giscus finds each post's discussion by `og:title`: keep it the bare title.
+      title: post.title,
+      description,
+      url: post.href,
+      publishedTime: post.date,
+      modifiedTime: post.lastModified,
+      authors: [siteConfig.url],
+      tags: post.tags,
     },
   };
-};
+}
 
-export default async function Layout(props: {
-  children: React.ReactNode;
-  params: Promise<{ slug: string }>;
-}) {
-  const params = await props.params;
-
-  const { children } = props;
-  const c = await cookies();
+export default async function PostLayout({
+  children,
+  params,
+}: LayoutProps<"/posts/[slug]">) {
+  const post = getPost((await params).slug);
+  if (!post) notFound();
 
   return (
     <>
-      <SidebarLayout
-        defaultOpen={c.get("sidebar:state")?.value === "true"}
-        className="flex-col"
-      >
-        <SiteNav
-          additionalControls={<SidebarTrigger />}
-          banner={
-            <PostActiveHeading
-              headings={findPost(params.slug)?.headings || []}
-            />
-          }
-        />
-        <PostSidebar />
-        {children}
-      </SidebarLayout>
+      <SiteNav
+        additionalControls={
+          <TocPopover headings={post.headings} className="xl:hidden" />
+        }
+      />
+      {children}
     </>
   );
 }

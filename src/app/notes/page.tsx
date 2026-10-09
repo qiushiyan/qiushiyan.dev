@@ -1,63 +1,45 @@
-import { Note } from "#content";
-import { Link } from "next-view-transitions";
-
-import { Container } from "@/components/container";
-import { Heading } from "@/components/heading";
-import { SiteNav } from "@/components/nav/site-nav";
+import { IndexListGroup } from "@/components/index-list";
+import { PageHeader } from "@/components/page-layout";
+import { PageShell } from "@/components/page-shell";
 import { getNotes } from "@/lib/content/notes";
 import { noteViewTransitionName } from "@/lib/utils";
+import type { Note } from "#content";
+import type { Metadata } from "next";
+
+const description = "Notes from books, courses and docs I've worked through.";
+
+export const metadata: Metadata = {
+  title: "Notes",
+  description,
+  openGraph: { type: "website", title: "Notes", description },
+};
+
+const OTHER = "Other";
 
 export default function NotesPage() {
-  const notesGrouped = getNotes().reduce(
-    (acc, note) => {
-      const category = note.category || "Others";
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(note);
-      return acc;
-    },
-    {} as Record<string, Note[]>
+  const groups = Map.groupBy(
+    getNotes(),
+    (note: Note) => note.category || OTHER
+  );
+  const categories = [...groups.keys()].toSorted((a, b) =>
+    a === OTHER ? 1 : b === OTHER ? -1 : a.localeCompare(b)
   );
 
-  const notes = Object.entries(notesGrouped);
-
   return (
-    <>
-      <SiteNav />
-      <Container>
-        <section aria-labelledby="notes-heading">
-          <Heading id="notes-heading">Notes</Heading>
-          <p className="text-muted-foreground">
-            My notes on books, courses, etc.
-          </p>
-          <div className="mt-8 space-y-6">
-            {notes.map(([category, notes]) => (
-              <div key={category}>
-                <h2 className="text-xl font-bold capitalize">{category}</h2>
-                <ul className="mt-4 flex list-inside list-decimal flex-col gap-2">
-                  {notes.map((note) => (
-                    <li key={note.href}>
-                      <Link href={note.href}>
-                        <h3
-                          className="inline-flex font-medium tracking-tight text-base lg:text-lg"
-                          style={{
-                            viewTransitionName: noteViewTransitionName(
-                              note.slug
-                            ),
-                          }}
-                        >
-                          {note.title}
-                        </h3>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      </Container>
-    </>
+    <PageShell>
+      <PageHeader title="Notes" description={description} />
+      {categories.map((category) => (
+        <IndexListGroup
+          key={category}
+          label={category}
+          items={groups.get(category)!.map((note) => ({
+            href: note.href,
+            title: note.title,
+            viewTransitionName: noteViewTransitionName(note.slug),
+            date: note.date,
+          }))}
+        />
+      ))}
+    </PageShell>
   );
 }

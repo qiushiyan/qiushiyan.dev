@@ -1,17 +1,24 @@
-/* ── Dark mode: GitHub Dark (unchanged) ────────────────────── */
+/*
+  Syntax colours for the build-time CodeHike theme (src/lib/content/tailwind-code-theme.ts),
+  which emits `var(--code-N)` instead of hex values so one highlight serves both themes.
+  Every token colour is at least 4.5:1 on the code surface (--code-17), on
+  marked lines, and on the inline-code chip (--muted), in both themes.
+*/
+
+/* ── Dark: GitHub Dark tokens on the site's cool neutral surface ── */
 .dark {
   --code-0: dark;
   --ch-0: dark;
   /* syntax */
-  --code-1: #8b949e;  /* comments */
-  --code-2: #79c0ff;  /* constants, enums, types, headings */
-  --code-3: #ffa657;  /* entity names, variables */
-  --code-4: #c9d1d9;  /* foreground */
-  --code-5: #d2a8ff;  /* functions */
-  --code-6: #7ee787;  /* tags, components, inserted */
-  --code-7: #ff7b72;  /* keywords, storage */
-  --code-8: #a5d6ff;  /* strings, regexp */
-  --code-9: #ffa198;  /* invalid, errors */
+  --code-1: #8b949e; /* comments */
+  --code-2: #79c0ff; /* constants, enums, types, headings */
+  --code-3: #ffa657; /* entity names, variables */
+  --code-4: #c9d1d9; /* foreground */
+  --code-5: #d2a8ff; /* functions */
+  --code-6: #7ee787; /* tags, components, inserted */
+  --code-7: #ff7b72; /* keywords, storage */
+  --code-8: #a5d6ff; /* strings, regexp */
+  --code-9: #ffa198; /* invalid, errors */
   --code-10: #79c0ff; /* support, properties */
   --code-11: #8b949e; /* brackets */
   /* ui chrome */
@@ -20,7 +27,8 @@
   --code-14: #04260f; /* inserted bg */
   --code-15: #5a1e02; /* changed bg */
   --code-16: #161b22; /* ignored bg */
-  --code-17: #0d1117; /* editor bg */
+  /* A slight lift off the page background (220 16% 5%), same hue */
+  --code-17: hsl(220 14% 8%); /* editor bg */
   --code-18: #6e76811a; /* line highlight */
   --code-19: #ffffff0b; /* range highlight */
   --code-20: #3794ff; /* info fg */
@@ -33,22 +41,22 @@
   --code-27: #0d1117e6; /* inline code bg */
 }
 
-/* ── Light mode: Tailwind CSS Light ────────────────────────── */
+/* ── Light: Tailwind CSS Light, darkened where a token fell below 4.5:1 ── */
 .light {
   --code-0: light;
   --ch-0: light;
   /* syntax – from Tailwind CSS Light Zed theme */
-  --code-1: #90a1b9;  /* comments */
-  --code-2: #e17100;  /* constants, booleans, enums, types, headings */
-  --code-3: #314158;  /* entity names, variable defs */
-  --code-4: #1d293d;  /* foreground */
-  --code-5: #9810fa;  /* functions */
-  --code-6: #0084d1;  /* tags, components, JSON props, inserted */
-  --code-7: #155dfc;  /* keywords, storage, embedded */
-  --code-8: #432dd7;  /* strings, regexp, links */
-  --code-9: #c70036;  /* invalid, errors */
+  --code-1: #5f6f86; /* comments (was #90a1b9, 2.6:1); R output lines are comments */
+  --code-2: #c2410c; /* constants, booleans, enums, types, headings (was #e17100) */
+  --code-3: #314158; /* entity names, variable defs */
+  --code-4: #1d293d; /* foreground */
+  --code-5: #9810fa; /* functions */
+  --code-6: #0369a1; /* tags, components, JSON props, inserted (was #0084d1) */
+  --code-7: #155dfc; /* keywords, storage, embedded */
+  --code-8: #432dd7; /* strings, regexp, links */
+  --code-9: #c70036; /* invalid, errors */
   --code-10: #45556c; /* support, property-names */
-  --code-11: #62748e; /* brackets */
+  --code-11: #5f6f86; /* brackets (was #62748e) */
   /* ui chrome – adapted from Tailwind CSS Light */
   --code-12: #f8fafc; /* diff text fg */
   --code-13: #ffccd3; /* deleted bg */
@@ -66,4 +74,18 @@
   --code-25: #90a1b9; /* line numbers */
   --code-26: #62748e33; /* list selection bg */
   --code-27: #f1f5f9e6; /* inline code bg */
+}
+
+/*
+  Code shows the characters a reader would type: JetBrains Mono's ligatures
+  would draw R's `<-` as an arrow and `!==` as a single glyph.
+*/
+pre,
+code {
+  font-variant-ligatures: none;
+}
+
+/* Inline code wraps with the sentence; only blocks keep their line breaks. */
+:not(pre) > code {
+  overflow-wrap: break-word;
 }

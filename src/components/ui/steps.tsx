@@ -1,5 +1,3 @@
-import React from "react";
-
 import styles from "./steps.module.css";
 
 export const Steps = ({ children }: { children: React.ReactNode }) => {

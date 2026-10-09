@@ -1,32 +1,24 @@
-"use client";
-
-import { EditorView, KeyBinding, keymap } from "@codemirror/view";
+import { EditorView } from "@codemirror/view";
 
 export const BaseEditorTheme = EditorView.baseTheme({
-  "&": {
+  // `.cm-editor` adds specificity over the light/dark theme's own background,
+  // so the editor sits on the page surface in both modes.
+  "&.cm-editor": {
     height: "100%",
+    backgroundColor: "transparent",
   },
   ".cm-content": {
-    fontSize: "16px",
-    padding: "16px",
-    lineHeight: "2rem",
+    fontFamily: "var(--font-mono)",
+    fontSize: "14px",
+    lineHeight: "1.6",
+    padding: "12px 16px",
   },
   "&dark .cm-activeLine": {
     backgroundColor: "hsl(var(--accent)) !important",
-  },
-  "&dark .cm-content": {
-    backgroundColor: "hsl(var(--background))",
-  },
-  "&.cm-editor.cm-editor-dark": {
-    backgroundColor: "hsl(var(--background))",
   },
   ".cm-gutters": {
     display: "none",
   },
 });
-
-export const createShortcuts = (keybindings: readonly KeyBinding[]) => {
-  return keymap.of(keybindings);
-};
 
 export const baseExtensions = [BaseEditorTheme];

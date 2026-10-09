@@ -19,7 +19,7 @@ headings:
 - title: Split providers to improve context performance
   slug: split-providers-to-improve-context-performance
   depth: 2
-- title: An Alternative to Spliting Providers with HOC
+- title: An Alternative to Splitting Providers with HOC
   slug: an-alternative-to-spliting-providers-with-hoc
   depth: 3
 - title: Maintaining Stateful Closures with Ref
@@ -39,10 +39,10 @@ headings:
   depth: 2
 ---
 
-You can purchased the book at [Advanced
-React](https://www.advanced-react.com/#author) and I highly recommend it
-to anyone who is interested in react performance. The book goes deep
-into the underlying workings of React yet remains very approachable.
+You can purchase the book at [Advanced
+React](https://www.advanced-react.com/#author). I highly recommend it to
+anyone interested in React performance. The book goes deep into how
+React works yet remains very approachable.
 
 ## Diffing, Reconciliation and Children as Props {#diffing-reconciliation-and-children-as-props}
 
@@ -79,17 +79,15 @@ The underlying representation is
 }
 ```
 
-When this component needs to re-render, react compares the object from
-“before” and “after” the state update, if an entry is the same (by
-reference) before and after the update, it won’t re-render. If an entry
-changes, there are some variations
+When this component re-renders, React compares the objects from “before”
+and “after” the state update. If an entry is the same (by reference), it
+won’t re-render. If an entry changes, there are two cases:
 
-- if the `type` is the same and the props changes, the `Input` component
+- If the `type` is the same and the props change, the `Input` component
   will be marked as “needs update,” and its re-render will be triggered.
 
-- If the `type` has changed, then React, during the re-render cycle,
-  will remove (unmount) the “previous” component and add (mount) the
-  “next” component.
+- If the `type` has changed, React will remove (unmount) the “previous”
+  component and add (mount) the “next” component.
 
 Let’s say we have a different component that does conditional rendering
 
@@ -100,9 +98,8 @@ const Component = () => {
 };
 ```
 
-then, assuming that the update was triggered by `isCompany` value
-flipping from true to false, the objects that React will be comparing
-are:
+Then, if the update was triggered by `isCompany` flipping from true to
+false, React compares these objects:
 
 ``` tsx
 // Before update, isCompany was "true"
@@ -118,16 +115,16 @@ are:
 }
 ```
 
-`type` has changed from Input to `TextPlaceholder` references, so React
-will unmount `Input` and remove everything associated with it from the
-DOM. And it will mount the new `TextPlaceholder` component and append it
-to the DOM for the first time.
+`type` has changed from `Input` to `TextPlaceholder`, so React will
+unmount `Input` and remove everything associated with it from the DOM.
+Then it will mount the new `TextPlaceholder` component and append it to
+the DOM for the first time.
 
-This diffing mechanism explains several things
+This diffing mechanism explains several things:
 
-- When the parent needs to re-render, a child component also needs to
-  re-render (assuming no memoization) even if it does not need the
-  state, with the following component
+- When the parent re-renders, a child component also re-renders
+  (assuming no memoization), even if it does not use the state. Take the
+  following component:
 
 ``` tsx
 const Parent = (props) => {
@@ -136,21 +133,20 @@ const Parent = (props) => {
 };
 ```
 
-While `Child` does not touch the state, `<Child />` is just a syntax
-sugar for creating the object
+While `Child` does not touch the state, `<Child />` is just syntax sugar
+for creating the object
 
 ``` tsx
 { type: Child, props: [] }
 ```
 
-and objects are compared by reference, so in React’s world, the two
-objects before and after render are always different and `Child` needs
-to re-render.
+and objects are compared by reference, so the two objects before and
+after render are always different and `Child` re-renders.
 
-- However, if an entry is created outside of a rendering cycle of
-  `Parent`, then the re-rendering of `Parent` does not recreate the
-  entry’s jsx object, and React will not re-render that entry. This is
-  often the case with children props
+- However, if an entry is created outside the rendering cycle of
+  `Parent`, re-rendering `Parent` does not recreate the entry’s JSX
+  object, and React will not re-render that entry. This is often the
+  case with children props:
 
 ``` tsx
 const Parent = ({ child }) => {
@@ -161,13 +157,13 @@ const Parent = ({ child }) => {
 <Parent child={<Child />} />;
 ```
 
-Now the jsx object for `Child` is created outside of the parent,
-`Parent` simply passes down the object reference, so it remains the same
-inside the `Parent` rendering cycle.
+Now the JSX object for `Child` is created outside the parent. `Parent`
+simply passes down the object reference, so it remains the same inside
+the `Parent` rendering cycle.
 
-Similar render props and `children` props won’t re-render if it does not
-rely on the parent state. Remember, children nesting are just sytnax
-sugar for an explicit `children` prop.
+Similarly, render props and `children` props won’t re-render if they
+don’t rely on the parent state. Remember, nesting children is just
+syntax sugar for an explicit `children` prop.
 
 ``` tsx
 <Parent>
@@ -178,10 +174,10 @@ sugar for an explicit `children` prop.
 <Parent children={<Child />} />
 ```
 
-- Nest component definitions is harmful because functions are also
-  compared by reference. If you define a child component directly inside
-  the parent, that child component will be seen as a different `type` on
-  every render and go through unmount-remount everytime.
+- Nesting component definitions is harmful because functions are also
+  compared by reference. If you define a child component inside the
+  parent, it is seen as a different `type` on every render and goes
+  through unmount-remount every time.
 
 ``` tsx
 const Component = () => {
@@ -201,8 +197,8 @@ The component returns
 
 ## Force Un-mounting {#force-un-mounting}
 
-As mentioned before, react uses `type` to determine if a component at
-the particular position in the tree can be reused.
+As mentioned before, React uses `type` to determine whether a component
+at a particular position in the tree can be reused.
 
 Consider the following example
 
@@ -222,8 +218,8 @@ const [isCompany, setIsCompany] = useState(false);
 }
 ```
 
-If we toggle `isCompany` from `false` to `true`, react will compare the
-following tree
+If we toggle `isCompany` from `false` to `true`, React will compare the
+following trees:
 
 <div class="two-column">
 
@@ -269,16 +265,16 @@ After
 
 </div>
 
-`Checkbox` is re-rendered as usual. The critical piece is that the
-element `Input` is considered a component that simply needs a prop
-update, because `type` refers to the function component. As a result, if
-the input already contains certain HTML state, such as an existing
-input, it will be persisted after we toggle the state, because react
-only updates the prop without un-mounting. This is not necessarily bad
-but something to consider when designing the UX.
+`Checkbox` re-renders as usual. The critical piece is that `Input` is
+considered a component that only needs a prop update, because `type`
+refers to the function component. As a result, if the input already
+holds HTML state, such as an existing value, it persists after we toggle
+the state, because React only updates the prop without unmounting. This
+is not necessarily bad, but it’s something to consider when designing
+the UX.
 
-If we do want to re-mount `Input` after toggling, we could consider
-changing the JSX structure
+If we do want to remount `Input` after toggling, we can change the JSX
+structure:
 
 ``` tsx
 const Form = () => {
@@ -305,12 +301,12 @@ After, `isCompany` is `true`:
 [{ type: Checkbox }, { type: Input }, null];
 ```
 
-Here, react will decide to mount `Input` for the second item, and
-unmount `Input` for the third item.
+Here, React mounts `Input` for the second item and unmounts `Input` for
+the third item.
 
-This technique can be used reversely. With the same JSX structure, what
-if we indeed want to keep the state and reused the same input, we can
-just use the same key:
+This technique also works in reverse. With the same JSX structure, if we
+do want to keep the state and reuse the same input, we can give both the
+same key:
 
 ``` tsx
 {isCompany ? <Input id="company-tax-id-number" key="text-input" /> : null }
@@ -329,21 +325,20 @@ After
 [null, { type: Input, key: "text-input" }]
 ```
 
-React sees an array of children and sees that before and after
-re-renders, there is an element with the Input type and the same “key.”
-So it will think that the Input component just changed its position in
-the array and will re-use the already created instance for it.
+React sees an array of children where, before and after the re-render,
+there is an element with the `Input` type and the same “key.” So it
+assumes the `Input` component just changed its position in the array and
+reuses the already created instance.
 
 ## Keys {#keys}
 
-There is an alternative way to force mounting by using the `key`
-attribute.
+Another way to force remounting is the `key` attribute.
 
-So, the root of our problem is that react uses `type` to distinguish
-components, if an element has a `key` attribute, it will be used as an
-additional identifier: an element will be considered to be of the same
-sort if it has the same `type` and `key` before and after render. To
-solve our problem using `key`:
+The root of our problem is that React uses `type` to distinguish
+components. If an element has a `key` attribute, React uses it as an
+additional identifier: an element is considered the same if it has the
+same `type` and `key` before and after render. To solve our problem
+using `key`:
 
 ``` tsx
 {isCompany ?
@@ -369,8 +364,8 @@ They are now considered different components.
 ### The Problem of index-based `key` {#the-problem-of-index-based-key}
 
 When rendering a static list, it’s usually fine to use the array index
-as `key`. But, if the list item can be reordered, index-based keys will
-be problematic, consider the following example:
+as `key`. But if list items can be reordered, index-based keys are
+problematic. Consider the following example:
 
 ``` tsx
 const data = ['1', '2'];
@@ -400,12 +395,11 @@ If you reorder the two `Input`, the tree becomes
 
 Since the keys are index-based, they don’t change after the reorder.
 
-While we know that the two items are swapped, react sees the same `type`
-and `key` and will reuse state. So if you type something in the first
-input and then swap, the text still exist in the first input (by
-position).
+While we know the two items are swapped, React sees the same `type` and
+`key` and reuses the state. So if you type something in the first input
+and then swap, the text stays in the first input (by position).
 
-This won’t happen if we are using a real id that uniquely identifies the
+This won’t happen if we use a real id that uniquely identifies the
 input.
 
 Before
@@ -426,8 +420,8 @@ After
 ];
 ```
 
-Key is no longer the same for both positions. So react will bring the
-existing state to the correct `Input` and swap the two DOM nodes.
+The keys at both positions have changed, so React moves the existing
+state to the correct `Input` and swaps the two DOM nodes.
 
 ## Split providers to improve context performance {#split-providers-to-improve-context-performance}
 
@@ -447,14 +441,13 @@ const NavigationController = ({ children }) => {
 const useNavigation = () => useContext(Context);
 ```
 
-The problem with this is that as long as the state `isNavExpanded` is
-updated, the `value` object is also created as a new object, thus
-triggering a re-render from the downstream components, even if it only
-needs access to the `setIsNavExpanded` action.
+The problem is that whenever the state `isNavExpanded` updates, the
+`value` object is recreated, triggering a re-render of downstream
+components, even those that only need the `setIsNavExpanded` action.
 
-This also has the problem that if the parent of `NavigationController`
-re-renders often, any child of `NavigationControler` will also have to
-re-render, e.g:
+Another problem is that if the parent of `NavigationController`
+re-renders often, any child of `NavigationController` also has to
+re-render, e.g.:
 
 ``` typescript
 const Layout = ({ children }) => {
@@ -474,12 +467,12 @@ const Layout = ({ children }) => {
 };
 ```
 
-`Layout` re-renders on every scroll, triggering a re-render of
-`NavigationController`, it recreates the `value` object, thus any
-subscriber to it will re-render.
+`Layout` re-renders on every scroll, which re-renders
+`NavigationController` and recreates the `value` object, so every
+subscriber re-renders.
 
-Memoization can help solve problem 2 but not problem 1. Consider the
-following changes
+Memoization can solve the second problem but not the first. Consider the
+following changes:
 
 ``` typescript
 const toggle = useCallback(() => {
@@ -497,10 +490,10 @@ return (
 )
 ```
 
-With a memoized `value`, context subscribers won’t re-render if `Layout`
-updates, but the state `isNavExpanded` and the action `toggle` is still
-coupled together such that even if a component only needs the action, it
-still re-renders when the state changes.
+With a memoized `value`, context subscribers won’t re-render when
+`Layout` updates. But the state `isNavExpanded` and the action `toggle`
+are still coupled: a component that only needs the action still
+re-renders when the state changes.
 
 Solution: two providers
 
@@ -559,10 +552,10 @@ const useNavigationData = () => useContext(ContextData);
 const useNavigationApi = () => useContext(ContextApi);
 ```
 
-This way the actions do not depend on the state, and two `useContext`
-are also independent.
+This way, the actions don’t depend on the state, and the two
+`useContext` calls are independent.
 
-### An Alternative to Spliting Providers with HOC {#an-alternative-to-spliting-providers-with-hoc}
+### An Alternative to Splitting Providers with HOC {#an-alternative-to-spliting-providers-with-hoc}
 
 ``` tsx
 const withNavigationOpen = (AnyComponent) => {
@@ -578,17 +571,17 @@ const withNavigationOpen = (AnyComponent) => {
 };
 ```
 
-`AnyComponentMemo` is wrapped in `React.Memo`, the `open` callback is
-memoized in the context itself, so `AnyComponentMemo` wont’ re-render if
+`AnyComponentMemo` is wrapped in `React.memo` and the `open` callback is
+memoized in the context itself, so `AnyComponentMemo` won’t re-render if
 only the context state changes.
 
 ## Maintaining Stateful Closures with Ref {#maintaining-stateful-closures-with-ref}
 
-When passing callbacks to child components, we often face the dilemma
-that the callback needs access to some state, so you must put the state
-in the corresponding `useCallback`’s dependency array. Now the callback
-is recreated every time the state changes, which triggers a re-render of
-the callback’s consumer component and break its memoization.
+When passing callbacks to child components, the callback often needs
+access to some state, so the state must go in the `useCallback`
+dependency array. Now the callback is recreated every time the state
+changes, which re-renders the consumer component and breaks its
+memoization.
 
 ``` tsx
 #| caption: Child re-renders on every state update
@@ -600,8 +593,8 @@ const onclick = useCallback(() => {
 return <ChildMemo onClick={onclick} />;
 ```
 
-Solution: create the callback only once, inside the callback refer to a
-`ref` that is updated with the latest state.
+Solution: create the callback only once, and inside it refer to a `ref`
+that is updated with the latest state.
 
 ``` tsx
 const [value, setValue] = useState();
@@ -624,10 +617,10 @@ return <ChildMemo onClick={onClick} />
 
 ## Implement debouncing {#implement-debouncing}
 
-There are two variants of debouncing in react
+There are two ways to debounce in React:
 
-- debounce the state, and only calls the function when the debounced
-  state is updated. This is a simpler approach
+- Debounce the state, and only call the function when the debounced
+  state updates. This is the simpler approach.
 
 ``` tsx
 // use-debounce.ts
@@ -656,9 +649,9 @@ useEffect(() => {
 }, [debouncedValue]);
 ```
 
-- debounce the function (what the book teaches). With this approach we
-  can rely on `debounce` from lodash (or similar utility libraries), the
-  gist is that we only create the debounced function once, and use the
+- Debounce the function (what the book teaches). With this approach, we
+  can use `debounce` from lodash (or a similar utility library). The
+  gist is that we create the debounced function only once and use the
   ref trick to make sure it always has the latest state.
 
 ``` tsx
@@ -703,10 +696,9 @@ function Input() {
 
 ## `useLayoutEffect` {#uselayouteffect}
 
-On a 60 FPS machine, browser repaints the screen approximately every
-16ms. When a new task is pulled from the task queue, if the task takes
-longer than 16ms, the browser will wait until the task is finished
-before repainting the screen. In this code
+On a 60 FPS machine, the browser repaints the screen approximately every
+16ms. If a task pulled from the task queue takes longer than 16ms, the
+browser waits until it finishes before repainting. In this code
 
 ``` tsx
 const Component = () => {
@@ -717,18 +709,16 @@ const Component = () => {
 }
 ```
 
-`useLayoutEffect` **and** the return statement are considered as one
-task. In other words `useLayoutEffect` runs synchronously so every UI
-update will be in sync with the `useLayoutEffect` side effect. In
-contrast, `useEffect` runs asynchronously and is executed after
-repainting.
+`useLayoutEffect` **and** the return statement are considered one task.
+In other words, `useLayoutEffect` runs synchronously, so every UI update
+is in sync with its side effect. In contrast, `useEffect` runs
+asynchronously, after repainting.
 
-As a result, any side effect in `useLayoutEffect` will be processed
-before the browser repaints the screen, at the cost of a slower UI
-update. If the `useLayoutEffect` task takes longer than 16ms, the UI
-will become unresponsive.
+As a result, any side effect in `useLayoutEffect` is processed before
+the browser repaints the screen, at the cost of a slower UI update. If
+the task takes longer than 16ms, the UI becomes unresponsive.
 
-See the react [official
+See the React [official
 example](https://react.dev/reference/react/useLayoutEffect) for
 positioning a tooltip element with `useLayoutEffect`.
 
@@ -740,9 +730,9 @@ To do this, you need to render in two passes:
 
 - Render the tooltip again in the correct place.
 
-Even though we have the first, incorrect render, the user won’t see it
-because the browser will repaint the screen after the `useLayoutEffect`
-task is finished, and by that time the positioning is finished.
+Even though the first render is incorrect, the user won’t see it,
+because the browser only repaints after the `useLayoutEffect` task
+finishes, and by then the positioning is done.
 
 ``` tsx
 function Tooltip() {
@@ -764,7 +754,7 @@ Events from portals propagate according to the React tree rather than
 the DOM tree. For example, if you click inside a portal, and the portal
 is wrapped in `<div onClick>`, that onClick handler will fire. If this
 causes issues, either stop the event propagation from inside the portal,
-or move the portal itself up in the react tree.
+or move the portal itself up in the React tree.
 
 ``` tsx
 // clicking the button will trigger the onClick handler
@@ -774,8 +764,8 @@ or move the portal itself up in the react tree.
 </div>
 ```
 
-In contrast, non-react, standard dom events will propagate according to
-the DOM tree. If you listen for the event via `el.addEventListener`, it
+In contrast, standard (non-React) DOM events propagate according to the
+DOM tree. If you listen for the event via `el.addEventListener`, it
 won’t fire if the event is triggered by a portal element.
 
 ``` tsx
@@ -783,7 +773,7 @@ const ref = useRef()
 
 useEffect(() => {
 el.addEventListener("click", () => {
-    // trying to catch events, originated in the portalled elemented
+    // trying to catch events, originated in the portalled elements
     // not going to work!!
 });
 }, [])
@@ -825,5 +815,5 @@ export default function Page() {
 The gist is that the result callback in `fetchBio` captures the “stale”
 variable `ignore`, which is a reference that points to `true` if the
 component is unmounted. So although we create a new `ignore` variable
-for each render, the callback still cancels correctly because it access
-the previous scope.
+for each render, the callback still cancels correctly because it
+accesses the previous scope.

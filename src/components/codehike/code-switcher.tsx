@@ -1,61 +1,50 @@
-import { HighlightedCode, Pre } from "codehike/code";
-import { FileCodeIcon } from "lucide-react";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { callout } from "./callout";
-import { mark } from "./mark";
+import { cn } from "@/lib/utils";
+import { codeSurfaceClasses } from "./classes";
+import { CodeBody } from "./code-block";
+import { CopyButton } from "./copy-button";
+import { decodeAttribute } from "./encoding";
 
+type Entry = {
+  lang: string;
+  code: string;
+  filename?: string;
+  /** The highlighted <pre>, rendered at build time */
+  html?: string;
+};
+
+/** Several files in one code surface, with the file tabs in the header row. */
 export const CodeSwitcher = ({ data }: { data: string }) => {
-  const entries = (
-    JSON.parse(data) as Array<{
-      lang: string;
-      code: string;
-      filename?: string;
-      highlighted?: HighlightedCode;
-    }>
-  ).map((entry, index) => ({
-    ...entry,
-    key: entry.filename || `tab ${index}`,
-    highlightedCode: entry.highlighted,
-  }));
-
-  if (entries.length === 0) {
-    return null;
-  }
+  // `data` is base64 JSON from the content build (src/lib/content/rehype-code.ts)
+  const entries = JSON.parse(decodeAttribute(data)) as Entry[];
+  if (entries.length === 0) return null;
 
   return (
-    <Tabs defaultValue={entries[0].key}>
-      <TabsList className="mb-2 flex w-fit justify-start rounded-none p-0 font-mono">
-        {entries.map((entry) => (
+    <Tabs defaultValue="0" className={cn("not-prose my-6", codeSurfaceClasses)}>
+      {/* pr-10 keeps the last tab clear of the copy button */}
+      <TabsList
+        aria-label="Files"
+        className="h-10 w-full justify-start overflow-x-auto rounded-none border-b bg-transparent p-0 pr-10"
+      >
+        {entries.map((entry, index) => (
           <TabsTrigger
-            key={entry.key}
-            value={entry.key}
-            className="inline-flex items-center gap-2 rounded-none px-6 data-[state=active]:border-l-4 xl:text-lg"
+            key={index}
+            value={String(index)}
+            className="h-10 shrink-0 rounded-none border-b-2 border-transparent px-4 font-mono text-sm font-normal text-muted-foreground shadow-none transition-colors duration-150 hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
           >
-            <FileCodeIcon className="size-4" />
-            <span>{entry.key}</span>
+            {entry.filename ?? entry.lang}
           </TabsTrigger>
         ))}
       </TabsList>
-      {entries.map((entry) => (
+      {entries.map((entry, index) => (
         <TabsContent
-          key={entry.key}
-          value={entry.key}
-          className="rounded-md border"
+          key={index}
+          value={String(index)}
+          className="relative mt-0"
         >
-          {entry.highlightedCode ? (
-            <Pre
-              handlers={[callout, mark]}
-              code={entry.highlightedCode}
-              lang={entry.lang}
-              style={entry.highlightedCode.style}
-              className="my-2"
-            />
-          ) : (
-            <pre className="my-2">
-              <code>{entry.code}</code>
-            </pre>
-          )}
+          {/* Positioned up into the header row, beside the tabs */}
+          <CopyButton text={entry.code} className="-top-9 right-1" />
+          <CodeBody html={entry.html} code={entry.code} />
         </TabsContent>
       ))}
     </Tabs>

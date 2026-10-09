@@ -1,0 +1,130 @@
+/*
+  Reading layout for posts and notes, imported by their route layouts.
+
+  The body is ordinary block flow in one centred column, not a CSS grid:
+  grid items never collapse their margins, which would double every gap the
+  typography plugin's rhythm relies on. Margin notes and wide blocks leave
+  the column with negative margins sized in container units against
+  `.article`, which spans the page.
+
+  Class names inside the content (`column-margin`, `wider`, `two-column`,
+  `column-body-outset`) come from the Quarto export, so they are styled here
+  in plain CSS.
+*/
+
+.article {
+  /*
+    About 79 characters of body text per line (Geist averages 0.456em per
+    character), within WCAG 1.4.8's 80, while still fitting 73 characters of
+    14px code. `65ch` would be ~86: Geist's zero, which `ch` measures, is
+    wider than its average letter.
+  */
+  --measure: 36em;
+  container-type: inline-size;
+}
+
+/* The measure, or the viewport minus 1.25rem gutters. */
+.article-column {
+  margin-inline: auto;
+  width: min(var(--measure), 100% - 2.5rem);
+}
+
+/* The Markdown body. flow-root keeps floated margin notes inside it. */
+.article-body {
+  display: flow-root;
+
+  & > :first-child {
+    margin-top: 0;
+  }
+
+  & > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+/*
+  Section headings link to themselves (see components-registry.tsx) but keep
+  the heading's look. Unlayered, so it wins over the prose link styles.
+*/
+.heading-anchor {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration-line: none;
+  text-decoration-color: hsl(var(--muted-foreground) / 0.4);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+
+  &:hover {
+    text-decoration-line: underline;
+  }
+}
+
+.two-column {
+  display: grid;
+  gap: 1.5rem;
+  margin-block: 1.5em;
+
+  & > * > :first-child {
+    margin-top: 0;
+  }
+
+  & > * > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Below 80rem a margin note is an inline aside, so it stays visible on phones. */
+.column-margin {
+  margin-block: 1.5em;
+  border-inline-start: 2px solid hsl(var(--border));
+  padding-inline-start: 1em;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875em;
+
+  & > :first-child {
+    margin-top: 0;
+  }
+
+  & > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (width >= 64rem) {
+  .two-column {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 80rem) {
+  /*
+    The note floats into the right-hand track at the point it appears in
+    the text. `100%` is the column, `100cqi` the page, so the track is half
+    their difference, less a 3rem gap and a 2rem page edge.
+  */
+  .article-body > .column-margin {
+    --note-width: min(18rem, (100cqi - 100%) / 2 - 5rem);
+    float: right;
+    clear: right;
+    margin-inline-end: calc(-1 * (var(--note-width) + 3rem));
+    margin-block: 0.25em 1.5em;
+    border: 0;
+    padding: 0;
+    width: var(--note-width);
+
+    /* Code in a ~15rem track: one size down, so JSON examples fit. */
+    & pre {
+      font-size: 0.75rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  /*
+    Wide blocks grow into the right-hand track only: the left one holds the
+    sticky table of contents, which a centred breakout would scroll under.
+  */
+  .article-body > :is(.wider, .column-body-outset) {
+    clear: both;
+    margin-inline-end: max((100% - 100cqi) / 2 + 2rem, 100% - 72rem);
+  }
+}

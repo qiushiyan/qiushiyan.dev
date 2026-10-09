@@ -1,6 +1,4 @@
-import { AnnotationHandler, InlineAnnotation } from "codehike/code";
-
-import { cn } from "@/lib/utils";
+import type { AnnotationHandler, InlineAnnotation } from "codehike/code";
 
 export const callout: AnnotationHandler = {
   name: "callout",
@@ -25,12 +23,8 @@ export const callout: AnnotationHandler = {
       return (
         <div className="flex items-start">
           {children}
-          <div
-            className={cn(
-              "relative mb-1 w-fit whitespace-break-spaces rounded border border-current bg-secondary px-4 text-foreground"
-            )}
-          >
-            <div className="absolute top-1/2 h-2 w-2 -translate-x-5 -translate-y-1/2 rotate-45 border-b border-l border-current bg-secondary text-foreground" />
+          <div className="relative mb-1 w-fit rounded-md border bg-muted px-3 whitespace-break-spaces text-foreground">
+            <div className="absolute top-1/2 size-2 -translate-x-4 -translate-y-1/2 rotate-45 border-b border-l bg-muted" />
             {annotation.query}
           </div>
         </div>
@@ -44,13 +38,11 @@ export const callout: AnnotationHandler = {
         {children}
         <div
           style={{ marginLeft: `${marginLeft}ch` }}
-          className={cn(
-            "relative mt-1 w-fit whitespace-break-spaces rounded border border-current bg-secondary px-4 text-foreground"
-          )}
+          className="relative mt-1 w-fit rounded-md border bg-muted px-3 whitespace-break-spaces text-foreground"
         >
           <div
             style={{ left: `${column - marginLeft}ch` }}
-            className="absolute -top-px h-2 w-2 -translate-y-1/2 rotate-45 border-l border-t border-current bg-secondary text-foreground"
+            className="absolute -top-px size-2 -translate-y-1/2 rotate-45 border-t border-l bg-muted"
           />
           {annotation.query}
         </div>
