@@ -79,27 +79,16 @@ const tags = entry.collection === "posts" ? entry.data.tags : undefined;
             set:html={lead}
           />
         )}
-        <p class="flex flex-wrap gap-x-2 text-sm text-muted-foreground">
+        <p class="article-meta text-sm text-muted-foreground">
           {entry.data.draft && (
-            <>
-              <span class="font-medium text-foreground">Draft</span>
-              <span aria-hidden="true">·</span>
-            </>
+            <span class="font-medium text-foreground">Draft</span>
           )}
           <time datetime={date}>{formatDate(date)}</time>
-          {showReadingTime && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{readingTime} min read</span>
-            </>
-          )}
+          {showReadingTime && <span>{readingTime} min read</span>}
           {updated && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>
-                Updated <time datetime={updated}>{formatDate(updated)}</time>
-              </span>
-            </>
+            <span>
+              Updated <time datetime={updated}>{formatDate(updated)}</time>
+            </span>
           )}
           {showViewCount && <ViewCount slug={entry.id} />}
         </p>

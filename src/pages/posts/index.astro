@@ -19,7 +19,7 @@ const tagHref = (tag: string | null) =>
           href={tagHref(tag)}
           data-tag={tag ? tagSlug(tag) : ""}
           aria-current={tag === null ? "page" : undefined}
-          class="inline-flex h-10 items-center rounded-md px-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:underline aria-[current=page]:underline-offset-4"
+          class="inline-flex h-10 items-center rounded-md px-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:underline aria-[current=page]:decoration-(length:--underline-thickness) aria-[current=page]:underline-offset-(--underline-offset)"
         >
           {tag ?? "All"}
         </a>

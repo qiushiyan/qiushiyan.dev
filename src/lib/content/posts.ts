@@ -14,15 +14,19 @@ export const getAllTags = (posts: Post[]) =>
     a.localeCompare(b)
   );
 
-/** Other posts that share at least one tag with `post`, newest first. */
-export const getRelatedPosts = (posts: Post[], post: Post, limit = 3) =>
-  posts
+/** Other posts that share at least one tag with `post`, newest first. The pager already links its neighbours. */
+export const getRelatedPosts = (posts: Post[], post: Post, limit = 3) => {
+  const { older, newer } = getAdjacentPosts(posts, post);
+  return posts
     .filter(
       (other) =>
         other.id !== post.id &&
+        other.id !== older?.id &&
+        other.id !== newer?.id &&
         other.data.tags.some((tag) => post.data.tags.includes(tag))
     )
     .slice(0, limit);
+};
 
 /** The neighbours of `post` in date order. */
 export const getAdjacentPosts = (posts: Post[], post: Post) => {

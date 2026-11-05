@@ -57,12 +57,15 @@
   :root {
     --nav-height: 3.5rem;
     --radius: 0.5rem;
+    /* Every text link's underline, in em so it scales with the text. Colour stays with each link. */
+    --underline-thickness: 0.07em;
+    --underline-offset: 0.18em;
     scrollbar-gutter: stable;
 
     --background: 210 40% 98%;
     --foreground: 217 33% 17%;
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 16% 45%;
     --popover: 0 0% 100%;
     --popover-foreground: 217 33% 17%;
     --card: 0 0% 100%;

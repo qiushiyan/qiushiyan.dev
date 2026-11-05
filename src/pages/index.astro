@@ -210,8 +210,8 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
   .home-link {
     color: hsl(var(--muted-foreground));
     text-decoration-line: underline;
-    text-decoration-thickness: 0.07em;
-    text-underline-offset: 0.18em;
+    text-decoration-thickness: var(--underline-thickness);
+    text-underline-offset: var(--underline-offset);
     text-decoration-skip-ink: auto;
     border-radius: calc(var(--radius) - 4px);
     transition: color 150ms ease-out;

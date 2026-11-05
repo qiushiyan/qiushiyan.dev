@@ -25,7 +25,7 @@ const { headings } = Astro.props;
     >
       <nav
         aria-label="On this page"
-        class="max-h-[min(70dvh,32rem)] overflow-y-auto p-3"
+        class="max-h-[calc(100dvh-var(--nav-height)-1.25rem)] overflow-y-auto p-3"
       >
         <ArticleToc headings={headings} itemClass="py-2.5" />
       </nav>

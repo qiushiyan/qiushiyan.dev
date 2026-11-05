@@ -3,10 +3,10 @@ type Props = { slug: string };
 const { slug } = Astro.props;
 ---
 
-{/* Filled in after load by the script below; the slot keeps its width so the meta line never shifts. */}
+{/* Filled in after load by the script below; the slot keeps its size, wrapped or not, so nothing shifts. */}
 <view-count
   data-slug={slug}
-  class="inline-flex min-w-28 gap-x-2 tabular-nums"
+  class="min-h-lh min-w-28 tabular-nums"
 ></view-count>
 
 <script>
@@ -38,7 +38,7 @@ const { slug } = Astro.props;
         .then((data) => {
           const views = data?.views;
           if (typeof views !== "number") return;
-          this.innerHTML = `<span aria-hidden="true">·</span><span>${formatter.format(views)} ${views === 1 ? "view" : "views"}</span>`;
+          this.textContent = `${formatter.format(views)} ${views === 1 ? "view" : "views"}`;
         })
         .catch(() => {
           // Offline: the slot stays empty.

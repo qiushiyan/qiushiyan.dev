@@ -23,10 +23,33 @@
   container-type: inline-size;
 }
 
-/* The measure, or the viewport minus 1.25rem gutters. */
+/* The measure, or the viewport minus the nav's 1rem gutters. */
 .article-column {
   margin-inline: auto;
-  width: min(var(--measure), 100% - 2.5rem);
+  width: min(var(--measure), 100% - 2rem);
+}
+
+/*
+  Metadata under a title. Each dot hangs in the gap before its item and the row
+  clips its own edge, so a line that wraps never opens with a dot.
+*/
+.article-meta {
+  --gap: 1.25em;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--gap);
+  overflow: clip;
+
+  & > * {
+    position: relative;
+  }
+
+  & > :not(:empty)::before {
+    position: absolute;
+    translate: -50%;
+    inset-inline-start: calc(var(--gap) / -2);
+    content: "·" / "";
+  }
 }
 
 /* The Markdown body. flow-root keeps floated margin notes inside it. */
@@ -51,8 +74,8 @@
   font-weight: inherit;
   text-decoration-line: none;
   text-decoration-color: hsl(var(--muted-foreground) / 0.4);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
+  text-decoration-thickness: var(--underline-thickness);
+  text-underline-offset: var(--underline-offset);
 
   &:hover {
     text-decoration-line: underline;

@@ -20,7 +20,7 @@ const { related, older, newer } = Astro.props;
           <li class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
             <a
               href={routes.post(post.id)}
-              class="font-medium text-pretty underline decoration-current/0 underline-offset-[3px] transition-[text-decoration-color] duration-150 hover:decoration-current/40"
+              class="font-medium text-pretty underline decoration-current/0 decoration-(length:--underline-thickness) underline-offset-(--underline-offset) transition-[text-decoration-color] duration-150 hover:decoration-current/40"
             >
               {post.data.title}
             </a>
