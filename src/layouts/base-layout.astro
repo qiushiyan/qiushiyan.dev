@@ -80,8 +80,10 @@ const ogImage = new URL(routes.og(ogCard), siteConfig.url).href;
     {article?.tags?.map((tag) => (
       <meta property="article:tag" content={tag} />
     ))}
-    <Font cssVariable="--font-geist-sans" preload />
+    {/* Only the upright face: preloading the italic costs every page a file it rarely uses. */}
+    <Font cssVariable="--font-geist-sans" preload={[{ style: "normal" }]} />
     <Font cssVariable="--font-jetbrains-mono" />
+    <meta name="theme-color" content="#f8fafc" />
     <ThemeScript />
     <slot name="head" />
   </head>
@@ -95,6 +97,7 @@ const ogImage = new URL(routes.og(ogCard), siteConfig.url).href;
       <slot name="nav-controls" slot="controls" />
     </SiteNav>
     <slot />
-    <Analytics />
+    {/* Dev and prototype visits stay out of the site's stats. */}
+    {import.meta.env.PROD && <Analytics />}
   </body>
 </html>

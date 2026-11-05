@@ -153,6 +153,23 @@
     text-wrap: pretty;
   }
 
+  /* No double-tap-zoom wait on controls. */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* A long press on a control shouldn't select its label; content stays selectable. */
+  button,
+  [role="button"] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
   /* Anchored targets land below the sticky nav. */
   [id] {
     scroll-margin-top: calc(var(--nav-height) + 1.5rem);
@@ -171,6 +188,12 @@
     padding: 0.15em 0.3em;
     font-size: 0.875em;
   }
+}
+
+/* Set by the theme script for two frames, so a switch doesn't tween each colour at its own speed. */
+.no-transitions,
+.no-transitions * {
+  transition: none !important;
 }
 
 @media (prefers-reduced-motion: no-preference) {

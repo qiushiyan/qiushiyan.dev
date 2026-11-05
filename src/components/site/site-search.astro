@@ -24,7 +24,7 @@ import Search from "@lucide/astro/icons/search";
 <script>
   type PagefindModal = HTMLElement & { open(): void };
 
-  let modal: Promise<PagefindModal> | undefined;
+  let modal: Promise<PagefindModal | undefined> | undefined;
 
   const loadModal = () =>
     (modal ??= Promise.all([
@@ -35,9 +35,13 @@ import Search from "@lucide/astro/icons/search";
       element.setAttribute("reset-on-close", "");
       document.body.append(element);
       return customElements.whenDefined("pagefind-modal").then(() => element);
+    }).catch(() => {
+      // A dropped connection, or a tab older than the last deploy. The next try starts over.
+      modal = undefined;
+      return undefined;
     }));
 
-  const openSearch = () => void loadModal().then((element) => element.open());
+  const openSearch = () => void loadModal().then((element) => element?.open());
 
   document
     .querySelector("[data-site-search]")

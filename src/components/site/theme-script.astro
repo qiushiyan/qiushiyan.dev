@@ -10,6 +10,9 @@
   (() => {
     const root = document.documentElement;
     const media = matchMedia("(prefers-color-scheme: dark)");
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    // The browser bar matches --background in globals.css.
+    const themeColors = { light: "#f8fafc", dark: "#0b0c0f" };
     const stored = () => {
       try {
         return localStorage.getItem("theme");
@@ -24,9 +27,14 @@
           : media.matches
             ? "dark"
             : "light";
+      root.classList.add("no-transitions");
       root.classList.toggle("dark", resolved === "dark");
       root.classList.toggle("light", resolved === "light");
       root.style.colorScheme = resolved;
+      themeColor.content = themeColors[resolved];
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => root.classList.remove("no-transitions"))
+      );
       return resolved;
     };
     apply(stored());
