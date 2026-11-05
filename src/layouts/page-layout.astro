@@ -5,7 +5,7 @@ import type { ComponentProps } from "astro/types";
 
 /*
   Index and standalone pages (/posts, /notes, /recipes, /about, 404): the
-  nav, one centred column and a header.
+  nav, the site's text column and a header.
 */
 type Props = ComponentProps<typeof BaseLayout> & {
   heading: string;
@@ -18,22 +18,21 @@ const { heading, lead, class: className, ...base } = Astro.props;
 ---
 
 <BaseLayout {...base}>
-  <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-    <main
-      id={MAIN_CONTENT_ID}
-      class:list={["mx-auto w-full max-w-2xl py-12 sm:py-16", className]}
-    >
-      <header>
-        <h1 class="text-2xl/8 font-semibold tracking-tight text-balance">
-          {heading}
-        </h1>
-        {lead && (
-          <p class="mt-2 text-base/7 text-pretty text-muted-foreground">
-            {lead}
-          </p>
-        )}
-      </header>
-      <slot />
-    </main>
-  </div>
+  <main
+    id={MAIN_CONTENT_ID}
+    class:list={[
+      "mx-auto w-full max-w-column px-4 pt-12 pb-16 sm:pt-20",
+      className,
+    ]}
+  >
+    <header>
+      <h1 class="text-2xl/8 font-semibold tracking-tight text-balance">
+        {heading}
+      </h1>
+      {lead && (
+        <p class="mt-2 text-base/7 text-pretty text-muted-foreground">{lead}</p>
+      )}
+    </header>
+    <slot />
+  </main>
 </BaseLayout>

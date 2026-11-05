@@ -17,9 +17,9 @@ import BaseLayout from "./base-layout.astro";
 import type { Article } from "@/lib/content/articles";
 
 /*
-  A post or note page: the title block, the table of contents (a rail at
-  80rem and up, a nav popover below), the rendered Markdown and a footer
-  slot. Only the article body is indexed for site search.
+  A post or note page: the title and lead, the details and table of contents
+  (a rail at 80rem and up, a line and a nav popover below), the rendered
+  Markdown and a footer slot. Only the article body is indexed for site search.
 */
 type Props = {
   entry: Article;
@@ -64,37 +64,39 @@ const tags = entry.collection === "posts" ? entry.data.tags : undefined;
   <slot name="head" slot="head" />
   <TocPopover slot="nav-controls" headings={entry.data.headings} />
   <main id={MAIN_CONTENT_ID} class="pb-24">
-    <div class:list={["article lg:prose-lg", proseClasses]}>
-      <header class="article-column not-prose grid gap-4 pt-10 pb-8">
-        <h1
-          class="text-3xl/tight font-semibold tracking-tight text-balance sm:text-4xl/tight"
-          style={{ viewTransitionName: `${kind}-${entry.id}` }}
-          data-pagefind-meta="title"
-        >
-          {entry.data.title}
-        </h1>
-        {lead && (
-          <div
-            class="text-base/7 text-pretty text-muted-foreground sm:text-lg/8"
-            set:html={lead}
-          />
-        )}
-        <p class="article-meta text-sm text-muted-foreground">
-          {entry.data.draft && (
-            <span class="font-medium text-foreground">Draft</span>
-          )}
-          <time datetime={date}>{formatDate(date)}</time>
-          {showReadingTime && <span>{readingTime} min read</span>}
-          {updated && (
-            <span>
-              Updated <time datetime={updated}>{formatDate(updated)}</time>
-            </span>
-          )}
-          {showViewCount && <ViewCount slug={entry.id} />}
-        </p>
-      </header>
+    <div class:list={["article", proseClasses]}>
       <div class="relative">
-        <TocRail headings={entry.data.headings} />
+        <header class="article-column not-prose grid gap-1 pt-12 sm:pt-20 xl:pb-10">
+          <h1
+            class="text-2xl/tight font-semibold tracking-tight text-balance"
+            style={{ viewTransitionName: `${kind}-${entry.id}` }}
+            data-pagefind-meta="title"
+          >
+            {entry.data.title}
+          </h1>
+          {lead && (
+            <div
+              class="leading-normal text-pretty text-muted-foreground"
+              set:html={lead}
+            />
+          )}
+        </header>
+        <div class="article-column article-rail not-prose">
+          <p class="article-meta text-sm text-muted-foreground">
+            {entry.data.draft && (
+              <span class="font-medium text-foreground">Draft</span>
+            )}
+            <time datetime={date}>{formatDate(date)}</time>
+            {showReadingTime && <span>{readingTime} min read</span>}
+            {updated && (
+              <span>
+                Updated <time datetime={updated}>{formatDate(updated)}</time>
+              </span>
+            )}
+            {showViewCount && <ViewCount slug={entry.id} />}
+          </p>
+          <TocRail headings={entry.data.headings} />
+        </div>
         <article
           class="article-column article-body"
           data-pagefind-body

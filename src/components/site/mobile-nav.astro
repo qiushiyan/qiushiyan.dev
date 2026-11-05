@@ -1,13 +1,7 @@
 ---
-import { isActivePath, navLinks } from "@/lib/navigation";
+import { isActivePath, navLinks, publicPath, routes } from "@/lib/navigation";
 
-type Props = {
-  /** The column nav keeps its links on phones, so the menu is only for the narrowest. */
-  column?: boolean;
-};
-
-const { column = false } = Astro.props;
-const pathname = Astro.url.pathname;
+const pathname = publicPath(Astro.url.pathname);
 ---
 
 {/* A native popover: light dismiss, Escape and focus return come from the browser. */}
@@ -17,7 +11,8 @@ const pathname = Astro.url.pathname;
   popovertarget="mobile-menu"
   class:list={[
     "grid size-11 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] md:hidden",
-    column && "min-[22.5rem]:hidden",
+    // The home page keeps its links on phones, so there the menu is only for the narrowest.
+    pathname === routes.home && "min-[22.5rem]:hidden",
   ]}
 >
   <svg

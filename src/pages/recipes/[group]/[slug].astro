@@ -35,6 +35,7 @@ const { recipe, recipes } = Astro.props;
   canonical={routes.recipe(recipe.data.group, recipe.data.slug)}
   ogCard={`recipes/${recipe.id}`}
   bodyClass="h-dvh"
+  wideNav
 >
   <button
     slot="nav-controls"

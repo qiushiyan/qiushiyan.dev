@@ -45,7 +45,7 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
-  /* The home page: 36rem of text plus its gutters, shared with the nav that lines up with it. */
+  /* The site's text column: 36rem of text plus its gutters, shared by the nav and every page. */
   --container-column: 38rem;
 
   --radius-lg: var(--radius);
@@ -241,6 +241,56 @@
   ::view-transition-new(*),
   ::view-transition-old(*) {
     animation: none;
+  }
+}
+
+/* Rows of a title and a muted detail, on the home page and under a post. */
+.index-list a,
+.index-secondary {
+  transition: color 150ms ease-out;
+}
+
+.index-secondary {
+  color: hsl(var(--muted-foreground));
+}
+
+.index-list a:active {
+  color: hsl(var(--muted-foreground));
+}
+
+/* The whole row is the link, so the ring goes around the row. */
+.index-list a:focus-visible {
+  outline: none;
+}
+
+.index-list a:focus-visible::after {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 4px;
+  border-radius: calc(var(--radius) - 4px);
+}
+
+/* The row in use stays and its neighbours step back: the same rule for keyboard and pointer. */
+.index-row:has(a:focus-visible) .index-secondary {
+  color: hsl(var(--foreground));
+}
+
+.index-list:has(a:focus-visible) .index-row:not(:has(a:focus-visible)) a {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Keyboard moves through the list faster than a fade can finish. */
+.index-list:has(a:focus-visible) a,
+.index-list:has(a:focus-visible) .index-secondary {
+  transition: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .index-row:hover .index-secondary {
+    color: hsl(var(--foreground));
+  }
+
+  .index-list:hover .index-row:not(:hover) a {
+    color: hsl(var(--muted-foreground));
   }
 }
 

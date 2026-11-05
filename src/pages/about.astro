@@ -1,6 +1,7 @@
 ---
 import { Content } from "../../content/about.md";
 
+import "@/styles/article.css";
 import "@/styles/content.css";
 
 import PageLayout from "@/layouts/page-layout.astro";
@@ -8,13 +9,7 @@ import { proseClasses } from "@/lib/prose";
 ---
 
 <PageLayout title="About" heading="About">
-  {/* Section headings stay below the 24px page title. */}
-  <div
-    class:list={[
-      "mt-8 lg:prose-lg prose-h2:text-xl/8 prose-h2:font-semibold prose-h2:tracking-tight",
-      proseClasses,
-    ]}
-  >
+  <div class:list={["article article-body mt-8", proseClasses]}>
     <Content />
   </div>
 </PageLayout>

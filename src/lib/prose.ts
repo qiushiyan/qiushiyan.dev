@@ -1,6 +1,6 @@
 /*
-  The typography plugin's own scale and rhythm, with no size or margin
-  overrides: only weights, wrapping, link decoration and the code chip.
+  Weights, wrapping, link decoration and the code chip on top of the
+  typography plugin. Size and rhythm are in src/styles/article.css.
 */
 export const proseClasses = [
   "prose max-w-none",

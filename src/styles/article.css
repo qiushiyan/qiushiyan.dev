@@ -1,5 +1,5 @@
 /*
-  Reading layout for posts and notes, imported by their route layouts.
+  Reading layout for posts, notes and the about page, imported by their layouts.
 
   The body is ordinary block flow in one centred column, not a CSS grid:
   grid items never collapse their margins, which would double every gap the
@@ -14,13 +14,26 @@
 
 .article {
   /*
-    About 79 characters of body text per line (Geist averages 0.456em per
-    character), within WCAG 1.4.8's 80, while still fitting 73 characters of
-    14px code. `65ch` would be ~86: Geist's zero, which `ch` measures, is
-    wider than its average letter.
+    The site's text column, so a post keeps the home page's edges. At 17px that
+    is about 70 characters a line; `65ch` would be ~86, because Geist's zero,
+    which `ch` measures, is wider than its average letter. Code wider than
+    this leaves the column (below).
   */
-  --measure: 36em;
+  --measure: 36rem;
+  /* One line of body text, the unit of the rhythm below. */
+  --line: 1.6rem;
   container-type: inline-size;
+  font-size: 1rem;
+  line-height: 1.6;
+  /* Bare URLs in the text would otherwise push phones sideways. */
+  overflow-wrap: break-word;
+}
+
+@media (width >= 40rem) {
+  .article {
+    --line: 1.7rem;
+    font-size: 1.0625rem;
+  }
 }
 
 /* The measure, or the viewport minus the nav's 1rem gutters. */
@@ -52,9 +65,69 @@
   }
 }
 
+/*
+  The details and the table of contents, in that order. Below 80rem this is
+  the line under the title; from there it is the rail left of the column,
+  starting level with the title. Only the contents stick, so they keep the
+  rail's full height.
+*/
+.article-rail {
+  margin-block: 0.75rem 2rem;
+}
+
+@media (width >= 40rem) {
+  .article-rail {
+    margin-block-end: 2.5rem;
+  }
+}
+
+@media (width >= 80rem) {
+  .article-rail {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    margin: 0;
+    padding-top: 5rem;
+    width: calc((100% - var(--measure)) / 2 - 3rem);
+  }
+
+  .article-meta {
+    flex-direction: column;
+    margin-block-end: 2rem;
+    margin-inline-start: auto;
+    width: 100%;
+    max-width: 14rem;
+    line-height: 1.5rem;
+
+    & > :not(:empty)::before {
+      content: none;
+    }
+  }
+}
+
 /* The Markdown body. flow-root keeps floated margin notes inside it. */
 .article-body {
   display: flow-root;
+
+  & > :is(p, ul, ol, blockquote) {
+    margin-block: 0 var(--line);
+  }
+
+  & :is(li, li > p) {
+    margin-block: 0.35em;
+  }
+
+  & h2 {
+    margin-block: calc(var(--line) * 2) calc(var(--line) / 2);
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  & h3 {
+    margin-block: calc(var(--line) * 1.5) calc(var(--line) / 4);
+    font-size: 1.0625rem;
+    line-height: 1.35;
+  }
 
   & > :first-child {
     margin-top: 0;
@@ -84,6 +157,7 @@
 
 .two-column {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
   margin-block: 1.5em;
 
@@ -119,6 +193,16 @@
   }
 }
 
+/* Code leaves the column to stop lines scrolling: both ways here, rightwards beside the rail. */
+@media (width >= 48rem) {
+  .article-body > :is(.expressive-code, code-switcher, .code-figure) {
+    --code-width: min(46rem, 100cqi - 2rem);
+    clear: right;
+    margin-inline: calc((100% - var(--code-width)) / 2);
+    width: var(--code-width);
+  }
+}
+
 @media (width >= 80rem) {
   /*
     The note floats into the right-hand track at the point it appears in
@@ -140,6 +224,11 @@
       font-size: 0.75rem;
       line-height: 1.25rem;
     }
+  }
+
+  .article-body > :is(.expressive-code, code-switcher, .code-figure) {
+    --code-width: min(46rem, var(--measure) + (100cqi - var(--measure)) / 2 - 2rem);
+    margin-inline: 0 calc(100% - var(--code-width));
   }
 
   /*

@@ -20,6 +20,9 @@ export const navLinks = [
   { href: routes.about, label: "About" },
 ] as const;
 
+/** A page's public path. With `build.format: "file"`, a build sees `/index.html` and `/posts.html` where dev sees `/` and `/posts`. */
+export const publicPath = (pathname: string) => pathname.replace(/(\/index)?\.html$/, "") || "/";
+
 /** Whether `href` is the current section: the page itself or any page under it. */
 export const isActivePath = (pathname: string, href: string) =>
   pathname === href || pathname.startsWith(`${href}/`);

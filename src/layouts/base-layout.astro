@@ -7,7 +7,7 @@ import "@/styles/highlight.css";
 import Analytics from "@/components/site/analytics.astro";
 import SiteNav from "@/components/site/site-nav.astro";
 import ThemeScript from "@/components/site/theme-script.astro";
-import { routes } from "@/lib/navigation";
+import { publicPath, routes } from "@/lib/navigation";
 import { siteConfig } from "@/lib/site";
 
 /*
@@ -27,8 +27,8 @@ type Props = {
   article?: { publishedTime: string; modifiedTime?: string; tags?: string[] };
   /** Extra classes on <body>, e.g. `h-dvh` for the full-height recipe page. */
   bodyClass?: string;
-  /** Lines the nav up with the home page's column (see SiteNav). */
-  columnNav?: boolean;
+  /** For full-width tool pages (see SiteNav). */
+  wideNav?: boolean;
 };
 
 const {
@@ -38,7 +38,7 @@ const {
   ogCard = "site",
   article,
   bodyClass,
-  columnNav,
+  wideNav,
 } = Astro.props;
 const pageTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
 const ogImage = new URL(routes.og(ogCard), siteConfig.url).href;
@@ -67,7 +67,7 @@ const ogImage = new URL(routes.og(ogCard), siteConfig.url).href;
     <meta property="og:description" content={description} />
     <meta
       property="og:url"
-      content={new URL(Astro.url.pathname, siteConfig.url)}
+      content={new URL(publicPath(Astro.url.pathname), siteConfig.url)}
     />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
@@ -96,7 +96,7 @@ const ogImage = new URL(routes.og(ogCard), siteConfig.url).href;
       bodyClass,
     ]}
   >
-    <SiteNav column={columnNav}>
+    <SiteNav wide={wideNav}>
       <slot name="nav-controls" slot="controls" />
     </SiteNav>
     <slot />

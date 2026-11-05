@@ -1,27 +1,33 @@
 ---
-import { isActivePath, navLinks, routes } from "@/lib/navigation";
-import { MAIN_CONTENT_ID } from "@/lib/site";
+import { isActivePath, navLinks, publicPath, routes } from "@/lib/navigation";
+import { MAIN_CONTENT_ID, siteConfig } from "@/lib/site";
 import MobileNav from "./mobile-nav.astro";
 import SiteSearch from "./site-search.astro";
 import ThemeToggle from "./theme-toggle.astro";
 
 type Props = {
-  /**
-   * Lines the nav up with the home page's column, in that page's one text
-   * size. It drops the wordmark, hairline and sticking, and keeps the links
-   * visible on phones wide enough for them (four words and two icons fit from 360px).
-   */
-  column?: boolean;
+  /** A full-width tool page: the nav spans it, and keeps its hairline because nothing scrolls under it. */
+  wide?: boolean;
 };
 
-const { column = false } = Astro.props;
-const pathname = Astro.url.pathname;
+const { wide = false } = Astro.props;
+const pathname = publicPath(Astro.url.pathname);
+const isHome = pathname === routes.home;
+const links = [{ href: routes.home, label: "Home" }, ...navLinks];
 ---
 
+{/*
+  One nav on every page, lined up with the text column. Phones have no room
+  for the links beside the icons, so they show the name and a menu. Only the
+  home page keeps its links there: four words and two icons fit from 360px.
+*/}
 <header
+  data-site-nav
   class:list={[
-    "h-(--nav-height) shrink-0",
-    !column && "sticky top-0 z-40 border-b border-border bg-background",
+    "sticky top-0 z-40 h-(--nav-height) shrink-0 border-b bg-background",
+    wide
+      ? "border-border"
+      : "border-transparent transition-[border-color] duration-150 ease-out data-scrolled:border-border",
   ]}
 >
   <a
@@ -33,55 +39,51 @@ const pathname = Astro.url.pathname;
   <div
     class:list={[
       "mx-auto flex h-full w-full items-center gap-6 px-4",
-      column ? "max-w-column" : "max-w-7xl sm:px-6 lg:px-8",
+      !wide && "max-w-column",
     ]}
   >
-    {!column && (
+    {!isHome && (
       <a
         href={routes.home}
-        class="rounded-md py-2 text-base font-semibold tracking-tight"
+        class="rounded-md py-2.5 font-medium transition-colors active:text-muted-foreground md:hidden"
       >
-        qiushiyan.dev
+        {siteConfig.name}
       </a>
     )}
     <nav
       aria-label="Main"
       class:list={[
-        "hidden items-center",
-        column
-          ? "mr-auto -ml-1.5 min-[22.5rem]:flex md:-ml-3"
-          : "ml-auto md:flex",
+        "mr-auto -ml-1.5 hidden items-center md:flex md:-ml-3",
+        isHome && "min-[22.5rem]:flex",
       ]}
     >
-      {navLinks.map((link) => (
+      {links.map((link) => (
         <a
           href={link.href}
           aria-current={isActivePath(pathname, link.href) ? "page" : undefined}
           class:list={[
-            "inline-flex items-center rounded-md text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground",
-            column
-              ? "h-11 px-1.5 text-base active:text-foreground md:h-10 md:px-3"
-              : "h-10 px-3 text-sm font-medium",
+            "inline-flex h-11 items-center rounded-md px-1.5 text-base text-muted-foreground transition-colors hover:text-foreground active:text-foreground aria-[current=page]:text-foreground md:h-10 md:px-3",
+            link.href === routes.home && "max-md:hidden",
           ]}
         >
           {link.label}
         </a>
       ))}
     </nav>
-    {/*
-      The negative margin lines the last icon's glyph up with the container
-      edge. In the column the sun's rays stop short of its box, so it takes 2px more.
-    */}
-    <div
-      class:list={[
-        "flex items-center max-md:ml-auto",
-        column ? "-mr-3" : "-mr-2.5",
-      ]}
-    >
+    {/* The negative margin lines the sun's rays up with the container edge. */}
+    <div class="-mr-3 flex items-center max-md:ml-auto">
       <slot name="controls" />
       <SiteSearch />
       <ThemeToggle />
-      <MobileNav column={column} />
+      <MobileNav />
     </div>
   </div>
 </header>
+
+<script>
+  // The hairline appears once the page has moved under the nav.
+  const nav = document.querySelector("[data-site-nav]");
+  const update = () => nav?.toggleAttribute("data-scrolled", scrollY > 8);
+  addEventListener("scroll", update, { passive: true });
+  update();
+</script>

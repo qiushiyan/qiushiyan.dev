@@ -5,7 +5,7 @@
 
 /* ── <my-callout> ── */
 .callout {
-  margin-block: 1.5rem;
+  margin-block: var(--line);
   border-radius: var(--radius);
   background: hsl(var(--muted) / 0.6);
   padding: 1rem 1.25rem;
@@ -40,7 +40,7 @@
 .steps {
   counter-reset: step;
   margin-inline-start: 0.875rem;
-  margin-block: 2rem;
+  margin-block: var(--line);
   border-inline-start: 1px solid hsl(var(--border));
   padding-inline-start: 1.75rem;
 
@@ -77,7 +77,7 @@
 
 /* ── Embeds and images ── */
 .embed {
-  margin-block: 2rem;
+  margin-block: var(--line);
 
   & iframe {
     display: block;
@@ -108,7 +108,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  margin-block: 2rem;
+  margin-block: var(--line);
 
   & img {
     margin: 0;
@@ -133,7 +133,7 @@
 
 /* ── Code blocks (Expressive Code) ── */
 .article-body .expressive-code {
-  margin-block: 1.5rem;
+  margin-block: var(--line);
 }
 
 /* Inside a figure or tabs, the wrapper owns the margin. */
@@ -142,7 +142,7 @@
 }
 
 .code-figure {
-  margin-block: 1.5rem;
+  margin-block: var(--line);
 
   & figcaption {
     margin-top: 0.5rem;
@@ -205,7 +205,7 @@
 /* ── <code-switcher>: tabs over several code blocks ── */
 code-switcher {
   display: block;
-  margin-block: 1.5rem;
+  margin-block: var(--line);
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
   overflow: hidden;
