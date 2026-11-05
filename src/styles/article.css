@@ -3,7 +3,7 @@
 
   The body is ordinary block flow in one centred column, not a CSS grid:
   grid items never collapse their margins, which would double every gap the
-  typography plugin's rhythm relies on. Margin notes and wide blocks leave
+  rhythm below relies on. Margin notes and wide blocks leave
   the column with negative margins sized in container units against
   `.article`, which spans the page.
 

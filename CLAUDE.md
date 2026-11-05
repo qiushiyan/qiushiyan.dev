@@ -13,7 +13,7 @@ Deploys run on Cloudflare Workers Builds, whose dashboard calls `pnpm cf:build`,
 Every page is a static file. Astro builds with no adapter, so a route with `prerender = false` fails the build (`NoAdapterInstalled`): pages cannot read request data or D1. The only request-time code is `worker/index.ts`, and `wrangler.jsonc` routes to it with `run_worker_first: ["/api/*"]`; every other request is a static-asset hit that never runs the Worker, and an unknown path gets `dist/404.html`.
 
 - **Per-visitor state lives in small client scripts:** the view count, the `/posts?tag=` filter, the theme and search.
-- **URLs have no trailing slash:** `build.format: "file"` writes `dist/posts/<slug>.html`, which Workers Static Assets serves at `/posts/<slug>`. Public URLs are inbound links and feed GUIDs, so they don't change.
+- **URLs have no trailing slash:** `build.format: "file"` writes `dist/posts/<slug>.html`, which Workers Static Assets serves at `/posts/<slug>`. Public URLs are inbound links and feed GUIDs, so they don't change. A build's `Astro.url.pathname` keeps the file name (`/index.html`, `/posts.html`) where dev has `/` and `/posts`, so compare paths through `publicPath` (`src/lib/navigation.ts`).
 
 **View counts:**
 
@@ -50,7 +50,7 @@ page  --render(entry)-->  <Content />
 - **Layouts:**
   - `src/layouts/base-layout.astro`: the HTML shell, metadata and nav.
   - `page-layout.astro`: index pages.
-  - `article-layout.astro`: posts and notes. It renders the entry, its table of contents and the content-element scripts, and marks the body for search.
+  - `article-layout.astro`: posts and notes. It renders the entry, its details and table of contents and the content-element scripts, and marks the body for search. The details and contents are one block, a line under the title that becomes the rail at 80rem, so `<view-count>` renders once.
 - **Components by area:** `site/` (nav, theme, search, analytics), `article/`, `lists/`, `post/`, `recipe/`, `content-elements/`.
 - **Interactivity:**
   - Pages are static HTML with small inline scripts, usually a custom element.
@@ -74,7 +74,8 @@ page  --render(entry)-->  <Content />
 
 - **`src/styles/globals.css` holds the whole Tailwind v4 config:** CSS-first design tokens for light and `.dark`. Dark mode is the `.dark` class (`@custom-variant dark`), not the OS media query.
 - **Typography-plugin overrides stay in `src/styles/typography.config.mjs` through `@config`.** Moving them to CSS reorders `.prose` against spacing utilities; the file header explains why.
-- **The article column, margin notes and TOC rail** are plain CSS in `src/styles/article.css`. `src/styles/content.css` styles the HTML the Markdown pipeline produces and the site's look for Expressive Code blocks.
+- **One text column:** the nav and index pages sit in `max-w-column`, and `--measure` in `article.css` is the same 36rem of text, so every left edge matches. Only the recipe workspace spans the page (`wideNav`).
+- **Reading type and layout are plain CSS in `src/styles/article.css`:** body size, the rhythm in units of `--line`, code's breakout past the column, margin notes and the rail. `src/styles/content.css` styles the HTML the Markdown pipeline produces and the site's look for Expressive Code blocks.
 - **Code colours** are the light and dark themes in `src/lib/markdown/code-themes.ts`, built from the palette in `tailwind-code-theme.ts`. Keep every token at 4.5:1 contrast or better in both themes.
 - **Design direction:**
   - Quiet chrome and text-first lists.
