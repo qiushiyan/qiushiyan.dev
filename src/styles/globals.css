@@ -241,8 +241,11 @@
   color: hsl(var(--popover-foreground));
 }
 
-/* Site search (Pagefind's component UI, loaded on first use) on the site's tokens. */
-:root {
+/*
+  Site search (Pagefind's component UI, loaded on first use) on the site's tokens.
+  `html:root` outranks Pagefind's own `:root`, whichever stylesheet loads last.
+*/
+html:root {
   --pf-text: hsl(var(--foreground));
   --pf-text-secondary: hsl(var(--muted-foreground));
   --pf-text-muted: hsl(var(--muted-foreground));
