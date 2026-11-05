@@ -1,6 +1,12 @@
 ---
 import { isActivePath, navLinks } from "@/lib/navigation";
 
+type Props = {
+  /** The column nav keeps its links on phones, so the menu is only for the narrowest. */
+  column?: boolean;
+};
+
+const { column = false } = Astro.props;
 const pathname = Astro.url.pathname;
 ---
 
@@ -9,7 +15,10 @@ const pathname = Astro.url.pathname;
   type="button"
   aria-label="Menu"
   popovertarget="mobile-menu"
-  class="grid size-11 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] md:hidden"
+  class:list={[
+    "grid size-11 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] md:hidden",
+    column && "min-[22.5rem]:hidden",
+  ]}
 >
   <svg
     aria-hidden="true"

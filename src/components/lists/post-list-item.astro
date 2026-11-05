@@ -4,9 +4,8 @@ import { formatDate } from "@/lib/format";
 import { routes } from "@/lib/navigation";
 import type { Post } from "@/lib/content/posts";
 
-type Props = { post: Post; headingLevel?: 2 | 3 };
-const { post, headingLevel = 2 } = Astro.props;
-const Heading = headingLevel === 2 ? "h2" : "h3";
+type Props = { post: Post };
+const { post } = Astro.props;
 ---
 
 {/* One post row: only the title is a link, stretched over the whole row. */}
@@ -14,7 +13,7 @@ const Heading = headingLevel === 2 ? "h2" : "h3";
   class="group relative py-5 first:pt-0"
   data-tags={post.data.tags.map(tagSlug).join(" ")}
 >
-  <Heading
+  <h2
     class="text-base/6 font-medium text-balance"
     style={{ viewTransitionName: `post-${post.id}` }}
   >
@@ -24,7 +23,7 @@ const Heading = headingLevel === 2 ? "h2" : "h3";
     >
       {post.data.title}
     </a>
-  </Heading>
+  </h2>
   <div
     class="mt-1 line-clamp-2 text-sm/6 text-pretty text-muted-foreground [&_code]:text-[0.875em]"
     set:html={post.data.descriptionHtml}

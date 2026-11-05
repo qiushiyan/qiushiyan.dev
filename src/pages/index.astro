@@ -1,79 +1,245 @@
 ---
-import FeaturedProjects from "@/components/home/featured-projects.astro";
-import PostListItem from "@/components/lists/post-list-item.astro";
-import PageLayout from "@/layouts/page-layout.astro";
+import BaseLayout from "@/layouts/base-layout.astro";
 import { getPosts } from "@/lib/content/posts";
+import { formatYear } from "@/lib/format";
 import { routes } from "@/lib/navigation";
-import { siteConfig } from "@/lib/site";
-import { socialIcons } from "@/lib/social-icons";
+import { MAIN_CONTENT_ID, siteConfig } from "@/lib/site";
+import type { Post } from "@/lib/content/posts";
 
 const posts = (await getPosts()).slice(0, 5);
-const social = [
-  { href: siteConfig.links.github, label: "GitHub", path: socialIcons.github },
-  { href: siteConfig.links.x, label: "X", path: socialIcons.x },
+const postYear = (post: Post) => formatYear(post.data.date.toISOString());
+const rows = posts.map((post, index) => ({
+  post,
+  repeatsYear: index > 0 && postYear(posts[index - 1]!) === postYear(post),
+}));
+
+const projects = [
   {
-    href: siteConfig.links.linkedin,
-    label: "LinkedIn",
-    path: socialIcons.linkedin,
+    name: "tidymodels/agua",
+    href: "https://tidymodels.github.io/agua",
+    description: "Create and evaluate models using tidymodels and h2o",
+  },
+  {
+    name: "js-notebook",
+    href: "https://javascript-notebook.netlify.app",
+    description: "An interactive notebook for JavaScript and TypeScript",
+  },
+  {
+    name: "linux-command-line-cheatsheet",
+    href: "https://github.com/qiushiyan/linux-command-line-cheatsheet",
+    description: "A cheatsheet of common Linux commands",
   },
 ];
+
+const external = { target: "_blank", rel: "noopener noreferrer" };
 ---
 
-<PageLayout canonical={routes.home}>
-  <header>
-    <h1 class="text-2xl/8 font-semibold tracking-tight">{siteConfig.name}</h1>
-    <p class="mt-3 text-base/7 text-pretty text-muted-foreground">
-      I'm a full-stack engineer working on LLM-related products. I write about
-      web development, data tooling and programming languages.
-    </p>
-    {/* -ml-3 keeps the first glyph on the column edge despite the 44px hit area. */}
-    <ul aria-label="Elsewhere" class="mt-4 -ml-3 flex">
-      {social.map(({ href, label, path }) => (
-        <li>
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="grid size-11 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-5"
+{/*
+  One size and two colours: hierarchy comes from colour and position. Every
+  control here has its own :active, so the browser's grey tap flash can go.
+*/}
+<BaseLayout
+  canonical={routes.home}
+  columnNav
+  bodyClass="[-webkit-tap-highlight-color:transparent]"
+>
+  <main
+    id={MAIN_CONTENT_ID}
+    class="mx-auto w-full max-w-column px-4 pt-12 pb-16 sm:pt-20"
+  >
+    <header>
+      <h1 class="text-base/6 font-medium">{siteConfig.name}</h1>
+      <p class="mt-1 text-base/relaxed text-pretty">
+        I’m a full-stack engineer working on <span class="whitespace-nowrap"
+          >LLM-related</span
+        > products.{" "}
+        <span class="text-muted-foreground">
+          I write about web development, data tooling and programming languages.
+          <span class="block">
+            Find me on <a
+              class="home-link home-inline"
+              href={siteConfig.links.github}
+              {...external}>GitHub</a
+            >, <a
+              class="home-link home-inline home-inline-short"
+              href={siteConfig.links.x}
+              {...external}>X</a
+            > and <a
+              class="home-link home-inline"
+              href={siteConfig.links.linkedin}
+              {...external}>LinkedIn</a
+            >.
+          </span>
+        </span>
+      </p>
+    </header>
+
+    <section aria-labelledby="home-posts" class="mt-12">
+      <div class="flex items-baseline justify-between gap-4">
+        <h2 id="home-posts" class="text-base/6 text-muted-foreground">
+          Posts
+        </h2>
+        <a
+          href={routes.posts}
+          class="home-link relative before:absolute before:-inset-x-2 before:-inset-y-2.5"
+        >
+          All posts
+        </a>
+      </div>
+      <ol class="home-list mt-2">
+        {rows.map(({ post, repeatsYear }) => (
+          <li class="home-row relative flex items-baseline justify-between gap-6 py-2.5">
+            <h3
+              class="min-w-0 text-base/6 break-words"
+              style={{ viewTransitionName: `post-${post.id}` }}
             >
-              <path d={path} />
-            </svg>
-            <span class="sr-only">{label}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </header>
+              <a href={routes.post(post.id)} class="after:absolute after:inset-0">
+                {post.data.title}
+              </a>
+              {post.data.draft && (
+                <span class="text-muted-foreground"> Draft</span>
+              )}
+            </h3>
+            <time
+              datetime={post.data.date.toISOString()}
+              class:list={[
+                "home-secondary shrink-0 text-base/6 tabular-nums",
+                repeatsYear && "home-repeat",
+              ]}
+            >
+              {postYear(post)}
+            </time>
+          </li>
+        ))}
+      </ol>
+    </section>
 
-  <section aria-labelledby="home-posts" class="mt-12">
-    <div class="flex items-baseline justify-between gap-4">
-      <h2 id="home-posts" class="text-sm font-medium text-muted-foreground">
-        Posts
+    <section aria-labelledby="home-projects" class="mt-10">
+      <h2 id="home-projects" class="text-base/6 text-muted-foreground">
+        Projects
       </h2>
-      <a
-        href={routes.posts}
-        class="relative text-sm text-muted-foreground transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-foreground"
-      >
-        All posts
-      </a>
-    </div>
-    <ol class="mt-4 divide-y divide-border">
-      {posts.map((post) => (
-        <PostListItem post={post} headingLevel={3} />
-      ))}
-    </ol>
-  </section>
+      <ul class="home-list mt-2">
+        {projects.map((project) => (
+          <li class="home-row relative flex flex-wrap items-baseline justify-between gap-x-6 py-2.5">
+            <h3 class="min-w-0 text-base/6 break-words">
+              <a
+                href={project.href}
+                {...external}
+                class="after:absolute after:inset-0"
+              >
+                {project.name}
+              </a>
+            </h3>
+            <p class="home-secondary min-w-0 text-base/6 max-sm:basis-full">
+              {project.description}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+</BaseLayout>
 
-  <section aria-labelledby="home-projects" class="mt-12">
-    <h2 id="home-projects" class="text-sm font-medium text-muted-foreground">
-      Projects
-    </h2>
-    <FeaturedProjects />
-  </section>
-</PageLayout>
+<style>
+  .home-list a,
+  .home-secondary {
+    transition: color 150ms ease-out;
+  }
+
+  .home-secondary {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .home-list a:active {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* The whole row is the link, so the ring goes around the row. */
+  .home-list a:focus-visible {
+    outline: none;
+  }
+
+  .home-list a:focus-visible::after {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 4px;
+    border-radius: calc(var(--radius) - 4px);
+  }
+
+  /* The year above already covers this row; it returns when the row is in use. */
+  .home-repeat {
+    opacity: 0;
+    transition:
+      opacity 150ms ease-out,
+      color 150ms ease-out;
+  }
+
+  /* The row in use stays and its neighbours step back: the same rule for keyboard and pointer. */
+  .home-row:has(a:focus-visible) .home-repeat {
+    opacity: 1;
+  }
+
+  .home-row:has(a:focus-visible) .home-secondary {
+    color: hsl(var(--foreground));
+  }
+
+  .home-list:has(a:focus-visible) .home-row:not(:has(a:focus-visible)) a {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Keyboard moves through the list faster than a fade can finish. */
+  .home-list:has(a:focus-visible) a,
+  .home-list:has(a:focus-visible) .home-secondary {
+    transition: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .home-row:hover .home-repeat {
+      opacity: 1;
+    }
+
+    .home-row:hover .home-secondary {
+      color: hsl(var(--foreground));
+    }
+
+    .home-list:hover .home-row:not(:hover) a {
+      color: hsl(var(--muted-foreground));
+    }
+  }
+
+  /* The underline is the only thing marking these inside a muted sentence, so it keeps the text's full contrast. */
+  .home-link {
+    color: hsl(var(--muted-foreground));
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.07em;
+    text-underline-offset: 0.18em;
+    text-decoration-skip-ink: auto;
+    border-radius: calc(var(--radius) - 4px);
+    transition: color 150ms ease-out;
+  }
+
+  .home-link:active {
+    color: hsl(var(--foreground));
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .home-link:hover {
+      color: hsl(var(--foreground));
+    }
+  }
+
+  .home-inline {
+    position: relative;
+  }
+
+  /* GitHub and X sit 7px apart, so their targets stop short of each other. */
+  .home-inline::before {
+    content: "";
+    position: absolute;
+    inset: -0.72rem -3px;
+  }
+
+  /* X is one letter; its target grows over the plain " and " beside it. */
+  .home-inline-short::before {
+    inset-inline-end: -1rem;
+  }
+</style>

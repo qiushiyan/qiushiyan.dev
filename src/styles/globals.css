@@ -45,6 +45,9 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  /* The home page: 36rem of text plus its gutters, shared with the nav that lines up with it. */
+  --container-column: 38rem;
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -78,6 +81,8 @@
     --warning-foreground: 0 0% 100%;
     /* Focus outlines stay neutral: the foreground colour, never the accent. */
     --ring: 217 33% 17%;
+    --elevation-popover:
+      0 0 0 1px rgb(0 0 0 / 0.05), 0 1px 3px rgb(0 0 0 / 0.05), 0 8px 24px -6px rgb(0 0 0 / 0.1);
 
     --expo-out: linear(
       0 0%,
@@ -122,6 +127,8 @@
     --warning: 43 96% 56%;
     --warning-foreground: 26 83% 14%;
     --ring: 210 20% 92%;
+    /* Shadows don't read on a dark surface, so the edge is a ring. */
+    --elevation-popover: 0 0 0 1px rgb(255 255 255 / 0.09);
   }
 }
 
@@ -134,6 +141,12 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-synthesis: none;
+  }
+
+  /* Selected text takes the foreground: muted text on this tint drops below 4.5:1. */
+  ::selection {
+    background: color-mix(in oklab, hsl(var(--primary)) 22%, transparent);
+    color: hsl(var(--foreground));
   }
 
   :focus-visible {
@@ -233,8 +246,8 @@
   position: fixed;
   margin: 0;
   inset: calc(var(--nav-height) + 0.25rem) 1rem auto auto;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
-  border: 1px solid hsl(var(--border));
+  box-shadow: var(--elevation-popover);
+  border: 0;
   border-radius: var(--radius);
   background: hsl(var(--popover));
   max-width: calc(100vw - 2rem);

@@ -2,7 +2,7 @@ import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from "astro-expressive-code";
 import pagefind from "astro-pagefind";
-import { defineConfig, envField, fontProviders } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 
 import { expressiveCodeOptions, markdownProcessor } from "./src/lib/markdown";
 
@@ -26,16 +26,6 @@ export default defineConfig({
     pagefind(),
   ],
   markdown: { syntaxHighlight: false, processor: markdownProcessor },
-  env: {
-    schema: {
-      // Optional: raises the GitHub API rate limit for the home page's repository stats.
-      GITHUB_TOKEN: envField.string({
-        context: "server",
-        access: "secret",
-        optional: true,
-      }),
-    },
-  },
   fonts: [
     {
       provider: fontProviders.google(),

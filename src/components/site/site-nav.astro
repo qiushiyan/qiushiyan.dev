@@ -5,40 +5,83 @@ import MobileNav from "./mobile-nav.astro";
 import SiteSearch from "./site-search.astro";
 import ThemeToggle from "./theme-toggle.astro";
 
+type Props = {
+  /**
+   * Lines the nav up with the home page's column, in that page's one text
+   * size. It drops the wordmark, hairline and sticking, and keeps the links
+   * visible on phones wide enough for them (four words and two icons fit from 360px).
+   */
+  column?: boolean;
+};
+
+const { column = false } = Astro.props;
 const pathname = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-40 h-(--nav-height) shrink-0 border-b border-border bg-background">
+<header
+  class:list={[
+    "h-(--nav-height) shrink-0",
+    !column && "sticky top-0 z-40 border-b border-border bg-background",
+  ]}
+>
   <a
     href={`#${MAIN_CONTENT_ID}`}
     class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:shadow-md"
   >
     Skip to content
   </a>
-  <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-    <a
-      href={routes.home}
-      class="rounded-md py-2 text-base font-semibold tracking-tight"
+  <div
+    class:list={[
+      "mx-auto flex h-full w-full items-center gap-6 px-4",
+      column ? "max-w-column" : "max-w-7xl sm:px-6 lg:px-8",
+    ]}
+  >
+    {!column && (
+      <a
+        href={routes.home}
+        class="rounded-md py-2 text-base font-semibold tracking-tight"
+      >
+        qiushiyan.dev
+      </a>
+    )}
+    <nav
+      aria-label="Main"
+      class:list={[
+        "hidden items-center",
+        column
+          ? "mr-auto -ml-1.5 min-[22.5rem]:flex md:-ml-3"
+          : "ml-auto md:flex",
+      ]}
     >
-      qiushiyan.dev
-    </a>
-    <nav aria-label="Main" class="ml-auto hidden items-center md:flex">
       {navLinks.map((link) => (
         <a
           href={link.href}
           aria-current={isActivePath(pathname, link.href) ? "page" : undefined}
-          class="inline-flex h-10 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground"
+          class:list={[
+            "inline-flex items-center rounded-md text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground",
+            column
+              ? "h-11 px-1.5 text-base active:text-foreground md:h-10 md:px-3"
+              : "h-10 px-3 text-sm font-medium",
+          ]}
         >
           {link.label}
         </a>
       ))}
     </nav>
-    {/* The negative margin lines the last icon's glyph up with the container edge. */}
-    <div class="-mr-2.5 flex items-center max-md:ml-auto">
+    {/*
+      The negative margin lines the last icon's glyph up with the container
+      edge. In the column the sun's rays stop short of its box, so it takes 2px more.
+    */}
+    <div
+      class:list={[
+        "flex items-center max-md:ml-auto",
+        column ? "-mr-3" : "-mr-2.5",
+      ]}
+    >
       <slot name="controls" />
       <SiteSearch />
       <ThemeToggle />
-      <MobileNav />
+      <MobileNav column={column} />
     </div>
   </div>
 </header>

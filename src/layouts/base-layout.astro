@@ -27,6 +27,8 @@ type Props = {
   article?: { publishedTime: string; modifiedTime?: string; tags?: string[] };
   /** Extra classes on <body>, e.g. `h-dvh` for the full-height recipe page. */
   bodyClass?: string;
+  /** Lines the nav up with the home page's column (see SiteNav). */
+  columnNav?: boolean;
 };
 
 const {
@@ -36,6 +38,7 @@ const {
   ogCard = "site",
   article,
   bodyClass,
+  columnNav,
 } = Astro.props;
 const pageTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
 const ogImage = new URL(routes.og(ogCard), siteConfig.url).href;
@@ -93,7 +96,7 @@ const ogImage = new URL(routes.og(ogCard), siteConfig.url).href;
       bodyClass,
     ]}
   >
-    <SiteNav>
+    <SiteNav column={columnNav}>
       <slot name="nav-controls" slot="controls" />
     </SiteNav>
     <slot />

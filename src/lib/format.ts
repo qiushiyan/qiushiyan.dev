@@ -9,3 +9,6 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 /** Formats an ISO date string as "Sep 15, 2024". */
 export const formatDate = (iso: string) => dateFormatter.format(new Date(iso));
+
+/** The year of an ISO date string, in UTC like `formatDate`. */
+export const formatYear = (iso: string) => new Date(iso).getUTCFullYear();
