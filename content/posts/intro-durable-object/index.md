@@ -33,12 +33,12 @@ headings:
 ## What are Durable Objects and Why They are Needed {#what-are-durable-objects-and-why-they-are-needed}
 
 Cloudflare Workers are one of the most impactful serverless solutions.
-Each worker is replicated across Cloudflare’s global network in hundreds
-of cities worldwide, also called the **Edge**. When a user makes a
+Each worker is replicated across Cloudflare’s global network in more
+than 340 cities worldwide, also called the **Edge**. When a user makes a
 request, a worker instance is spawned close to the user’s geographic
 location to serve the request with minimal latency.
 
-<img src="global-network.svg" alt="Cloudflare network where each circle represents an edge location in which workers can be spawned">
+<img src="network-map.svg" alt="Cloudflare network in November 2026, where each dot represents an edge location in which workers can be spawned">
 
 This works great until you need to coordinate between clients. In edge
 deployments, requests are spread across multiple workers, which makes it

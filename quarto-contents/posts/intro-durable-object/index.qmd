@@ -13,9 +13,9 @@ components:
 
 ## What are Durable Objects and Why They are Needed
 
-Cloudflare Workers are one of the most impactful serverless solutions. Each worker is replicated across Cloudflare's global network in hundreds of cities worldwide, also called the **Edge**. When a user makes a request, a worker instance is spawned close to the user's geographic location to serve the request with minimal latency.
+Cloudflare Workers are one of the most impactful serverless solutions. Each worker is replicated across Cloudflare's global network in more than 340 cities worldwide, also called the **Edge**. When a user makes a request, a worker instance is spawned close to the user's geographic location to serve the request with minimal latency.
 
-<img src="global-network.svg" alt="Cloudflare network where each circle represents an edge location in which workers can be spawned">
+<img src="network-map.svg" alt="Cloudflare network in November 2026, where each dot represents an edge location in which workers can be spawned">
 
 This works great until you need to coordinate between clients. In edge deployments, requests are spread across multiple workers, which makes it hard to share and manage state. If you are building a collaborative editor, you want every edit User A makes to be reflected instantly on User B's screen. One obvious solution is to store keystrokes in a database and have all clients constantly poll it to stay in sync. At best, this performs poorly. Moreover, we will have consistency problems, with database transactions from different users fighting each other and failing constantly.
 
