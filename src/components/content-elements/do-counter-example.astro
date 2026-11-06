@@ -208,8 +208,10 @@
       width: 2.25rem;
       height: 2.25rem;
 
-      &:hover {
-        background: var(--color-muted);
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: var(--color-muted);
+        }
       }
 
       &:disabled {

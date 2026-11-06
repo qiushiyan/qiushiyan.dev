@@ -7,6 +7,15 @@
 /* The theme script (src/components/site/theme-script.astro) toggles the `dark` class on <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Tailwind's own `hover:` checks hover alone, so a tap can leave the style stuck on a hybrid device. */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
 /*
   Colours: the light values here, the dark ones under `.dark` below, and the
   aliases follow. `.dark` is the one theme switch: Expressive Code and the
@@ -266,6 +275,22 @@
   background: var(--color-popover);
   max-width: calc(100vw - 2rem);
   color: var(--color-popover-foreground);
+}
+
+/*
+  From 40rem the nav sits in the column, far from the viewport's edge, so the
+  popover follows its trigger: `popovertarget` is the anchor. The 0.75rem end
+  margin is the controls' negative margin, which lines it up with the column.
+*/
+@supports (position-area: block-end) {
+  @media (width >= 40rem) {
+    .nav-popover {
+      inset: auto;
+      margin-block-start: 0.75rem;
+      margin-inline-end: 0.75rem;
+      position-area: block-end span-inline-start;
+    }
+  }
 }
 
 /*

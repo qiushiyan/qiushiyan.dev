@@ -12,7 +12,7 @@ const tagHref = (tag: string | null) =>
 
 <PageLayout title="Posts" heading="Posts">
   {/* The page is static: `?tag=` filters the list on the client (script below). Without JS every post shows. */}
-  <post-tag-filter>
+  <post-tag-filter class="block">
     <nav aria-label="Filter by tag" class="mt-6 -ml-2.5 flex flex-wrap">
       {[null, ...tags].map((tag) => (
         <a
@@ -26,7 +26,7 @@ const tagHref = (tag: string | null) =>
       ))}
     </nav>
     <p aria-live="polite" class="sr-only" data-status></p>
-    <ol class="mt-6 divide-y divide-border">
+    <ol class="mt-6">
       {posts.map((post) => (
         <PostListItem post={post} />
       ))}

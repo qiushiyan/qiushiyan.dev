@@ -150,8 +150,10 @@
   text-decoration-thickness: var(--underline-thickness);
   text-underline-offset: var(--underline-offset);
 
-  &:hover {
-    text-decoration-line: underline;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      text-decoration-line: underline;
+    }
   }
 }
 

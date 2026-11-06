@@ -233,8 +233,10 @@ code-switcher {
     color: var(--color-muted-foreground);
     font: 0.875rem var(--font-mono);
 
-    &:hover {
-      color: var(--color-foreground);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--color-foreground);
+      }
     }
 
     &[aria-selected="true"] {
