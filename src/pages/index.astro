@@ -160,7 +160,7 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
 
   /* The underline is the only thing marking these inside a muted sentence, so it keeps the text's full contrast. */
   .home-link {
-    color: hsl(var(--muted-foreground));
+    color: var(--color-muted-foreground);
     text-decoration-line: underline;
     text-decoration-thickness: var(--underline-thickness);
     text-underline-offset: var(--underline-offset);
@@ -170,12 +170,12 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
   }
 
   .home-link:active {
-    color: hsl(var(--foreground));
+    color: var(--color-foreground);
   }
 
   @media (hover: hover) and (pointer: fine) {
     .home-link:hover {
-      color: hsl(var(--foreground));
+      color: var(--color-foreground);
     }
   }
 

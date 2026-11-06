@@ -156,9 +156,9 @@
   .counter-card {
     display: grid;
     gap: 0.75rem;
-    border: 1px solid hsl(var(--border));
+    border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    background: hsl(var(--card));
+    background: var(--color-card);
     padding: 1.5rem;
 
     & p {
@@ -171,7 +171,7 @@
   }
 
   .counter-name {
-    color: hsl(var(--muted-foreground));
+    color: var(--color-muted-foreground);
     font: 0.875rem var(--font-mono);
   }
 
@@ -184,11 +184,11 @@
 
   .counter-error {
     min-height: 2.25rem;
-    color: hsl(var(--muted-foreground));
+    color: var(--color-muted-foreground);
     font-size: 0.875rem;
 
     & button {
-      color: hsl(var(--foreground));
+      color: var(--color-foreground);
       text-decoration: underline;
       text-underline-offset: var(--underline-offset);
     }
@@ -202,14 +202,14 @@
       display: grid;
       place-items: center;
       transition: background-color 150ms;
-      border: 1px solid hsl(var(--border));
+      border: 1px solid var(--color-border);
       border-radius: calc(var(--radius) - 2px);
-      background: hsl(var(--background));
+      background: var(--color-background);
       width: 2.25rem;
       height: 2.25rem;
 
       &:hover {
-        background: hsl(var(--muted));
+        background: var(--color-muted);
       }
 
       &:disabled {
@@ -226,7 +226,7 @@
 
   .counter-notice {
     min-height: 1.25rem;
-    color: hsl(var(--muted-foreground));
+    color: var(--color-muted-foreground);
     font-size: 0.875rem;
   }
 </style>

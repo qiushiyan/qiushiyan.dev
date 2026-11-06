@@ -28,7 +28,7 @@ const editorTheme = EditorView.baseTheme({
     lineHeight: "1.6",
     padding: "12px 16px",
   },
-  "&dark .cm-activeLine": { backgroundColor: "hsl(var(--accent)) !important" },
+  "&dark .cm-activeLine": { backgroundColor: "var(--color-accent) !important" },
   ".cm-gutters": { display: "none" },
 });
 const extensions = [editorTheme, python()];

@@ -146,7 +146,7 @@
   color: inherit;
   font-weight: inherit;
   text-decoration-line: none;
-  text-decoration-color: hsl(var(--muted-foreground) / 0.4);
+  text-decoration-color: color-mix(in oklab, var(--color-muted-foreground) 40%, transparent);
   text-decoration-thickness: var(--underline-thickness);
   text-underline-offset: var(--underline-offset);
 
@@ -173,9 +173,9 @@
 /* Below 80rem a margin note is an inline aside, so it stays visible on phones. */
 .column-margin {
   margin-block: 1.5em;
-  border-inline-start: 2px solid hsl(var(--border));
+  border-inline-start: 2px solid var(--color-border);
   padding-inline-start: 1em;
-  color: hsl(var(--muted-foreground));
+  color: var(--color-muted-foreground);
   font-size: 0.875em;
 
   & > :first-child {

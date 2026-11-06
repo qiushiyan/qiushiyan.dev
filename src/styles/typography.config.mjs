@@ -18,9 +18,9 @@ const config = {
       typography: {
         DEFAULT: {
           css: {
-            "--tw-prose-body": "hsl(var(--foreground))",
-            "--tw-prose-headings": "hsl(var(--foreground))",
-            "--tw-prose-lead": "hsl(var(--muted-foreground))",
+            "--tw-prose-body": "var(--color-foreground)",
+            "--tw-prose-headings": "var(--color-foreground)",
+            "--tw-prose-lead": "var(--color-muted-foreground)",
             /*
               Links are body text and need 4.5:1. The light primary is 3.9:1
               on the page, so links mix a fifth of the foreground into it:
@@ -28,17 +28,17 @@ const config = {
               slightly lighter one in dark mode (12.5:1).
             */
             "--tw-prose-links":
-              "color-mix(in srgb, hsl(var(--primary)) 80%, hsl(var(--foreground)))",
-            "--tw-prose-bold": "hsl(var(--foreground))",
-            "--tw-prose-counters": "hsl(var(--muted-foreground))",
-            "--tw-prose-bullets": "hsl(var(--muted-foreground))",
-            "--tw-prose-hr": "hsl(var(--border))",
-            "--tw-prose-quotes": "hsl(var(--foreground))",
-            "--tw-prose-quote-borders": "hsl(var(--border))",
-            "--tw-prose-captions": "hsl(var(--muted-foreground))",
-            "--tw-prose-code": "hsl(var(--foreground))",
-            "--tw-prose-th-borders": "hsl(var(--border))",
-            "--tw-prose-td-borders": "hsl(var(--border))",
+              "color-mix(in srgb, var(--color-primary) 80%, var(--color-foreground))",
+            "--tw-prose-bold": "var(--color-foreground)",
+            "--tw-prose-counters": "var(--color-muted-foreground)",
+            "--tw-prose-bullets": "var(--color-muted-foreground)",
+            "--tw-prose-hr": "var(--color-border)",
+            "--tw-prose-quotes": "var(--color-foreground)",
+            "--tw-prose-quote-borders": "var(--color-border)",
+            "--tw-prose-captions": "var(--color-muted-foreground)",
+            "--tw-prose-code": "var(--color-foreground)",
+            "--tw-prose-th-borders": "var(--color-border)",
+            "--tw-prose-td-borders": "var(--color-border)",
             p: {
               "+ ul": {
                 margin: "0px",
