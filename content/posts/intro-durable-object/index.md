@@ -38,7 +38,7 @@ of cities worldwide, also called the **Edge**. When a user makes a
 request, a worker instance is spawned close to the user’s geographic
 location to serve the request with minimal latency.
 
-<img src="https://workers.cloudflare.com/resources/illustrations/global-network-dark-theme.svg" alt="Cloudflare network where each circle represents an edge location in which workers can be spawned">
+<img src="global-network.svg" alt="Cloudflare network where each circle represents an edge location in which workers can be spawned">
 
 This works great until you need to coordinate between clients. In edge
 deployments, requests are spread across multiple workers, which makes it
