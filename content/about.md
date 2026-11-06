@@ -1,4 +1,4 @@
-I am a platform engineer at [Planlab](https://planlab.ai) in London, building AI coworkers for project scheduling. Before that, I worked as a full-stack engineer on LLM products and in several data science positions. This website is where I share technical notes on various programming topics.
+I am a platform engineer at [Planlab](https://planlab.ai) in London. Before that, I worked as a full-stack engineer on LLM products and in several data science positions. This website is where I share technical notes on various programming topics.
 
 ## Technologies
 

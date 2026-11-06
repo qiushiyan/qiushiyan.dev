@@ -43,8 +43,11 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
     <header>
       <h1 class="text-base/6 font-medium">{siteConfig.name}</h1>
       <p class="mt-1 text-base/relaxed">
-        I’m a platform engineer at Planlab, building AI coworkers for project
-        scheduling.{" "}
+        I’m a platform engineer at <a
+          class="home-link home-link-strong home-inline"
+          href="https://planlab.ai"
+          {...external}>Planlab</a
+        >.{" "}
         <span class="text-muted-foreground">
           I write about web development, data tooling and programming languages.
           <span class="block">
@@ -168,6 +171,21 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
   @media (hover: hover) and (pointer: fine) {
     .home-link:hover {
       color: var(--color-foreground);
+    }
+  }
+
+  /* Inside the foreground sentence, so it starts at that colour and dims in use. */
+  .home-link-strong {
+    color: var(--color-foreground);
+  }
+
+  .home-link-strong:active {
+    color: var(--color-muted-foreground);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .home-link-strong:hover {
+      color: var(--color-muted-foreground);
     }
   }
 
