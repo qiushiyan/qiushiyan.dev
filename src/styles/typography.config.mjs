@@ -7,8 +7,8 @@
   plugin's own `.prose` rule: Tailwind v4 sorts utilities by the CSS
   properties they contain, and the `margin` below is what keeps `.prose`
   ahead of the `m-*` / `mx-*` / `my-*` utilities, so those utilities still win
-  over prose element styles (e.g. `my-0` on a code block's <pre>). Moving these
-  overrides into plain CSS changes that order and visibly breaks code blocks.
+  over prose element styles. Moving these overrides into plain CSS changes that
+  order and shifts the layout of posts.
 */
 
 /** @type {import("tailwindcss").Config} */
