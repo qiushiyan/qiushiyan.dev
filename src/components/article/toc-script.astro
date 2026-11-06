@@ -23,7 +23,9 @@
 
   if (headings.length > 0) {
     const offset =
-      parseFloat(getComputedStyle(headings[0]).scrollMarginTop) + READING_ROOM;
+      parseFloat(
+        getComputedStyle(document.documentElement).scrollPaddingBlockStart
+      ) + READING_ROOM;
     let frame = 0;
     let active: string | undefined;
 

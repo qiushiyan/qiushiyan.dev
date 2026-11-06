@@ -16,11 +16,6 @@ code {
   font-variant-ligatures: none;
 }
 
-/* Inline code wraps with the sentence; only blocks keep their line breaks. */
-:not(pre) > code {
-  overflow-wrap: break-word;
-}
-
 /* Expressive Code resets every property on its <code>; restate the rule there. */
 .expressive-code .frame pre > code {
   font-variant-ligatures: none;

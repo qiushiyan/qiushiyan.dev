@@ -14,7 +14,7 @@ const { post } = Astro.props;
   data-tags={post.data.tags.map(tagSlug).join(" ")}
 >
   <h2
-    class="text-base/6 font-medium text-balance"
+    class="text-base/6 font-medium"
     style={{ viewTransitionName: `post-${post.id}` }}
   >
     <a
@@ -25,7 +25,7 @@ const { post } = Astro.props;
     </a>
   </h2>
   <div
-    class="mt-1 line-clamp-2 text-sm/6 text-pretty text-muted-foreground [&_code]:text-[0.875em]"
+    class="mt-1 line-clamp-2 text-sm/6 text-muted-foreground [&_code]:text-[0.875em]"
     set:html={post.data.descriptionHtml}
   />
   <p class="mt-2 text-sm text-muted-foreground">

@@ -68,7 +68,7 @@ const tags = entry.collection === "posts" ? entry.data.tags : undefined;
       <div class="relative">
         <header class="article-column not-prose grid gap-1 pt-12 sm:pt-20 xl:pb-10">
           <h1
-            class="text-2xl/tight font-semibold tracking-tight text-balance"
+            class="text-2xl/tight font-semibold tracking-tight"
             style={{ viewTransitionName: `${kind}-${entry.id}` }}
             data-pagefind-meta="title"
           >
@@ -76,7 +76,7 @@ const tags = entry.collection === "posts" ? entry.data.tags : undefined;
           </h1>
           {lead && (
             <div
-              class="leading-normal text-pretty text-muted-foreground"
+              class="leading-normal text-muted-foreground"
               set:html={lead}
             />
           )}

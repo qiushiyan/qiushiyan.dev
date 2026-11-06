@@ -64,6 +64,11 @@
     --underline-thickness: 0.07em;
     --underline-offset: 0.18em;
     scrollbar-gutter: stable;
+    /* Anchored targets land below the sticky nav. */
+    scroll-padding-block-start: calc(var(--nav-height) + 1.5rem);
+    text-wrap: pretty;
+    /* Bare URLs in the text would otherwise push phones sideways. */
+    overflow-wrap: break-word;
 
     --elevation-popover:
       0 0 0 1px oklch(0 0 none / 0.05), 0 1px 3px oklch(0 0 none / 0.05),
@@ -129,14 +134,9 @@
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     text-wrap: balance;
-  }
-
-  p,
-  li,
-  figcaption {
-    text-wrap: pretty;
   }
 
   /* No double-tap-zoom wait on controls. */
@@ -154,11 +154,6 @@
   [role="button"] {
     user-select: none;
     -webkit-user-select: none;
-  }
-
-  /* Anchored targets land below the sticky nav. */
-  [id] {
-    scroll-margin-top: calc(var(--nav-height) + 1.5rem);
   }
 
   pre,
@@ -202,18 +197,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  ::view-transition-group(*),
-  ::view-transition-new(*),
-  ::view-transition-old(*) {
-    animation: none;
-  }
-}
-
 /* Rows of a title and a muted detail, on the home page and under a post. */
 .index-list a,
 .index-secondary {
@@ -230,7 +213,7 @@
 
 /* The whole row is the link, so the ring goes around the row. */
 .index-list a:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
 }
 
 .index-list a:focus-visible::after {

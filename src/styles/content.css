@@ -208,7 +208,7 @@ code-switcher {
   margin-block: var(--line);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow: clip;
 
   /* One surface: the tab row replaces each block's own frame. */
   & .expressive-code .frame,

@@ -48,7 +48,7 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
   >
     <header>
       <h1 class="text-base/6 font-medium">{siteConfig.name}</h1>
-      <p class="mt-1 text-base/relaxed text-pretty">
+      <p class="mt-1 text-base/relaxed">
         I’m a full-stack engineer working on <span class="whitespace-nowrap"
           >LLM-related</span
         > products.{" "}
@@ -89,7 +89,7 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
         {rows.map(({ post, repeatsYear }) => (
           <li class="index-row relative flex items-baseline justify-between gap-6 py-2.5">
             <h3
-              class="min-w-0 text-base/6 break-words"
+              class="min-w-0 text-base/6"
               style={{ viewTransitionName: `post-${post.id}` }}
             >
               <a href={routes.post(post.id)} class="after:absolute after:inset-0">
@@ -120,7 +120,7 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
       <ul class="index-list mt-2">
         {projects.map((project) => (
           <li class="index-row relative flex flex-wrap items-baseline justify-between gap-x-6 py-2.5">
-            <h3 class="min-w-0 text-base/6 break-words">
+            <h3 class="min-w-0 text-base/6">
               <a
                 href={project.href}
                 {...external}
@@ -164,7 +164,6 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
     text-decoration-line: underline;
     text-decoration-thickness: var(--underline-thickness);
     text-underline-offset: var(--underline-offset);
-    text-decoration-skip-ink: auto;
     border-radius: calc(var(--radius) - 4px);
     transition: color 150ms ease-out;
   }
