@@ -1,6 +1,8 @@
 ---
 import Search from "@lucide/astro/icons/search";
 
+import NavIconButton from "./nav-icon-button.astro";
+
 /*
   Full-text search over posts and notes, with Pagefind. `astro build` indexes
   every element marked `data-pagefind-body` (the article layout) into
@@ -11,15 +13,13 @@ import Search from "@lucide/astro/icons/search";
 */
 ---
 
-<button
-  type="button"
+<NavIconButton
   aria-label="Search"
   aria-keyshortcuts="Meta+K Control+K"
   data-site-search
-  class="grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11"
 >
   <Search aria-hidden="true" stroke-width={1.5} class="size-5" />
-</button>
+</NavIconButton>
 
 <script>
   type PagefindModal = HTMLElement & { open(): void };

@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+/* An icon button in the nav. `class` adds its visibility rules, such as `md:hidden`. */
+type Props = HTMLAttributes<"button">;
+
+const { class: className, ...attributes } = Astro.props;
+---
+
+<button
+  type="button"
+  class:list={[
+    "grid size-10 place-items-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground active:scale-[0.96] motion-safe:transition-[color,scale] max-md:size-11",
+    className,
+  ]}
+  {...attributes}
+>
+  <slot />
+</button>

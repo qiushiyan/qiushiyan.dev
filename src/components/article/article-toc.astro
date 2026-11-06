@@ -14,7 +14,7 @@ const { headings, itemClass = "" } = Astro.props;
         href={`#${heading.slug}`}
         data-toc-link={heading.slug}
         class:list={[
-          "-ml-px block border-l-2 border-transparent pr-2 text-muted-foreground transition-colors duration-150 hover:text-foreground aria-[current=location]:border-primary aria-[current=location]:text-foreground",
+          "-ml-px block border-l-2 border-transparent pr-2 text-muted-foreground transition-colors duration-150 hover:text-foreground active:text-foreground aria-[current=location]:border-primary aria-[current=location]:text-foreground",
           heading.depth === 3 ? "pl-6" : "pl-3.5",
           itemClass,
         ]}

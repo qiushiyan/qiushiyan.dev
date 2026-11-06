@@ -26,7 +26,7 @@ const id = `group-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
       <li class="group relative flex items-baseline justify-between gap-4 py-3">
         <a
           href={item.href}
-          class="font-medium transition-colors group-hover:text-primary after:absolute after:inset-0"
+          class="font-medium transition-colors group-hover:text-primary active:text-primary after:absolute after:inset-0"
         >
           <span style={{ viewTransitionName: item.viewTransitionName }}>
             {item.title}

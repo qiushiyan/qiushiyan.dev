@@ -3,6 +3,7 @@ import PanelLeft from "@lucide/astro/icons/panel-left";
 
 import RecipeSidebar from "@/components/recipe/recipe-sidebar.astro";
 import { RecipeWorkspace } from "@/components/recipe/recipe-workspace";
+import NavIconButton from "@/components/site/nav-icon-button.astro";
 import BaseLayout from "@/layouts/base-layout.astro";
 import { getRecipes, groupLabel, runnableGroups } from "@/lib/content/recipes";
 import { routes } from "@/lib/navigation";
@@ -37,15 +38,14 @@ const { recipe, recipes } = Astro.props;
   bodyClass="h-dvh"
   wideNav
 >
-  <button
+  <NavIconButton
     slot="nav-controls"
-    type="button"
     aria-label="Recipes"
     popovertarget="recipes-menu"
-    class="grid size-11 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground md:hidden"
+    class="md:hidden"
   >
     <PanelLeft aria-hidden="true" stroke-width={1.5} class="size-5" />
-  </button>
+  </NavIconButton>
   <div id="recipes-menu" popover class="nav-popover w-64 p-2">
     <RecipeSidebar recipes={recipes} current={recipe.id} />
   </div>

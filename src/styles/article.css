@@ -85,7 +85,7 @@
     inset-block: 0;
     inset-inline-start: 0;
     margin: 0;
-    padding-top: 5rem;
+    padding-block-start: 5rem;
     width: calc((100% - var(--measure)) / 2 - 3rem);
   }
 
@@ -128,30 +128,11 @@
   }
 
   & > :first-child {
-    margin-top: 0;
+    margin-block-start: 0;
   }
 
   & > :last-child {
-    margin-bottom: 0;
-  }
-}
-
-/*
-  Section headings link to themselves (see components-registry.tsx) but keep
-  the heading's look. Unlayered, so it wins over the prose link styles.
-*/
-.heading-anchor {
-  color: inherit;
-  font-weight: inherit;
-  text-decoration-line: none;
-  text-decoration-color: color-mix(in oklab, var(--color-muted-foreground) 40%, transparent);
-  text-decoration-thickness: var(--underline-thickness);
-  text-underline-offset: var(--underline-offset);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      text-decoration-line: underline;
-    }
+    margin-block-end: 0;
   }
 }
 
@@ -162,11 +143,11 @@
   margin-block: 1.5em;
 
   & > * > :first-child {
-    margin-top: 0;
+    margin-block-start: 0;
   }
 
   & > * > :last-child {
-    margin-bottom: 0;
+    margin-block-end: 0;
   }
 }
 
@@ -179,11 +160,11 @@
   font-size: 0.875em;
 
   & > :first-child {
-    margin-top: 0;
+    margin-block-start: 0;
   }
 
   & > :last-child {
-    margin-bottom: 0;
+    margin-block-end: 0;
   }
 }
 

@@ -1,6 +1,7 @@
 ---
 import TableOfContents from "@lucide/astro/icons/table-of-contents";
 
+import NavIconButton from "@/components/site/nav-icon-button.astro";
 import ArticleToc from "./article-toc.astro";
 
 type Props = { headings: { slug: string; depth: number; html: string }[] };
@@ -10,14 +11,13 @@ const { headings } = Astro.props;
 {/* The table of contents below 80rem, where there is no room for the rail: a native popover from the nav. */}
 {headings.length > 0 && (
   <>
-    <button
-      type="button"
+    <NavIconButton
       aria-label="On this page"
       popovertarget="toc-popover"
-      class="grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11 xl:hidden"
+      class="xl:hidden"
     >
       <TableOfContents aria-hidden="true" stroke-width={1.5} class="size-5" />
-    </button>
+    </NavIconButton>
     <div
       id="toc-popover"
       popover

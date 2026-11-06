@@ -83,7 +83,7 @@ function Workspace({ title, recipesHref, files }: Props) {
       <div className="flex min-h-12 items-center gap-2 py-2 text-sm">
         <a
           href={recipesHref}
-          className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+          className="shrink-0 text-muted-foreground transition-colors hover:text-foreground active:text-foreground"
         >
           Recipes
         </a>
@@ -96,7 +96,7 @@ function Workspace({ title, recipesHref, files }: Props) {
           onClick={run}
           disabled={busy}
           title="Run (⌘/Ctrl + Enter)"
-          className="ml-auto inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border bg-background pr-3 pl-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-50"
+          className="ml-auto inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border bg-background pr-3 pl-2.5 text-sm font-medium transition-colors hover:bg-muted active:scale-[0.96] motion-safe:transition-[color,background-color,scale] disabled:pointer-events-none disabled:opacity-50"
         >
           {busy ? (
             <Loader2Icon aria-hidden className="size-3.5 motion-safe:animate-spin" />

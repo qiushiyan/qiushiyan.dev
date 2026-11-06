@@ -22,7 +22,7 @@ const { recipes, current } = Astro.props;
               <a
                 href={href}
                 aria-current={recipe.id === current ? "page" : undefined}
-                class="block rounded-md px-2 py-1.5 text-muted-foreground -outline-offset-2 transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
+                class="block rounded-md px-2 py-1.5 text-muted-foreground -outline-offset-2 transition-colors hover:bg-muted hover:text-foreground active:bg-muted active:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
               >
                 {recipe.data.title}
               </a>

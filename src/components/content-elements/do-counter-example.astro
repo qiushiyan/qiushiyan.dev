@@ -189,6 +189,10 @@
       color: var(--color-foreground);
       text-decoration: underline;
       text-underline-offset: var(--underline-offset);
+
+      &:active {
+        color: var(--color-muted-foreground);
+      }
     }
   }
 
@@ -205,6 +209,16 @@
       background: var(--color-background);
       width: 2.25rem;
       height: 2.25rem;
+
+      &:active {
+        scale: 0.96;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        transition:
+          background-color 150ms,
+          scale 150ms;
+      }
 
       @media (hover: hover) and (pointer: fine) {
         &:hover {

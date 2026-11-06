@@ -34,14 +34,8 @@ const projects = [
 const external = { target: "_blank", rel: "noopener noreferrer" };
 ---
 
-{/*
-  One size and two colours: hierarchy comes from colour and position. Every
-  control here has its own :active, so the browser's grey tap flash can go.
-*/}
-<BaseLayout
-  canonical={routes.home}
-  bodyClass="[-webkit-tap-highlight-color:transparent]"
->
+{/* One size and two colours: hierarchy comes from colour and position. */}
+<BaseLayout canonical={routes.home}>
   <main
     id={MAIN_CONTENT_ID}
     class="mx-auto w-full max-w-column px-4 pt-12 pb-16 sm:pt-20"

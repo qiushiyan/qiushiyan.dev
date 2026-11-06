@@ -1,14 +1,11 @@
 ---
 import Moon from "@lucide/astro/icons/moon";
 import Sun from "@lucide/astro/icons/sun";
+
+import NavIconButton from "./nav-icon-button.astro";
 ---
 
-<button
-  type="button"
-  aria-label="Toggle dark mode"
-  data-theme-toggle
-  class="grid size-10 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] max-md:size-11"
->
+<NavIconButton aria-label="Toggle dark mode" data-theme-toggle>
   {/* Both icons are in the HTML and the `dark` class picks one. */}
   <Sun aria-hidden="true" stroke-width={1.5} class="size-5 dark:hidden" />
   <Moon
@@ -16,7 +13,7 @@ import Sun from "@lucide/astro/icons/sun";
     stroke-width={1.5}
     class="hidden size-5 dark:block"
   />
-</button>
+</NavIconButton>
 
 <script>
   for (const button of document.querySelectorAll("[data-theme-toggle]")) {

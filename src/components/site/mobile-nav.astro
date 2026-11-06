@@ -1,16 +1,16 @@
 ---
 import { isActivePath, navLinks, publicPath, routes } from "@/lib/navigation";
+import NavIconButton from "./nav-icon-button.astro";
 
 const pathname = publicPath(Astro.url.pathname);
 ---
 
 {/* A native popover: light dismiss, Escape and focus return come from the browser. */}
-<button
-  type="button"
+<NavIconButton
   aria-label="Menu"
   popovertarget="mobile-menu"
   class:list={[
-    "grid size-11 place-items-center rounded-md text-muted-foreground transition-[color,scale] duration-150 ease-out hover:text-foreground active:scale-[0.96] md:hidden",
+    "md:hidden",
     // The home page keeps its links on phones, so there the menu is only for the narrowest.
     pathname === routes.home && "min-[22.5rem]:hidden",
   ]}
@@ -29,7 +29,7 @@ const pathname = publicPath(Astro.url.pathname);
     <path d="M3 12H16"></path>
     <path d="M3 19H21"></path>
   </svg>
-</button>
+</NavIconButton>
 <div id="mobile-menu" popover class="nav-popover w-56 p-1">
   <nav aria-label="Main">
     <ul>
@@ -40,7 +40,7 @@ const pathname = publicPath(Astro.url.pathname);
             aria-current={
               isActivePath(pathname, link.href) ? "page" : undefined
             }
-            class="flex h-11 items-center rounded-sm px-3 text-base text-muted-foreground -outline-offset-2 transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
+            class="flex h-11 items-center rounded-sm px-3 text-base text-muted-foreground -outline-offset-2 transition-colors hover:bg-muted hover:text-foreground active:bg-muted active:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
           >
             {link.label}
           </a>

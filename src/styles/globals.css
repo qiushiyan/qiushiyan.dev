@@ -69,6 +69,12 @@
     text-wrap: pretty;
     /* Bare URLs in the text would otherwise push phones sideways. */
     overflow-wrap: break-word;
+    /*
+      Every control has its own :active, so the browser's grey tap flash can go.
+      A new control needs one before it ships. Pagefind's `all: initial` keeps
+      the flash in its modal.
+    */
+    -webkit-tap-highlight-color: transparent;
 
     --elevation-popover:
       0 0 0 1px oklch(0 0 none / 0.05), 0 1px 3px oklch(0 0 none / 0.05),
@@ -251,7 +257,8 @@
 .nav-popover {
   position: fixed;
   margin: 0;
-  inset: calc(var(--nav-height) + 0.25rem) 1rem auto auto;
+  inset-block: calc(var(--nav-height) + 0.25rem) auto;
+  inset-inline: auto 1rem;
   box-shadow: var(--elevation-popover);
   border: 0;
   border-radius: var(--radius);
